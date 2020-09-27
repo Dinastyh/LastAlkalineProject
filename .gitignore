@@ -1,0 +1,6 @@
+# Binaries
+obj/
+*.o
+
+#Prog
+LastAlkalineProject
