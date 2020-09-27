@@ -12,6 +12,7 @@ struct Picture
 {
     int w,h;
     Pixel* pixels;
+    //Pixels format: to go to [i,j]: pixels[w*j+i]
 };
 typedef struct Picture Picture;
 
