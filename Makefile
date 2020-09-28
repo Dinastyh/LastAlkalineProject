@@ -1,5 +1,5 @@
 CC = gcc
-EXEC = LastAlakalineProject
+EXEC = LastAlkalineProject
 OBJ = obj
 SRC = src
 
