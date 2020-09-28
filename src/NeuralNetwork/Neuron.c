@@ -6,5 +6,6 @@ Neuron NewNeuron(double bias, double weight)
     Neuron neuron;
     neuron.bias = bias;
     neuron.weight = weight;
+    neuron.value = 0;
     return neuron;
 }
