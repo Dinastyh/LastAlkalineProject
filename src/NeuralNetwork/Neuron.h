@@ -8,4 +8,6 @@ struct Neuron
 typedef struct Neuron Neuron;
 
 Neuron NewNeuron(double bias, double weight);
+void init_random_neuron(Neuron neuron);
+
 #endif

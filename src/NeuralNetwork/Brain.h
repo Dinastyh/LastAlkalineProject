@@ -14,4 +14,5 @@ typedef struct Brain Brain;
 Brain* NewBrain();
 double SigmoidSum(const Neuron* layer);
 void NeuronUpdate(Neuron* neuron, double sigSum);
+void init_random_brain(Brain brain);
 #endif
