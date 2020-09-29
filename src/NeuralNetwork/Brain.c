@@ -18,7 +18,7 @@ double SigmoidSum(const Neuron* layer)
     double result = 0;
     for(int i = 0; i < 784; i++)
     {
-	result += layer[i].weight;
+	    result += layer[i].weight;
     }
     return result;
 }

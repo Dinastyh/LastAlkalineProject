@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include "NeuralNetwork/list_io.h"
+#include "NeuralNetwork/write_read_brain.h"
 
 int main()
 {
-    list_io();
     return 0;
 }
