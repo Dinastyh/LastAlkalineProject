@@ -4,15 +4,13 @@
 
 struct Brain
 {
-    Neuron* layer0;
-    Neuron* layer1;
-    Neuron* layer2;
-    Neuron* layer3;
-}
+    Neuron* layers;
+};
 typedef struct Brain Brain;
 
 Brain* NewBrain();
-double SigmoidSum(const Neuron* layer);
+double SigmoidSum(const Neuron* layer, Neuron neuron);
 void NeuronUpdate(Neuron* neuron, double sigSum);
-void init_random_brain(Brain brain);
+void init_random_brain(Brain* brain);
+double* forward_propagation(Brain* brain, double* data);
 #endif

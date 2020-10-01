@@ -6,19 +6,21 @@
 Brain* NewBrain()
 {
     Brain* brain = malloc(sizeof(Brain));
-    brain->layer0 = calloc(784,sizeof(Neuron*));
-    brain->layer1 = calloc(784,sizeof(Neuron*));
-    brain->layer2 = calloc(784,sizeof(Neuron*));
-    brain->layer3 = calloc(66,sizeof(Neuron*));
+    brain->layers = calloc(4, sizeof(Neuron*));
+    for(int i = 0; i <3; i++)
+    {
+	brain->layers[i] = calloc(784, sizeof(Neuron*));
+    }
+    brain->layers[3] = calloc(66,sizeof(Neuron*)); 
     return brain;
 }
 
-double SigmoidSum(const Neuron* layer)
+double SigmoidSum(const Neuron* layer, Neuron neuron)
 {
     double result = 0;
     for(int i = 0; i < 784; i++)
     {
-	    result += layer[i].weight;
+	    result += neuron.weights[i]*layer[i].value;
     }
     return result;
 }
@@ -28,40 +30,49 @@ void NeuronUpdate(Neuron* neuron, double sigSum)
     neuron->value = 1/(1+exp(-1*(sigSum - neuron->bias);
 }
 
-void init_random_brain(Brain brain)// pointer or not ?
+void init_random_brain(Brain* brain)
 {
-    // 4 layers : 784, 784, 784 and 66
-    for (int i = 0; i < 4; i++)
+    for(int i = 0; i < 3; i++)
     {
-        int layer_length;
-        switch (i)
-        {
-            case 0:
-                current_layer[] = brain->layer0;
-                layer_length = 784;
-                break;
+	for(int j = 0; j <784; j++)
+	    {
+		init_random_neuron(brain->layers[i][j];
+	    }
+    }
 
-            case 1:
-                current_layer[] = brain->layer1;
-                //layer_length = 784;
-                break;
+    for (int i = 0; i < 66;i++ )
+    {
+        init_random_neuron(brain->layers[3][i]);
+    }
+}
 
-            case 2:
-                current_layer[] = brain->layer2;
-                //layer_length = 784;
-                break;
+double* forward_propagation(Brain* brain, double* data)
+{
+    for(int i = 0; i<784; i++)
+    {
+	brain->layers[0][i].value = data[i];
+    }
+    
+    for(int i = 1; i<3; i++)
+    {
+	for(int j = 0; j<784; j++)
+	{   
+	    //Update ALL values for layers 0 -> 1 and 1->2
+	    double sigsum = Sigmoid(&(brain->layers[i-1], brain->layers[i][j];
+	    NeuronUpdate(&(brain->layers[i][j]), sigsum);
+	}
+    }
 
-            case 3:
-                current_layer[] = brain->layer3;
-                layer_length = 66;
-                break;
+    for(int i = 0; i <66; i++)
+    {
+	double sigsum = Sigmoid(&(brain->layers[2], brain->layers[3][i];
+	NeuronUpdate(&(brain->layers[3][i]), sigsum);
+    }
 
-            default:
-                printf("init_random_brain : switch case i is not recognized");
-                return(1);
-        }
-        for (int j = 0; j < layer_length)
-        {
-            init_random_neuron(current_layer[j]); //pointer or not ?
-        }
+    double* end_value[66];
+    for(int i = 0; i<66; i++)
+    {
+	end_value[i] = layers[3][i].value;
+    }
+    return end_value;
 }

@@ -3,11 +3,12 @@
 
 struct Neuron
 {
-    double bias, weight, value;
-}
+    double bias, value;
+    double* weights;
+};
 typedef struct Neuron Neuron;
 
-Neuron NewNeuron(double bias, double weight);
-void init_random_neuron(Neuron neuron);
+Neuron NewNeuron(double bias);
+void init_random_neuron(Neuron* neuron);
 
 #endif
