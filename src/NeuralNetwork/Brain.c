@@ -76,3 +76,14 @@ void forward_propagation(Brain* brain, double* data, double* end_data)
 	end_data[i] = brain->last_layer[i].value;
     }
 }
+
+void mean_square_function(double* label, double* end_data, double* del_out)
+{
+   //del_out lenght must be equal with lend_data lenght
+   for(int i =0; i <66; i++)
+   {
+       del_out[i] = (label[i] - end_data[i])* (end_data[i] *(1-end_data[i]));
+   }
+}
+
+
