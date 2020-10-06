@@ -2,6 +2,7 @@
 obj/
 obj
 *.o
+.idea
 
 #Prog
 LastAlkalineProject

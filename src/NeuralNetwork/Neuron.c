@@ -10,6 +10,7 @@ Neuron NewNeuron(double bias)
     neuron.bias = bias;
     neuron.weights = calloc(784,(sizeof(double)));
     neuron.value = 0;
+    neuron.gradient = 0;
     return neuron;
 }
 
@@ -46,3 +47,5 @@ void init_random_neuron(Neuron* neuron)
 
     }
 }
+
+

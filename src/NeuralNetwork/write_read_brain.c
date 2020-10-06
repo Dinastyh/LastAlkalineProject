@@ -20,25 +20,25 @@ int write(FILE* brain_file, Brain brain)
             switch (i)
             {
                 case 0:
-                    current_layer[] = brain->layer0;
+                    current_layer[] = brain->layers[0];
                     layer_length = 784;
                     weight_count = 0;
                     break;
 
                 case 1:
-                    current_layer[] = brain->layer1;
+                    current_layer[] = brain->layers[1];
                     weight_count = 784;
                     //layer_length = 784;
                     break;
 
                 case 2:
-                    current_layer[] = brain->layer2;
+                    current_layer[] = brain->layers[2];
                     //layer_length = 784;
                     //weight_count = 784;
                     break;
 
                 case 3:
-                    current_layer[] = brain->layer3;
+                    current_layer[] = brain->last_layer;
                     layer_length = 66;
                     //weight_count = 784;
                     break;
@@ -83,25 +83,25 @@ Brain read(FILE* brain_file)
             switch (i)
             {
                 case 0:
-                    current_layer[] = brain->layer0;
+                    current_layer[] = brain->layers[0];
                     layer_length = 784;
                     weight_count = 0;
                     break;
 
                 case 1:
-                    current_layer[] = brain->layer1;
+                    current_layer[] = brain->layers[1];
                     weight_count = 784;
                     //layer_length = 784;
                     break;
 
                 case 2:
-                    current_layer[] = brain->layer2;
+                    current_layer[] = brain->layers[2];
                     //layer_length = 784;
                     //weight_count = 784;
                     break;
 
                 case 3:
-                    current_layer[] = brain->layer3;
+                    current_layer[] = brain->last_layer;
                     layer_length = 66;
                     //weight_count = 784;
                     break;

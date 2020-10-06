@@ -3,7 +3,7 @@
 
 struct Neuron
 {
-    double bias, value;
+    double bias, value, gradient;
     double* weights;
 };
 typedef struct Neuron Neuron;
