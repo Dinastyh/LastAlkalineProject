@@ -16,36 +16,47 @@ int write(FILE* brain_file, Brain brain)
         for (int i = 0; i < 4; i++)
         {
             int layer_length;
+            int weight_count;
             switch (i)
             {
                 case 0:
                     current_layer[] = brain->layer0;
                     layer_length = 784;
+                    weight_count = 0;
                     break;
 
                 case 1:
                     current_layer[] = brain->layer1;
+                    weight_count = 784;
                     //layer_length = 784;
                     break;
 
                 case 2:
                     current_layer[] = brain->layer2;
                     //layer_length = 784;
+                    //weight_count = 784;
                     break;
 
                 case 3:
                     current_layer[] = brain->layer3;
                     layer_length = 66;
+                    //weight_count = 784;
                     break;
 
                 default:
                     printf("write_brain : switch case i is not recognized");
                     return(1);
             }
+
             for (int j = 0; j < layer_length)
             {
                 fprintf(brain_file,"(");
-                fprintf(brain_file,"%lf %lf",current_layer[j].weight,current_layer[j].bias);
+                fprintf(brain_file,"%lf",current_layer[j].bias);
+                for(int k = 0; k < weight_count; k++)
+                {
+                    fprintf(brain_file," %lf", current_layer[j].weight[k]);
+                }
+
                 fprintf(brain_file,") ");
             }
             fprintf(brainf_file,"\n")
@@ -68,36 +79,49 @@ Brain read(FILE* brain_file)
         for (int i = 0; i < 4; i++)
         {
             int layer_length;
+            int weight_count;
             switch (i)
             {
                 case 0:
                     current_layer[] = brain->layer0;
                     layer_length = 784;
+                    weight_count = 0;
                     break;
 
                 case 1:
                     current_layer[] = brain->layer1;
+                    weight_count = 784;
                     //layer_length = 784;
                     break;
 
                 case 2:
                     current_layer[] = brain->layer2;
                     //layer_length = 784;
+                    //weight_count = 784;
                     break;
 
                 case 3:
                     current_layer[] = brain->layer3;
                     layer_length = 66;
+                    //weight_count = 784;
                     break;
 
                 default:
                     printf("read_brain : switch case i is not recognized");
                     exit(1);
             }
-            for (int j = 0; j < layer_length)
+            for (int j = 0; j < layer_length; j++)
             {
-                fscanf(brain_file, "(%lf %lf) ", current_layer[j]->weight,current_layer[j]->bias);
-                printf("(%lf %lf) ",current_layer[j].weight,current_layer[j].bias);
+                //fscanf(brain_file, "(%lf %lf) ", current_layer[j]->weight,current_layer[j]->bias);
+                char buffer;
+                fscanf(brain_file,"(%lf",current_layer[j]->bias);
+                for (k = 0; k < weight_count; k++)
+                {
+                    fscanf(brain_file, " %lf", current_layer[j]->weight[k]);
+                }
+
+                fscanf(brain_file, ") ",&buffer);
+                //printf("(%lf %lf) ",current_layer[j].weight,current_layer[j].bias);
             }
             //there should be a \n that we need to empty
             char buffer[10];
@@ -117,5 +141,5 @@ Brain read(FILE* brain_file)
         printf("this file doesnt exist or is elsewhere");
         exit(1);
     }
-    exit(0);
+    return brain;
 }
