@@ -1,5 +1,9 @@
 #ifndef _NEURON_H
 #define _NEURON_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
 struct Neuron
 {

@@ -1,9 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include "write_read_brain.h"
-#include "Brain.h"
 
 int write(FILE* brain_file, Brain brain)
 {

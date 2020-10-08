@@ -1,6 +1,10 @@
 #ifndef _Brain_H
 #define _Brain_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "Neuron.h"
+
 #define SIZE_LAYERS 784
 #define SIZE_LAST_LAYER 66
 #define NUMBER_HIDDEN_LAYERS 3

@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 #include "Brain.h"
-#include "Neuron.h"
 
 Brain* NewBrain()
 {
