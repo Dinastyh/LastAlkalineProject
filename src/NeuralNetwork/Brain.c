@@ -6,9 +6,18 @@ Brain* NewBrain()
     brain->layers = malloc(NUMBER_HIDDEN_LAYERS*sizeof(Neuron*)); 
     for(int i = 0; i <NUMBER_HIDDEN_LAYERS; i++)
     {
-	brain->layers[i] = calloc(SIZE_LAYERS, sizeof(Neuron));
+	    brain->layers[i] = calloc(SIZE_LAYERS, sizeof(Neuron));
+	    for(int j = 0; j < SIZE_LAYERS;j++)
+        {
+	        brain->layers[i][j] = NewNeuron();
+        }
     }
-    brain->last_layer = calloc(SIZE_LAST_LAYER,sizeof(Neuron*)); 
+
+    brain->last_layer = calloc(SIZE_LAST_LAYER,sizeof(Neuron));
+    for(int j = 0; j < SIZE_LAST_LAYER;j++)
+    {
+        brain->last_layer[j] = NewNeuron();
+    }
     return brain;
 }
 
@@ -38,8 +47,10 @@ void init_random_brain(Brain* brain)
     {
 	for(int j = 0; j <SIZE_LAYERS; j++)
 	    {
-		init_random_neuron(&(brain->layers[i][j]));
+            //printf("i= %d j= %d", i, j);
+            init_random_neuron(&(brain->layers[i][j]));
 	    }
+
     }
 
     for (int i = 0; i < SIZE_LAST_LAYER;i++ )

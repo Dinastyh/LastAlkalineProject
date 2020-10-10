@@ -41,21 +41,21 @@ int write(FILE* brain_file, Brain brain)
 
                 default:
                     printf("write_brain : switch case i is not recognized");
-                    return(1);
+                    exit(1);
             }
 
-            for (int j = 0; j < layer_length)
+            for (int j = 0; j < layer_length; j++)
             {
                 fprintf(brain_file,"(");
-                fprintf(brain_file,"%lf",current_layer[j].bias);
+                fprintf(brain_file,"%lf",current_layer[j].->bias);
                 for(int k = 0; k < weight_count; k++)
                 {
-                    fprintf(brain_file," %lf", current_layer[j].weight[k]);
+                    fprintf(brain_file," %lf", current_layer[j]->weights[k]);
                 }
 
                 fprintf(brain_file,") ");
             }
-            fprintf(brainf_file,"\n")
+            fprintf(brainf_file,"\n");
         }
         fclose(list);
     }
@@ -113,7 +113,7 @@ Brain read(FILE* brain_file)
                 fscanf(brain_file,"(%lf",current_layer[j]->bias);
                 for (k = 0; k < weight_count; k++)
                 {
-                    fscanf(brain_file, " %lf", current_layer[j]->weight[k]);
+                    fscanf(brain_file, " %lf", current_layer[j]->weights[k]);
                 }
 
                 fscanf(brain_file, ") ",&buffer);

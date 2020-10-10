@@ -12,7 +12,8 @@ struct Neuron
 };
 typedef struct Neuron Neuron;
 
-Neuron NewNeuron(double bias);
+Neuron NewNeuron();
+double box_muller();
 void init_random_neuron(Neuron* neuron);
 
 #endif

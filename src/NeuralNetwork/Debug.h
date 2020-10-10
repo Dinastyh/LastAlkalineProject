@@ -6,4 +6,6 @@
 #include "Brain.h"
 #include "Neuron.h"
 
+void print_brain(Brain* brain);
+
 #endif
