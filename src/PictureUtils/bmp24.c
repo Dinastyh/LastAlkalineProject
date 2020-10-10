@@ -1,21 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <assert.h>
 #include "bmp24.h"
-
-Picture newPicture(const char* filename,const char* newfilename)
+Picture newPicture(const char *filename,char *newfilename)
 	{
 		Picture picture;
-		FILE* file = fopen("filename","rb");
-		int size = sizeof(file);
-		char* data = malloc(size);
+		FILE *file = fopen(filename,"rb");
+		char* data = malloc(56);
 		int w = 0;
 		int h = 0;
 		int r = 0;
 		int b = 0;
 		int g = 0;
-		double average =0;
+		float average = 0;
 		Pixel pixel;
 		fgets(data,54,file);
 		if (data[0] != 'B' || data[1] != 'M')
@@ -23,16 +19,22 @@ Picture newPicture(const char* filename,const char* newfilename)
 			printf("wrong format");
 			
 		}		
+		
 		picture.head = data;
 		picture.name = newfilename;
+		
 		fseek(file,18,SEEK_SET);
-		w = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) + 256 * 256 * 256 * fgetc(file);
-		h = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) + 256 * 256 * 256 * fgetc(file);
+		
+		w = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) 
+			+ 256 * 256 * 256 * fgetc(file);
+		h = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) 
+			+ 256 * 256 * 256 * fgetc(file);
 		picture.h = h;
 		picture.w = w;
-		Pixel* pixels = malloc(h*w);
+		
+		Pixel *pixels = malloc((w * h + 1) + 1);
 		fseek(file,54,SEEK_SET);
-		for(int i = 0; i <w*h ; i++)
+		for(int i = 0; i < w * h; i++)
 		{
 			b =  fgetc(file);
 			g =  fgetc(file);
@@ -41,16 +43,15 @@ Picture newPicture(const char* filename,const char* newfilename)
 			pixel.b = b;
 			pixel.g = g;
 			average += r + g + b; 
-			pixels[i] = pixel;
+			pixels[i] =pixel;
 		}
-		
 		picture.pixels = pixels;
 		picture.averagecolor = average/(h*w*3);
-		fclose("filename");
+		fclose(file);
 		return picture;
 	}
 
-	void savePicture(Picture picture)
+void savePicture(Picture picture)
 	{
 		FILE* file =fopen(picture.name,"wb+");
 		fputs(picture.head, file);
@@ -60,8 +61,6 @@ Picture newPicture(const char* filename,const char* newfilename)
 			fputc(picture.pixels[i].g,file);
 			fputc(picture.pixels[i].r,file);
 		}
-		free(picture.head);
-		free(picture.pixels);
 		fclose(file);
 	}
 

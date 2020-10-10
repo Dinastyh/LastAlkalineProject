@@ -1,5 +1,5 @@
-#include <stdio.h>
-
+#ifndef H_GL_BMP24
+#define H_GL_BMP24
 
 struct Pixel
 {
@@ -11,12 +11,13 @@ typedef struct Pixel Pixel;
 struct Picture
 {
 	int h,w;
-	char* name,head;
-	double averagecolor;
+	char *name, *head;
+	float averagecolor;
 	Pixel* pixels;
 };
 
 typedef struct Picture Picture;
 
-Picture newPicture( const char* filename, const char* filenamenew);
+Picture newPicture(const char *filename, char *filenamenew);
 void savePicture(Picture picture);
+#endif
