@@ -57,14 +57,40 @@ Picture newPicture(const char *filename,char *newfilename)
 void savePicture(Picture picture)
 	{
 		FILE* file =fopen(picture.name,"wb+");
-		fputs(picture.head, file);
+		for(int i = 0; i<54; i++)
+		{
+			fputc(picture.head[i],file);
+		}
+
 		for(int i = 0; i<picture.w * picture.h;i++)
 		{
 			fputc(picture.pixels[i].b,file);
 			fputc(picture.pixels[i].g,file);
 			fputc(picture.pixels[i].r,file);
 		}
+		free(picture.pixels);
+		free(picture.head);
 		fclose(file);
 	}
 
+void BlackAndWhite (Picture picture)
+	{
+		float color;
+		for (int i = 0; i < picture.h*picture.w;i++)
+		{
+			color = ((float)(picture.pixels[i].r + picture.pixels[i].g + picture.pixels[i].b))/3;
+			if (color > picture.averagecolor)
+			{
+				picture.pixels[i].r = 255;
+				picture.pixels[i].g = 255;
+			       	picture.pixels[i].b = 255;
+			}
+			else
+			{
+				 picture.pixels[i].r = 0;
+				 picture.pixels[i].g = 0;
+				 picture.pixels[i].b = 0;
+			}
+		}
+	}
 

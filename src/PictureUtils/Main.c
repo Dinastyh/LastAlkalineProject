@@ -5,6 +5,7 @@ int main(int argc, char* argv[])
 {
 	printf("ok\n");
 	Picture cobaye = newPicture("image.bmp","essai.bmp");
+	BlackAndWhite(cobaye);
 	printf("w : %d, h : %d\n",cobaye.w, cobaye.h);
 	savePicture(cobaye);
 	return 0;

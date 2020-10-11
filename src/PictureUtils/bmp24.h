@@ -19,5 +19,6 @@ struct Picture
 typedef struct Picture Picture;
 
 Picture newPicture(const char *filename, char *filenamenew);
+void BlackAndWhite(Picture picture);
 void savePicture(Picture picture);
 #endif
