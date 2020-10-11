@@ -13,7 +13,10 @@ Picture newPicture(const char *filename,char *newfilename)
 		int g = 0;
 		float average = 0;
 		Pixel pixel;
-		fgets(data,54,file);
+		for(int i = 0; i < 54; i++)
+		{
+			data[i] = fgetc(file);
+		}
 		if (data[0] != 'B' || data[1] != 'M')
 		{
 			printf("wrong format");
@@ -32,7 +35,7 @@ Picture newPicture(const char *filename,char *newfilename)
 		picture.h = h;
 		picture.w = w;
 		
-		Pixel *pixels = malloc((w * h + 1) + 1);
+		Pixel *pixels = malloc(sizeof(Pixel) * h * w);
 		fseek(file,54,SEEK_SET);
 		for(int i = 0; i < w * h; i++)
 		{
@@ -43,7 +46,7 @@ Picture newPicture(const char *filename,char *newfilename)
 			pixel.b = b;
 			pixel.g = g;
 			average += r + g + b; 
-			pixels[i] =pixel;
+			pixels[i] = pixel;
 		}
 		picture.pixels = pixels;
 		picture.averagecolor = average/(h*w*3);
