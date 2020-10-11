@@ -18,7 +18,7 @@ double box_muller() //box-muller for gaussian distribution (polar method).
     double r = u * u + v * v;
 
     if (r == 0 || r > 1) return box_muller();
-    return u * sqrt(-2 * log(r) / r) / 2;
+    return u * sqrt(-2 * log(r) / r) / 3;
 
 }
 

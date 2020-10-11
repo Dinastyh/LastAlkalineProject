@@ -4,7 +4,7 @@ Brain* NewBrain()
 {
     Brain* brain = malloc(sizeof(Brain));
     brain->layers = malloc(NUMBER_HIDDEN_LAYERS*sizeof(Neuron*)); 
-    for(int i = 0; i <NUMBER_HIDDEN_LAYERS; i++)
+    for(int i = 0; i < NUMBER_HIDDEN_LAYERS; i++)
     {
 	    brain->layers[i] = calloc(SIZE_LAYERS, sizeof(Neuron));
 	    for(int j = 0; j < SIZE_LAYERS;j++)
