@@ -6,6 +6,7 @@
 #include "Brain.h"
 #include "Neuron.h"
 
+void print_layer(Neuron* layer, int choice);
 void print_brain(Brain* brain);
 
 #endif

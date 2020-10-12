@@ -5,7 +5,7 @@ void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LA
     switch (choice)
     {
         case 0:
-            printf("\n#### LAYER 0 #### \n");
+            printf("\n#### LAYER 0, SIZE : %d #### \n", SIZE_LAYERS);
             for (int i = 0; i < SIZE_LAYERS; i++)
             {
                 printf("(");
@@ -15,8 +15,8 @@ void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LA
             printf("\n");
             break;
 
-        case NUMBER_HIDDEN_LAYERS + 1:
-            printf("\n#### LAST LAYER #### \n");
+        case NUMBER_HIDDEN_LAYERS:
+            printf("\n#### LAST LAYER, SIZE : %d #### \n", SIZE_LAST_LAYER);
             for (int i = 0; i < SIZE_LAST_LAYER; i++)
             {
                 printf("(");
@@ -31,7 +31,7 @@ void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LA
             printf("\n");
             break;
         default:
-            printf("\n#### LAYER %d #### \n",choice);
+            printf("\n#### LAYER %d, SIZE : %d #### \n",choice,SIZE_LAYERS);
             for (int i = 0; i < SIZE_LAYERS; i++)
             {
                 printf("(");
@@ -54,6 +54,6 @@ void print_brain(Brain* brain)
     {
         print_layer(brain->layers[i], i);
     }
-    print_layer(brain->last_layer, NUMBER_HIDDEN_LAYERS + 1);
+    print_layer(brain->last_layer, NUMBER_HIDDEN_LAYERS);
 }
 

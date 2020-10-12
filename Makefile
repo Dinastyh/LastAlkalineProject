@@ -6,8 +6,8 @@ SRC = src
 
 all : $(EXEC)
 
-$(EXEC) : $(OBJ)/Main.o $(OBJ)/Brain.o $(OBJ)/Neuron.o $(OBJ)/Debug.o
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Brain.o $(OBJ)/Neuron.o $(OBJ)/Debug.o -lm
+$(EXEC) : $(OBJ)/Main.o $(OBJ)/Brain.o $(OBJ)/Neuron.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Brain.o $(OBJ)/Neuron.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o -lm
 
 $(OBJ)/Main.o : $(SRC)/Main.c
 	$(CC) $(CFLAGS) -o $(OBJ)/Main.o -c $(SRC)/Main.c
@@ -20,6 +20,9 @@ $(OBJ)/Neuron.o : $(SRC)/NeuralNetwork/Neuron.c
 
 $(OBJ)/Debug.o : $(SRC)/NeuralNetwork/Debug.c
 	$(CC) $(CFLAGS) -o $(OBJ)/Debug.o -c $(SRC)/NeuralNetwork/Debug.c
+
+$(OBJ)/write_read_brain.o : $(SRC)/NeuralNetwork/write_read_brain.c
+	$(CC) $(CFLAGS) -o $(OBJ)/write_read_brain.o -c $(SRC)/NeuralNetwork/write_read_brain.c
 
 clearOBJ :
 	rm -r $(OBJ)/*.o
