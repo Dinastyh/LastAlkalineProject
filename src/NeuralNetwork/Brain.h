@@ -1,9 +1,14 @@
 #ifndef _Brain_H
 #define _Brain_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "Neuron.h"
-#define SIZE_LAYERS 784
-#define SIZE_LAST_LAYER 66
-#define NUMBER_HIDDEN_LAYERS 3
+
+#define NUMBER_HIDDEN_LAYERS 1 + 2 //3 //layer 0 is counter as a hidden layer
+#define SIZE_LAYERS 5 //784
+#define SIZE_LAST_LAYER 2 //66
+
 
 struct Brain
 {

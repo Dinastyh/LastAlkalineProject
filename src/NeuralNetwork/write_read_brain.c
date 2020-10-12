@@ -1,72 +1,63 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include "write_read_brain.h"
-#include "Brain.h"
 
-int write(FILE* brain_file, Brain brain)
+void write_brain(Brain* brain)
 {
-    brain_file = fopen("brain.txt","w"); // Warning : this delete the previous brain and rewrite on it
+    FILE* brain_file = fopen("brain.txt","w"); // Warning : this delete the previous brain and rewrite on it
 
-    if (list != NULL)
+    if (brain_file != NULL)
     {
-        Neuron* current_layer[];
-        // 4 layers : 784, 784, 784 and 66
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < SIZE_LAYERS; i++) //print layer 0
         {
-            int layer_length;
-            int weight_count;
-            switch (i)
-            {
-                case 0:
-                    current_layer[] = brain->layers[0];
-                    layer_length = 784;
-                    weight_count = 0;
-                    break;
+            fprintf(brain_file,"(");
+            fprintf(brain_file,"%lf",brain->layers[0][i].bias);
+            fprintf(brain_file,") ");
+        }
+        fprintf(brain_file,"\n");
 
-                case 1:
-                    current_layer[] = brain->layers[1];
-                    weight_count = 784;
-                    //layer_length = 784;
-                    break;
-
-                case 2:
-                    current_layer[] = brain->layers[2];
-                    //layer_length = 784;
-                    //weight_count = 784;
-                    break;
-
-                case 3:
-                    current_layer[] = brain->last_layer;
-                    layer_length = 66;
-                    //weight_count = 784;
-                    break;
-
-                default:
-                    printf("write_brain : switch case i is not recognized");
-                    return(1);
-            }
-
-            for (int j = 0; j < layer_length)
+        for (int i = 1; i < NUMBER_HIDDEN_LAYERS;i++)//print all hidden layers
+        {
+            for (int j = 0; j < SIZE_LAYERS; j++)
             {
                 fprintf(brain_file,"(");
-                fprintf(brain_file,"%lf",current_layer[j].bias);
-                for(int k = 0; k < weight_count; k++)
+                fprintf(brain_file,"%lf",brain->layers[i][j].bias);
+                for(int k = 0; k < SIZE_LAYERS; k++)
                 {
-                    fprintf(brain_file," %lf", current_layer[j].weight[k]);
+                    fprintf(brain_file," %lf", brain->layers[i][j].weights[k]);
                 }
 
                 fprintf(brain_file,") ");
             }
-            fprintf(brainf_file,"\n")
+            fprintf(brain_file,"\n");
         }
-        fclose(list);
-    }
 
-    return 0;
+        //print last layer
+
+        for (int i = 0; i < SIZE_LAST_LAYER; i++)
+        {
+            fprintf(brain_file,"(");
+            fprintf(brain_file,"%lf",brain->last_layer[i].bias);
+            for(int j = 0; j < SIZE_LAST_LAYER; j++)
+            {
+                fprintf(brain_file," %lf", brain->last_layer[i].weights[j]);
+            }
+
+            fprintf(brain_file,") ");
+        }
+        fprintf(brain_file,"\n");
+
+        fclose(brain_file);
+        printf("write_brain : brain_file closed");
+        exit(0);
+    }
+    else
+    {
+        printf("write_brain : writing failed");
+        exit(1);
+    }
 }
 
+/*
 Brain read(FILE* brain_file)
 {
     brain_file = fopen("brain.txt","r"); //read only
@@ -74,42 +65,8 @@ Brain read(FILE* brain_file)
 
     if (list != NULL)
     {
-        Neuron* current_layer[];
-        // 4 layers : 784, 784, 784 and 66
-        for (int i = 0; i < 4; i++)
-        {
-            int layer_length;
-            int weight_count;
-            switch (i)
-            {
-                case 0:
-                    current_layer[] = brain->layers[0];
-                    layer_length = 784;
-                    weight_count = 0;
-                    break;
+        Neuron* current_layer;
 
-                case 1:
-                    current_layer[] = brain->layers[1];
-                    weight_count = 784;
-                    //layer_length = 784;
-                    break;
-
-                case 2:
-                    current_layer[] = brain->layers[2];
-                    //layer_length = 784;
-                    //weight_count = 784;
-                    break;
-
-                case 3:
-                    current_layer[] = brain->last_layer;
-                    layer_length = 66;
-                    //weight_count = 784;
-                    break;
-
-                default:
-                    printf("read_brain : switch case i is not recognized");
-                    exit(1);
-            }
             for (int j = 0; j < layer_length; j++)
             {
                 //fscanf(brain_file, "(%lf %lf) ", current_layer[j]->weight,current_layer[j]->bias);
@@ -117,7 +74,7 @@ Brain read(FILE* brain_file)
                 fscanf(brain_file,"(%lf",current_layer[j]->bias);
                 for (k = 0; k < weight_count; k++)
                 {
-                    fscanf(brain_file, " %lf", current_layer[j]->weight[k]);
+                    fscanf(brain_file, " %lf", current_layer[j]->weights[k]);
                 }
 
                 fscanf(brain_file, ") ",&buffer);
@@ -128,11 +85,11 @@ Brain read(FILE* brain_file)
             fscanf(brain_file,"\n",buffer);
             printf(brainf_file,"\n");
 
-            /*
+
             reference for how to read a file (I may have fcked up on the pointers)
             fscanf(list, "%lf", &f2);
             double_get[i] = f2;
-            */
+
         }
         fclose(list);
     }
@@ -143,3 +100,4 @@ Brain read(FILE* brain_file)
     }
     return brain;
 }
+ */
