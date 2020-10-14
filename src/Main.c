@@ -5,7 +5,7 @@
 #include "NeuralNetwork/Neuron.h"
 #include "NeuralNetwork/Debug.h"
 #include "NeuralNetwork/write_read_brain.h"
-#include "bmp24.c"
+#include "PictureUtils/bmp24.h"
 
 int main()
 {
