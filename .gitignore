@@ -4,3 +4,7 @@ obj/
 
 #Prog
 LastAlkalineProject
+
+#Data Files
+*.bmp
+*.test
