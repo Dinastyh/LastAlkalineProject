@@ -3,21 +3,30 @@
 Brain* NewBrain()
 {
     Brain* brain = malloc(sizeof(Brain));
-    brain->layers = malloc(NUMBER_HIDDEN_LAYERS*sizeof(Neuron*)); 
-    for(int i = 0; i < NUMBER_HIDDEN_LAYERS; i++)
+    brain->layers = malloc(NUMBER_HIDDEN_LAYERS*sizeof(Neuron*) + 1);
+
+    //first layer
+    brain->layers[0] = calloc(SIZE_LAYERS, sizeof(struct Neuron) + 1);
+    for(int i = 0; i < SIZE_LAYERS; i++)
+        brain->layers[0][i] = NewNeuron(0);
+
+    // hidden layers except first one
+    for(int i = 1; i < NUMBER_HIDDEN_LAYERS; i++)
     {
-	    brain->layers[i] = calloc(SIZE_LAYERS, sizeof(Neuron));
+	    brain->layers[i] = calloc(SIZE_LAYERS, sizeof(Neuron) + 1);
 	    for(int j = 0; j < SIZE_LAYERS;j++)
         {
-	        brain->layers[i][j] = NewNeuron();
+	        brain->layers[i][j] = NewNeuron(SIZE_LAYERS);
         }
     }
 
-    brain->last_layer = calloc(SIZE_LAST_LAYER,sizeof(Neuron));
+    //last layer
+    brain->last_layer = calloc(SIZE_LAST_LAYER,sizeof(Neuron) + 1);
     for(int j = 0; j < SIZE_LAST_LAYER;j++)
     {
-        brain->last_layer[j] = NewNeuron();
+        brain->last_layer[j] = NewNeuron(SIZE_LAYERS);
     }
+
     return brain;
 }
 
@@ -64,28 +73,28 @@ void forward_propagation(Brain* brain, double* data, double* end_data)
     //We need one variable end-data to use this function (double end_data[SIZE_LAST_LAYER])
     for(int i = 0; i<SIZE_LAYERS; i++)
     {
-	brain->layers[0][i].value = data[i];
+        brain->layers[0][i].value = data[i];
     }
-    
+
     for(int i = 1; i<NUMBER_HIDDEN_LAYERS; i++)
     {
-	for(int j = 0; j<SIZE_LAYERS; j++)
-	{   
-	    //Update ALL values for layers 0 -> 1 and 1->2
-	    double sigsum = SigmoidSum(brain->layers[i-1], brain->layers[i][j]);
-	    NeuronUpdate(&(brain->layers[i][j]), sigsum);
-	}
+        for(int j = 0; j<SIZE_LAYERS; j++)
+        {
+            //Update ALL values for layers 0 -> 1 and 1->2
+            double sigsum = SigmoidSum(brain->layers[i-1], brain->layers[i][j]);
+            NeuronUpdate(&(brain->layers[i][j]), sigsum);
+        }
     }
 
     for(int i = 0; i <SIZE_LAST_LAYER; i++)
     {
-	double sigsum = SigmoidSum(brain->layers[2], brain->last_layer[i]);
-	NeuronUpdate(&(brain->last_layer[i]), sigsum);
+        double sigsum = SigmoidSum(brain->layers[2], brain->last_layer[i]);
+        NeuronUpdate(&(brain->last_layer[i]), sigsum);
     }
 
     for(int i = 0; i<SIZE_LAST_LAYER; i++)
     {
-	end_data[i] = brain->last_layer[i].value;
+        end_data[i] = brain->last_layer[i].value;
     }
 }
 
@@ -141,7 +150,7 @@ void update_weights(Brain* brain, double learning_rate, double batch_size)
             for (int k = 0; k < SIZE_LAYERS; k++)//each weight
             {
                 brain->layers[i][j].weights[k] -= learning_rate * 
-		brain->layers[i][j].gradient * brain->layers[i-1][j].value / batch_size;
+		        brain->layers[i][j].gradient * brain->layers[i-1][j].value / batch_size;
             }
             brain->layers[i][j].gradient = 0;
         }

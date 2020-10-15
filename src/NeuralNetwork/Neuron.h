@@ -12,7 +12,7 @@ struct Neuron
 };
 typedef struct Neuron Neuron;
 
-Neuron NewNeuron();
+Neuron NewNeuron(int nb_weights);
 double box_muller();
 void init_random_neuron(Neuron* neuron);
 

@@ -37,7 +37,7 @@ void write_brain(Brain* brain)
         {
             fprintf(brain_file,"(");
             fprintf(brain_file,"%lf",brain->last_layer[i].bias);
-            for(int j = 0; j < SIZE_LAST_LAYER; j++)
+            for(int j = 0; j < SIZE_LAYERS; j++)
             {
                 fprintf(brain_file," %lf", brain->last_layer[i].weights[j]);
             }
@@ -46,13 +46,16 @@ void write_brain(Brain* brain)
         }
         fprintf(brain_file,"\n");
 
-        fclose(brain_file);
-        printf("write_brain : brain_file closed");
+        if(fclose(brain_file) == -1)
+        {
+            exit(2);
+        }
+        printf("write_brain : brain_file closed \n");
         exit(0);
     }
     else
     {
-        printf("write_brain : writing failed");
+        printf("write_brain : writing failed \n");
         exit(1);
     }
 }
