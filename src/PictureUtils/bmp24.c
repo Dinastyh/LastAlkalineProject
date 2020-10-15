@@ -12,6 +12,7 @@ Picture newPicture(const char *filename,char *newfilename)
 		int b = 0;
 		int g = 0;
 		float average = 0;
+		int taille = 0;
 		Pixel pixel;
 		for(int i = 0; i < 54; i++)
 		{
@@ -21,32 +22,47 @@ Picture newPicture(const char *filename,char *newfilename)
 		{
 			printf("wrong format");
 			
-		}		
-		
+		}
+		fseek(file, 2, SEEK_SET);
+		taille = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) 
+			+ 256 * 256 * 256 * fgetc(file);
 		picture.head = data;
 		picture.name = newfilename;
-		
+		fseek(file,18,SEEK_SET);
 		fseek(file,18,SEEK_SET);
 		
 		w = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) 
 			+ 256 * 256 * 256 * fgetc(file);
+
 		h = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) 
 			+ 256 * 256 * 256 * fgetc(file);
 		picture.h = h;
 		picture.w = w;
-		
+		for(int i = 0; i < 4; i++)
+		{
+			if((taille - 54 - (h * w * 3 + h * i)) == 0)
+				picture.offset = i;
+		}
 		Pixel *pixels = malloc(sizeof(Pixel) * h * w);
 		fseek(file,54,SEEK_SET);
-		for(int i = 0; i < w * h; i++)
+		int i = 0;
+		for(int j = 0; j < h; j++)
 		{
-			b =  fgetc(file);
-			g =  fgetc(file);
-			r =  fgetc(file); 
-			pixel.r = r;
-			pixel.b = b;
-			pixel.g = g;
-			average += r + g + b; 
-			pixels[i] = pixel;
+			for(int i = 0; i < w; i++)
+			{
+				b =  fgetc(file);
+				g =  fgetc(file);
+				r =  fgetc(file); 
+				pixel.r = r;
+				pixel.b = b;
+				pixel.g = g;
+				average += r + g + b; 
+				pixels[i + j * w] = pixel;
+				if( i == w - 1)
+				{
+					fseek(file, picture.offset, SEEK_CUR);
+				}
+			}
 		}
 		picture.pixels = pixels;
 		picture.averagecolor = average/(h*w*3);
@@ -57,16 +73,42 @@ Picture newPicture(const char *filename,char *newfilename)
 void savePicture(Picture picture)
 	{
 		FILE* file =fopen(picture.name,"wb+");
+		char *offset = "";
+		int w = picture.w;
+		int h = picture.h;
+		switch(picture.offset)
+		{
+			case 0:
+				offset = "";
+				break;
+			case 1:
+				offset = "F";
+				break;
+			case 2:
+				offset = "0F";
+				break;
+			default:
+				offset = "00F";
+				break;
+		}
+		
 		for(int i = 0; i<54; i++)
 		{
 			fputc(picture.head[i],file);
 		}
-
-		for(int i = 0; i<picture.w * picture.h;i++)
+		for(int j = 0; j < h; j++)
 		{
-			fputc(picture.pixels[i].b,file);
-			fputc(picture.pixels[i].g,file);
-			fputc(picture.pixels[i].r,file);
+			for(int i = 0; i < w; i++)
+			{	
+				fputc(picture.pixels[i + j * w].b,file);
+				fputc(picture.pixels[i + j * w].g,file);
+				fputc(picture.pixels[i + j * w].r,file);
+				if(i == w - 1)
+				{
+					fputs(offset, file);
+				}
+			}
+
 		}
 		free(picture.pixels);
 		free(picture.head);

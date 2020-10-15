@@ -10,7 +10,7 @@ typedef struct Pixel Pixel;
 
 struct Picture
 {
-	int h,w;
+	int h, w, offset;
 	char *name, *head;
 	float averagecolor;
 	Pixel* pixels;
