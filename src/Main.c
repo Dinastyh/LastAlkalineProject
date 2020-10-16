@@ -10,10 +10,13 @@
 int main()
 {
     srand (time ( NULL));
-    Brain* brain = NewBrain();
-    init_random_brain(brain);
-    //print_brain(brain);
-    write_brain(brain);
+    Brain brain = NewBrain();
+    init_random_brain(&brain);
+    print_brain(&brain);
+    write_brain(&brain);
+
+    Brain brain2 = read_brain("brain.txt");
+    print_brain(&brain2);
 
     return 0;
 }

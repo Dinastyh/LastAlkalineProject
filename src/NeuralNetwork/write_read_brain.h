@@ -3,6 +3,6 @@
 #include "Brain.h"
 
 void write_brain(Brain* brain);
-Brain read(FILE* brain_file);
+Brain read_brain(char* brain_name);
 
 #endif
