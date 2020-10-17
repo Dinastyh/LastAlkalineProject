@@ -1,4 +1,7 @@
 #include "Debug.h"
+#include "Brain.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LAYERS + 1 is last, else is hidden
 {
@@ -55,3 +58,21 @@ void print_brain(Brain* brain)
     print_layer(brain->last_layer, NUMBER_HIDDEN_LAYERS);
 }
 
+void print_vector(int size, double* data)
+{
+    for(int i = 0; i< size; i++)
+    {
+	printf("Data[%d] = %lf\n",i,data[i]);
+    }
+}
+
+void check_forward_propagation(Brain* brain)
+{
+    double data[5] ={rand()%2, rand()%2, rand()%2, rand()%2, rand()%2};
+    double end_data[2] = {0,0};
+    printf("Data In\n");
+    print_vector(5,data);
+    forward_propagation(brain, data, end_data);
+    printf("Data Out\n");
+    print_vector(2, data);
+}

@@ -17,6 +17,10 @@ int main()
 
     Brain brain2 = read_brain("brain.txt");
     print_brain(&brain2);
+    
+    printf("\n\n\n\n");
+    printf("###############Debug forward propagation##################\n");
+    check_forward_propagation(&brain);
 
     return 0;
 }
