@@ -34,69 +34,56 @@ Brain NewBrain()
     return brain;
 }
 
-double SigmoidSum(const Neuron* layer, Neuron neuron)
-{
-    double result = 0;
-    for(int i = 0; i < SIZE_LAYERS; i++)
-    {
-	    result += neuron.weights[i]*layer[i].value;
-    }
-    return result;
-}
-
-double Sigmoid_prime(double value)
-{
-    return value*(1-value);
-}
-
-void NeuronUpdate(Neuron* neuron, double sigSum)
-{
-    neuron->value = 1/(1+exp(-1*(sigSum - neuron->bias)));
-}
-
 void init_random_brain(Brain* brain)
 {
     for(int i = 0; i < NUMBER_HIDDEN_LAYERS; i++)
     {
-	for(int j = 0; j <SIZE_LAYERS; j++)
-	    {
+        for(int j = 0; j <SIZE_LAYERS; j++)
+        {
             //printf("i= %d j= %d", i, j);
             init_random_neuron(&(brain->layers[i][j]));
-	    }
-
+        }
     }
-
     for (int i = 0; i < SIZE_LAST_LAYER;i++ )
     {
         init_random_neuron(&(brain->last_layer[i]));
     }
 }
 
+void update_neuron_value(Neuron* neuron, Neuron* layer)
+{
+    double result = 0.0;
+    for(int i = 0; i < SIZE_LAYERS; i++)
+    {
+        result += neuron->weights[i] * layer[i].value;
+    }
+    neuron->value = 1/(1+exp(-1*(result - neuron->bias)));
+}
+
 void forward_propagation(Brain* brain, double* data, double* end_data)
 {
     //We need one variable end-data to use this function (double end_data[SIZE_LAST_LAYER])
-    for(int i = 0; i<SIZE_LAYERS; i++)
+    for(int i = 0; i < SIZE_LAYERS; i++)
     {
         brain->layers[0][i].value = data[i];
     }
 
-    for(int i = 1; i<NUMBER_HIDDEN_LAYERS; i++)
+    for(int i = 1; i < NUMBER_HIDDEN_LAYERS; i++)
     {
-        for(int j = 0; j<SIZE_LAYERS; j++)
+        for(int j = 0; j < SIZE_LAYERS; j++)
         {
-            //Update ALL values for layers 0 -> 1 and 1->2
-            double sigsum = SigmoidSum(brain->layers[i-1], brain->layers[i][j]);
-            NeuronUpdate(&(brain->layers[i][j]), sigsum);
+            //Update all neuron values for hidden layers
+            update_neuron_value(&brain->layers[i][j],brain->layers[i-1]);
+            printf("layer %d neuron %d value : %lf \n",i,j,brain->layers[i][j].value);
         }
     }
 
-    for(int i = 0; i <SIZE_LAST_LAYER; i++)
+    for(int i = 0; i < SIZE_LAST_LAYER; i++)
     {
-        double sigsum = SigmoidSum(brain->layers[2], brain->last_layer[i]);
-        NeuronUpdate(&(brain->last_layer[i]), sigsum);
+        update_neuron_value(&brain->last_layer[i],brain->layers[NUMBER_HIDDEN_LAYERS-1]);
     }
 
-    for(int i = 0; i<SIZE_LAST_LAYER; i++)
+    for(int i = 0; i < SIZE_LAST_LAYER; i++)
     {
         end_data[i] = brain->last_layer[i].value;
     }
@@ -111,6 +98,11 @@ double mean_square_function(double* target, double* end_data) // target = label 
        total_error += 0.5*(target[i] - end_data[i])*(target[i] - end_data[i]);
    }
    return total_error;
+}
+
+double Sigmoid_prime(double value)
+{
+    return value*(1-value);
 }
 
 void calculate_gradient(Brain* brain, double* target)// calculate each gradient for each neuron and accept batch

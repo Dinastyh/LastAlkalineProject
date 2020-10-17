@@ -62,17 +62,17 @@ void print_vector(int size, double* data)
 {
     for(int i = 0; i< size; i++)
     {
-	printf("Data[%d] = %lf\n",i,data[i]);
+	    printf("Data[%d] = %lf\n",i,data[i]);
     }
 }
 
 void check_forward_propagation(Brain* brain)
 {
-    double data[5] ={rand()%2, rand()%2, rand()%2, rand()%2, rand()%2};
-    double end_data[2] = {0,0};
+    double data[2] ={rand()%2, rand()%2};
+    double end_data[1] = {0.0};
     printf("Data In\n");
-    print_vector(5,data);
+    print_vector(2,data);
     forward_propagation(brain, data, end_data);
     printf("Data Out\n");
-    print_vector(2, data);
+    print_vector(1, end_data);
 }
