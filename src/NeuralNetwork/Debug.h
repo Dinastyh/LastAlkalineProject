@@ -10,5 +10,6 @@ void print_layer(Neuron* layer, int choice);
 void print_brain(Brain* brain);
 void print_vector(int size, double* data);
 void check_forward_propagation(Brain* brain);
+void check_backpropagation(Brain* brain);
 
 #endif

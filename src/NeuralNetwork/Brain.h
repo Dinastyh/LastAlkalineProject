@@ -5,7 +5,7 @@
 #include <math.h>
 #include "Neuron.h"
 
-#define NUMBER_HIDDEN_LAYERS 1 + 1 //3 //layer 0 is counter as a hidden layer
+#define NUMBER_HIDDEN_LAYERS 1 + 1 //3 //layer 0 is counter as a hidden layer, must have at least one hidden layer (2 min)
 #define SIZE_LAYERS 2 //784
 #define SIZE_LAST_LAYER 1 //66
 

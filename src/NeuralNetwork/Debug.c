@@ -76,3 +76,10 @@ void check_forward_propagation(Brain* brain)
     printf("Data Out\n");
     print_vector(1, end_data);
 }
+
+/*
+void check_backpropagation(Brain* brain)
+{
+    
+}
+*/
