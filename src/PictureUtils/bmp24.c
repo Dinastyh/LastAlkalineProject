@@ -136,3 +136,91 @@ void BlackAndWhite (Picture picture)
 		}
 	}
 
+char* ChangeDimensionHead(char* head,int h, int w,int offset)
+{
+	int sizeall = h*w*3+54+h*offset;
+	int height = h;
+	int width = w;
+	int i = 0;
+	char* heads = malloc(54);
+	for (int i = 0; i <54; i++)
+	{
+		heads[i] = head[i];
+	}
+
+	while (sizeall >0 && i <4)
+	{
+		i++;
+		heads[2+i] = (char) (sizeall%256);
+		heads[18+i] = (char) (width%256);
+		heads[22+i] = (char) (height%256);
+		sizeall = sizeall/256;
+		height = h/256;
+		width = width/256;
+	}
+	return heads;
+}
+
+
+Picture* CaptureLine(const Picture picture)
+{
+	Picture *pics = malloc(sizeof(Picture)*90);
+	Pixel* pixels = malloc(sizeof(Pixel)*picture.h*picture.w);
+	int height =0;
+	int lines =0;
+	int width = picture.w;
+	int color = 0;
+	for (int i = 0; i < picture.h;i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if(color == 1)
+			{
+				pixels[height*width+j].r = picture.pixels[i*width + j].r;
+				pixels[height*width+j].g = picture.pixels[i*width + j].r;
+				pixels[height*width+j].b = picture.pixels[i*width + j].r;
+			}
+			else if(picture.pixels[i*width + j].r == 0 && color == 0)
+			{
+				j = 0;
+				color = 1;
+			}
+		}
+
+		if (color == 1)
+		{
+			height ++;
+			color = 0;
+		}
+		else if (height >0)
+		{
+			
+			Picture line;
+			line.w = width;
+			line.h = height;
+			line.name = "line.bmp";
+			line.pixels = pixels;
+			line.head =  ChangeDimensionHead(picture.head,height, width,picture.offset);
+			pics[lines] = line;
+			line.offset = picture.offset;
+			lines++;
+			//free(pixels);
+			Pixel* pixels = malloc(sizeof(Pixel)*(picture.h-i)*picture.w);
+			height = 0;
+		}
+	}
+	if (height > 0)
+	{
+		Picture line;
+		line.w = width;
+		line.h = height;
+		line.name = "line.bmp";
+		line.pixels = pixels;
+		line.offset = picture.offset;
+		line.head =  ChangeDimensionHead(picture.head,height, width,picture.offset);
+		pics[lines] = line;
+		//free(pixels);
+	}
+	return pics;
+}
+                      

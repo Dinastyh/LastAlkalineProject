@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "bmp24.c"
+#include "PictureUtils/bmp24.h"
+#include "PictureUtils/DisplayPicture.h"
 int main()
 {
-   return 0;
+	return 0;
 }
