@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-void DisplayPicture(const char *filename, int width, int height) 
+void DisplayPicture(const char *filename, int width, int height, int time) 
 {	
 	// take relative || absolute path of a picture to display
 	SDL_Surface *picture = NULL;
@@ -16,12 +16,14 @@ void DisplayPicture(const char *filename, int width, int height)
 
 	picture = SDL_LoadBMP(filename);
 	if(picture == NULL)
-		printf("%c : Invalid Name of Picture", filename);
+		printf("%s : Invalid Name of Picture\n", filename);
 	texture = SDL_CreateTextureFromSurface(renderer, picture);
+	if(texture == NULL)
+		printf("%s : Invalide Format of BMP\n", filename);
 	SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, texture, 0, 0);
 	SDL_RenderPresent(renderer);
-	SDL_Delay(5000);
+	SDL_Delay(time);
 	SDL_FreeSurface(picture);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

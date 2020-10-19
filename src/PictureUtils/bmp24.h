@@ -10,7 +10,7 @@ typedef struct Pixel Pixel;
 
 struct Picture
 {
-	int h,w;
+	int h, w, offset;
 	char *name, *head;
 	float averagecolor;
 	Pixel* pixels;
@@ -20,5 +20,7 @@ typedef struct Picture Picture;
 
 Picture newPicture(const char *filename, char *filenamenew);
 void BlackAndWhite(Picture picture);
+Picture* CaptureLine(const Picture picture);
+char* ChangeDimensionHead(char* head,int h, int w,int offset);
 void savePicture(Picture picture);
 #endif
