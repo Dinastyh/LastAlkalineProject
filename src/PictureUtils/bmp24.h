@@ -13,7 +13,7 @@ struct Picture
 	int h, w, offset;
 	char *name, *head;
 	float averagecolor;
-	Pixel* pixels;
+	Pixel* pixels, *origine;
 };
 
 typedef struct Picture Picture;
