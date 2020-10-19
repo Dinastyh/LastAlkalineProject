@@ -5,9 +5,9 @@
 #include <math.h>
 #include "Neuron.h"
 
-#define NUMBER_HIDDEN_LAYERS 1 + 2 //3 //layer 0 is counter as a hidden layer
-#define SIZE_LAYERS 5 //784
-#define SIZE_LAST_LAYER 2 //66
+#define NUMBER_HIDDEN_LAYERS 1 + 1 //3 //layer 0 is counter as a hidden layer, must have at least one hidden layer (2 min)
+#define SIZE_LAYERS 2 //784
+#define SIZE_LAST_LAYER 1 //66
 
 
 struct Brain
@@ -17,13 +17,14 @@ struct Brain
 };
 typedef struct Brain Brain;
 
-Brain* NewBrain();
-double SigmoidSum(const Neuron* layer, Neuron neuron);
-double Sigmoid_prime(double value);
-void NeuronUpdate(Neuron* neuron, double sigSum);
+Brain NewBrain();
 void init_random_brain(Brain* brain);
+
+void update_neuron_value(Neuron* neuron, Neuron* layer);
 void forward_propagation(Brain* brain, double* data, double* end_data);
+
 double mean_square_function(double* label, double* end_data);
+double Sigmoid_prime(double value);
 void calculate_gradient(Brain* brain, double* target);
 void update_weights(Brain* brain, double learning_rate, double batch_size);
 #endif

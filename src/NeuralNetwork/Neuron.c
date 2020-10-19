@@ -1,13 +1,13 @@
 #include "Brain.h"
 #include "Neuron.h"
 
-Neuron NewNeuron()
+Neuron NewNeuron(int nb_weights)
 {
     Neuron neuron;
-    neuron.bias = 0;
-    neuron.weights = calloc(SIZE_LAYERS,(sizeof(double)));
-    neuron.value = 0;
-    neuron.gradient = 0;
+    neuron.bias = 0.0;
+    neuron.weights = calloc(nb_weights,(sizeof(double) + 1));
+    neuron.value = 0.0;
+    neuron.gradient = 0.0;
     return neuron;
 }
 
