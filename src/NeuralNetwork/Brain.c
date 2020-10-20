@@ -134,7 +134,7 @@ void calculate_gradient(Brain* brain, double* target)// calculate each gradient 
             double gradient_sum;
             for(int k = 0; k < SIZE_LAYERS; k++) //each weight
             {
-                gradient_sum += brain->layers[i][k].gradient * brain->layers[i][k].weights[k];
+                gradient_sum += brain->layers[i][k].gradient * brain->layers[i][k].weights[j+1];
             }
             neuron.gradient += gradient_sum * Sigmoid_prime(neuron.value);
         }
