@@ -22,7 +22,7 @@ int main()
     //check_forward_propagation(&brain);
 
     // TRAINING FOR XOR
-    int nb_trainings = 1000;
+    int nb_trainings = 10000000;
     for(int i = 0; i < nb_trainings;i++)
     {
         printf("Training : %d\n",i);

@@ -8,6 +8,7 @@ Neuron NewNeuron(int nb_weights)
     neuron.weights = calloc(nb_weights,(sizeof(double) + 1));
     neuron.value = 0.0;
     neuron.gradient = 0.0;
+    neuron.error = 0.0;
     return neuron;
 }
 
