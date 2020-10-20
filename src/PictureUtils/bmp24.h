@@ -20,7 +20,9 @@ typedef struct Picture Picture;
 
 Picture newPicture(const char *filename, char *filenamenew);
 void BlackAndWhite(Picture picture);
+Pixel* myPixel(Pixel* pic, int h , int w,int startw,int width);
 Picture* CaptureLine(const Picture picture);
+Picture* captureChar(const Picture picture);
 char* ChangeDimensionHead(char* head,int h, int w,int offset);
 void savePicture(Picture picture);
 #endif

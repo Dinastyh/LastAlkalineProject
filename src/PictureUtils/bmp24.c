@@ -206,6 +206,7 @@ Picture* CaptureLine(const Picture picture)
 			pics[lines++] = line;
 			height = 0;
 			debut = 0;
+			
 
 		}
 
@@ -213,4 +214,67 @@ Picture* CaptureLine(const Picture picture)
 	return pics;
 }
 
-                      
+
+Pixel* myPixel (Pixel* pic, int h , int w,int startw,int width)
+{
+	Pixel* newPic = malloc(sizeof(Pixel)*h*w);
+	for(int i = 0 ; i <h ; i++)
+	{
+		for (int j =0; j <w; j++)
+		{
+			newPic[j+i*w] = pic[j+startw+i*(width)];
+		}
+	}
+	return newPic;
+}
+
+
+Picture* captureChar(const Picture picture)
+{
+	Picture *pics = malloc(sizeof(Picture) *  picture.w);
+        int height = picture.h;
+	int lines = 0;
+	int width = 0;
+	int color = 0;
+	int debut = 0;
+	for(int i = 0; i < picture.w; i++)
+	{
+		int j = 0;
+		while(j < picture.h && color != 1)									                {
+			if(picture.pixels[j* picture.w + i].r == 0)
+			{
+				color = 1;
+			}
+			j++;
+                }
+		
+		if (color == 1 && i != picture.w - 1)
+		{
+			if(width == 0)
+			{
+				debut = i;
+			}
+			width++;
+			color = 0;
+		}
+		else if (width > 0)
+		{
+		
+			Picture line;
+			line.w = width;
+			line.h = height;
+			line.name = "line.bmp";
+			line.pixels = myPixel(picture.pixels,height,width,debut,picture.w);
+			line.offset = (4 - (width*3)%4)%4;
+			line.averagecolor = picture.averagecolor;
+			line.head = ChangeDimensionHead(picture.head, height, width, line.offset);
+			pics[lines++] = line;
+		        width = 0;
+			debut = 0;
+                 }
+
+        }
+        return pics;
+}
+
+
