@@ -4,7 +4,6 @@
 Neuron NewNeuron(int nb_weights)
 {
     Neuron neuron;
-    neuron.bias = 0.0;
     neuron.weights = calloc(nb_weights,(sizeof(double) + 1));
     neuron.value = 0.0;
     neuron.gradient = 0.0;
@@ -25,13 +24,9 @@ double box_muller() //box-muller for gaussian distribution (polar method).
 
 void init_random_neuron(Neuron* neuron)
 {
-    neuron->bias = box_muller();
-
-    for(int i = 0; i < SIZE_LAYERS; i+=2)
+    for(int i = 0; i < SIZE_LAYERS; i++)
     {
         neuron->weights[i] = box_muller();
-        neuron->weights[i+1] = box_muller();
-
     }
 }
 

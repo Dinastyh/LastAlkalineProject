@@ -5,8 +5,8 @@
 #include <math.h>
 #include "Neuron.h"
 
-#define NUMBER_HIDDEN_LAYERS 1 + 1 //3 //layer 0 is counter as a hidden layer, must have at least one hidden layer (2 min)
-#define SIZE_LAYERS 2 //784
+#define NUMBER_HIDDEN_LAYERS 1 + 2 //3 //layer 0 is counter as a hidden layer, must have at least one hidden layer (2 min)
+#define SIZE_LAYERS 3 //784
 #define SIZE_LAST_LAYER 1 //66
 
 
@@ -25,6 +25,5 @@ void forward_propagation(Brain* brain, double* data, double* end_data);
 
 double mean_square_function(double* label, double* end_data);
 double Sigmoid_prime(double value);
-void calculate_gradient(Brain* brain, double* target);
-void update_weights(Brain* brain, double learning_rate, double batch_size);
+void backPropagation(Brain* brain, double* target, const double learningRate);
 #endif

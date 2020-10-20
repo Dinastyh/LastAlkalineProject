@@ -53,11 +53,14 @@ void init_random_brain(Brain* brain)
 void update_neuron_value(Neuron* neuron, Neuron* layer)
 {
     double result = 0.0;
-    for(int i = 0; i < SIZE_LAYERS; i++)
+    for(int i = 0; i <= SIZE_LAYERS; i++)
     {
-        result += neuron->weights[i] * layer[i].value;
+        if (i == 0)
+            result+= neuron->weights[i];
+        else
+            result += neuron->weights[i] * layer[i-1].value;
     }
-    neuron->value = 1/(1+exp(-1*(result - neuron->bias)));
+    neuron->value = 1/(1+exp(-1*result));
 }
 
 void forward_propagation(Brain* brain, double* data, double* end_data)
@@ -95,7 +98,7 @@ double mean_square_function(double* target, double* end_data) // target = label 
    double total_error;
    for(int i = 0; i < SIZE_LAST_LAYER; i++)
    {
-       total_error += 0.5*(target[i] - end_data[i])*(target[i] - end_data[i]);
+       total_error += (target[i] - end_data[i])*(target[i] - end_data[i]);
    }
    return total_error;
 }
@@ -105,55 +108,84 @@ double Sigmoid_prime(double value)
     return value*(1-value);
 }
 
-void calculate_gradient(Brain* brain, double* target, const double learningRate)// calculate each gradient for each neuron and accept batch (not yet)
+void backPropagation(Brain* brain, double* target, const double learningRate)// calculate each gradient for each neuron and accept batch (not yet)
 {
     //Last Layer 
     for(int i =0; i<SIZE_LAYERS; i++)
     {
-	double output = brain->last_layer[i].value;
-	brain->last_layer[i].error = target[i] - output;
-	//Error update
-	double error = brain->last_layer[i].error;
-	brain->last_layer[i].gradient = output*(1-ouput)*error;
+        double output = brain->last_layer[i].value;
+        brain->last_layer[i].error = target[i] - output;
+        //Error update
+        double error = brain->last_layer[i].error;
+        brain->last_layer[i].gradient = output*(1-output)*error;
     }
     for(int i = NUMBER_HIDDEN_LAYERS-1; i > 0; i--)
     {
-	for(int j = 0; j < SIZE_LAYERS; j++)
-	{
-	    double output = brain->layers[i][j].value;
-	    double sum = 0;
-	    Neuron* previousLayer;
-	    int max;
-	    if(i == NUMBER_HIDDEN_LAYERS -1)
-	    {
-		previousLayer = brain->last_layer;
-		max = SIZE_LAST_LAYER;
-	    }
-	    else
-	    {
-		previousLayer = brain->layers[i];
-		max = SIZE_LAYERS;
-	    }
-	    for(int k = 0; k<max; k++)
-	    {
-		sum += previousLayer[k].weights[j+1]*previousLayer[k].gradient;
-	    }
-	    brain->layers[i][j].delta = output*(1-output)*sum;
-	}
+        for(int j = 0; j < SIZE_LAYERS; j++)
+        {
+            double output = brain->layers[i][j].value;
+            double sum = 0;
+            Neuron* previousLayer;
+            int max;
+            if(i == NUMBER_HIDDEN_LAYERS -1)
+            {
+                previousLayer = brain->last_layer;
+                max = SIZE_LAST_LAYER;
+            }
+            else
+            {
+                previousLayer = brain->layers[i];
+                max = SIZE_LAYERS;
+            }
+            for(int k = 0; k<max; k++)
+            {
+                sum += previousLayer[k].weights[j+1]*previousLayer[k].gradient;
+            }
+            brain->layers[i][j].gradient = output*(1-output)*sum;
+        }
     }
 
-        //Update Weights
-        for(int i = 1 < NUMBER_HIDDEN_LAYERS; i++)
+    //Update Weights
+    for(int i = 1; i < NUMBER_HIDDEN_LAYERS; i++)
     {
-        for(int j = 0; j < SIZE_LAYERS;j++) //each neuron of layer i compute gradient to neuron layer i-1
+        for(int j = 0; j < SIZE_LAYERS; j++)
         {
-            Neuron neuron = brain->layers[i-1][j];
-            double gradient_sum;
-            for(int k = 0; k < SIZE_LAYERS; k++) //each weight
+            /*
+            Neuron* previousLayer;
+            int max;
+            if(i == NUMBER_HIDDEN_LAYERS -1)
             {
-                gradient_sum += brain->layers[i][k].gradient * brain->layers[i][k].weights[j+1];
+                previousLayer = brain->last_layer;
+                max = SIZE_LAST_LAYER;
             }
-            neuron.gradient += gradient_sum * Sigmoid_prime(neuron.value);
+            else
+            {
+                previousLayer = brain->layers[i];
+                max = SIZE_LAYERS;
+            }
+             */
+            for(int k = 0; k <= SIZE_LAYERS;k++)
+            {
+                double input;
+                if(k == 0)
+                {
+                    input = 1; //Bias
+                }
+                else
+                {
+                    input = brain->layers[i-1][j-1].value;
+                }
+                brain->layers[i][j].weights[k] += learningRate*brain->layers[i][j].gradient*input;
+            }
+        }
+
+        // last layer weights
+
+        for(int j = 0;j < SIZE_LAST_LAYER; j++)
+        {
+            for(int k = 0; k < SIZE_LAST_LAYER; k++)
+            {
+            }
         }
     }
 }
