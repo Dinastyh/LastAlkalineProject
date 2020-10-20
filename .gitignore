@@ -2,8 +2,13 @@
 obj/
 obj
 *.o
-.idea
+
+# Prog
+LastAlkalineProject
+
+# Annexes File
+*.bmp
 *.txt
 
-#Prog
-LastAlkalineProject
+# Clion
+.idea

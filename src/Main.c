@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <math.h>
 #include "NeuralNetwork/Brain.h"
 #include "NeuralNetwork/Neuron.h"
 #include "NeuralNetwork/Debug.h"
 #include "NeuralNetwork/write_read_brain.h"
+#include "PictureUtils/bmp24.h"
 
 int main()
 {
@@ -22,7 +22,7 @@ int main()
     //check_forward_propagation(&brain);
 
     // TRAINING FOR XOR
-    int nb_trainings = 1000;
+    int nb_trainings = 10000000;
     for(int i = 0; i < nb_trainings;i++)
     {
         printf("Training : %d\n",i);
