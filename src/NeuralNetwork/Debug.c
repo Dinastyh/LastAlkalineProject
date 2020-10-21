@@ -12,8 +12,7 @@ void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LA
             printf("\n#### LAYER 0, SIZE : %d #### \n", SIZE_LAYERS);
             for (int i = 0; i < SIZE_LAYERS; i++)
             {
-                neuron = layer[i];
-                printf("(%lf) ",neuron.bias);
+                printf("() ");
             }
             printf("\n");
             break;
@@ -23,7 +22,7 @@ void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LA
             for (int i = 0; i < SIZE_LAST_LAYER; i++)
             {
                 neuron = layer[i];
-                printf("(%lf",neuron.bias);
+                printf("(");
                 for(int j = 0; j < SIZE_LAYERS; j++)
                 {
                     printf(" %lf", neuron.weights[j]);
@@ -37,7 +36,7 @@ void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LA
             for (int i = 0; i < SIZE_LAYERS; i++)
             {
                 neuron = layer[i];
-                printf("(%lf",neuron.bias);
+                printf("(");
                 for(int j = 0; j < SIZE_LAYERS; j++)
                 {
                     printf(" %lf", neuron.weights[j]);

@@ -7,7 +7,11 @@
 
 struct Neuron
 {
+
     double bias, value, delta, error;
+
+    double value, gradient, error;
+
     double* weights;
 };
 typedef struct Neuron Neuron;

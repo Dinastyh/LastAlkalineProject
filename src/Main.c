@@ -5,14 +5,14 @@
 #include "NeuralNetwork/Neuron.h"
 #include "NeuralNetwork/Debug.h"
 #include "NeuralNetwork/write_read_brain.h"
-#include "PictureUtils/bmp24.h"
+//#include "PictureUtils/bmp24.h"
 
 int main()
 {
     srand (time ( NULL));
-    //Brain brain = NewBrain();
-    //init_random_brain(&brain);
-    Brain brain = read_brain("brain.txt");
+    Brain brain = NewBrain();
+    init_random_brain(&brain);
+    //Brain brain = read_brain("brain.txt");
     print_brain(&brain);
     //write_brain(&brain);
     //print_brain(&brain2);
@@ -22,14 +22,35 @@ int main()
     //check_forward_propagation(&brain);
 
     // TRAINING FOR XOR
-    int nb_trainings = 10000000;
+    int nb_trainings = 10;
     for(int i = 0; i < nb_trainings;i++)
     {
         printf("Training : %d\n",i);
-        double data[2] ={rand()%2, rand()%2};
+        int choice ={rand()%4};
         double label[1] = {0};
-        if ((data[0] == 0.0 && data[1] == 1.0) || (data[0] == 1.0 && data[1] == 0.0))//xor
-            label[0] = 1.0;
+        double data[2] = {0.0,0.0};
+        switch (choice)
+        {
+            case 0:
+                break;
+            case 1:
+                data[0] = 0.0;
+                data[1] = 1.0;
+                label[0] = 1.0;
+                break;
+            case 2:
+                data[0] = 1.0;
+                data[1] = 0.0;
+                label[0] = 1.0;
+                break;
+            case 3:
+                data[0] = 1.0;
+                data[1] = 1.0;
+                break;
+            default:
+                printf("choice random is not between 0 and 4]");
+                printf("%d",choice);
+        }
 
         double end_data[1] = {0};
         printf("Data In :\n");
@@ -41,8 +62,7 @@ int main()
         //print_vector(1,label);
         printf("Total cost : %lf",mean_square_function(label,end_data));
         printf("\n\n");
-        calculate_gradient(&brain,label);
-        update_weights(&brain,0.2,1);
+        backPropagation(&brain,label,4);
     }
 
 

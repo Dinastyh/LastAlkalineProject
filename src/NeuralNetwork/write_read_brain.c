@@ -8,7 +8,8 @@ void write_brain(Brain* brain)
     {
         for (int i = 0; i < SIZE_LAYERS; i++) //print layer 0
         {
-            fprintf(brain_file,"(%lf) ",brain->layers[0][i].bias);
+            //fprintf(brain_file,"(%lf) ",brain->layers[0][i].bias);
+            fprintf(brain_file,"(%lf) ",brain->layers[0][i].weights[0]);
         }
         fprintf(brain_file,"\n");
 
@@ -16,7 +17,8 @@ void write_brain(Brain* brain)
         {
             for (int j = 0; j < SIZE_LAYERS; j++)
             {
-                fprintf(brain_file,"(%lf",brain->layers[i][j].bias);
+                //fprintf(brain_file,"(%lf",brain->layers[i][j].bias);
+                fprintf(brain_file,"(");
                 for(int k = 0; k < SIZE_LAYERS; k++)
                 {
                     fprintf(brain_file," %lf", brain->layers[i][j].weights[k]);
@@ -32,7 +34,7 @@ void write_brain(Brain* brain)
         for (int i = 0; i < SIZE_LAST_LAYER; i++)
         {
             fprintf(brain_file,"(");
-            fprintf(brain_file,"%lf",brain->last_layer[i].bias);
+            //fprintf(brain_file,"%lf",brain->last_layer[i].bias);
             for(int j = 0; j < SIZE_LAYERS; j++)
             {
                 fprintf(brain_file," %lf", brain->last_layer[i].weights[j]);
@@ -67,7 +69,7 @@ Brain read_brain(char* brain_name)
         //get layer 0
         for(int i = 0; i < SIZE_LAYERS; i++)
         {
-            fscanf(brain_file, "(%lf) ",&brain.layers[0][i].bias);
+            fscanf(brain_file, "(%lf) ",&brain.layers[0][i].weights[0]);
         }
         fscanf(brain_file,"\n");
         //get hidden layers
@@ -75,7 +77,8 @@ Brain read_brain(char* brain_name)
         {
             for(int j = 0; j < SIZE_LAYERS; j++)
             {
-                fscanf(brain_file,"(%lf",&brain.layers[i][j].bias);
+                //fscanf(brain_file,"(%lf",&brain.layers[i][j].bias);
+                fscanf(brain_file,"(");
                 for (int k = 0; k < SIZE_LAYERS; k++)
                 {
                     fscanf(brain_file, " %lf",&brain.layers[i][j].weights[k]);
@@ -87,7 +90,8 @@ Brain read_brain(char* brain_name)
         //get last layer
         for (int i = 0; i < SIZE_LAST_LAYER; i++)
         {
-            fscanf(brain_file,"(%lf",&brain.last_layer[i].bias);
+            //fscanf(brain_file,"(%lf",&brain.last_layer[i].bias);
+            fscanf(brain_file,"(");
             for (int j = 0; j < SIZE_LAYERS; j++)
             {
                 fscanf(brain_file, " %lf", &brain.last_layer[i].weights[j]);
