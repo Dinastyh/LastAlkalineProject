@@ -98,6 +98,8 @@ void savePicture(Picture picture)
 		{
 			fputc(picture.head[i],file);
 		}
+
+
 		for(int j = 0; j < h; j++)
 		{
 			for(int i = 0; i < w; i++)
@@ -118,7 +120,7 @@ void savePicture(Picture picture)
 	}
 
 void BlackAndWhite (Picture picture)
-	{
+{
 		float color;
 		for (int i = 0; i < picture.h*picture.w;i++)
 		{
@@ -136,8 +138,40 @@ void BlackAndWhite (Picture picture)
 				 picture.pixels[i].b = 0;
 			}
 		}
-	}
+}
+int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)
+{
+	int j = 0;
 
+	if(line == 1)
+	{
+		int *intermed = calloc(h, sizeof(int));
+		for(int i = 0; i < h; i++)
+		{
+			for(int j = 0; j < w; j++)
+			{
+				if(pixels[i * width + j + start].r == 0)
+				{
+					intermed[i]++;
+				}
+			}
+		}
+		return intermed;
+	}
+	int *intermed = calloc(w, sizeof(int));
+	for(int i = 0; i < w; i++)
+	{
+		for(int j = 0; j < h; j++)
+		{
+			if(pixels[j * width + i + start].r == 0)
+			{
+				intermed[i]++;
+			}
+		}
+	}
+	
+	return intermed;
+}
 char* ChangeDimensionHead(char* head,int h, int w,int offset)
 {
 	int sizeall = h * w * 3 + 54 + h * offset;
@@ -163,7 +197,7 @@ char* ChangeDimensionHead(char* head,int h, int w,int offset)
 }
 
 
-Block* CaptureLine(const Picture picture)
+Block* CaptureLine(Picture picture)
 {
 	Block *pics = malloc(sizeof(Block) *  picture.h);
 	int height = 0;
@@ -171,39 +205,25 @@ Block* CaptureLine(const Picture picture)
 	int width = picture.w;
 	int color = 0;
 	int debut = 0;
+	int *intermed = browseImage(picture.w, picture.h, picture.pixels, picture.w, 1, 0);	
 	for(int i = 0; i < picture.h; i++)
 	{
-		int j = 0;
-		while(j < picture.w && color != 1)
+		if(intermed[i] != 0 && debut == 0)
 		{
-			if(picture.pixels[i* width + j].r == 0)
-			{
-				color = 1;
-				j = picture.w;
-			}
-			j++;
+			debut = i * width;
+			height = i;
 
 		}
-		if (color == 1 && i != picture.h - 1)
-		{
-			if(height == 0)
-			{
-				debut = i * width ;
-			}
-			height++;
-			color = 0;
-		}
-		else if (height > 0)
+		if(debut != 0 && (intermed[i] == 0 || i == picture.h - 1))
 		{
 			Block line;
 			line.w = width;
-			line.h = height;
+			line.h = i - height;
 		        line.start = debut;
 			pics[lines++] = line;
 			height = 0;
 			debut = 0;
 		}
-
 	}
 	return pics;
 }
@@ -223,48 +243,34 @@ Pixel* myPixel (Pixel* pic, int h , int w,int startw,int width)
 }
 
 
-Block* captureChar(const Pixel* pixels,Block block,int w)
+Block* captureChar(Pixel* pixels,Block block,int w)
 {
-	Block *pics = malloc(sizeof(pics) *  block.w);
+	Block *pics = malloc(sizeof(Block) *  block.w);
         int height = block.h;
 	int lines = 0;
 	int width = 0;
 	int color = 0;
 	int debut = 0;
+	int *intermed = browseImage(block.w, block.h, pixels, w, 0, block.start);
 	for(int i = 0; i < block.w; i++)
 	{
-		int j = 0;
-		while(j < block.h && color != 1)
+		if(intermed[i] != 0 && debut == 0)
 		{
-			if(pixels[j* w + i+block.start].r == 0)
-			{
-				color = 1;
-			}
-			j++;
-                }
-		if (color == 1 && i != block.w - 1)
-		{
-			if(width == 0)
-			{
-				debut = i+block.start;
-			}
-			width++;
-			color = 0;
+			debut = i + block.start;
+			width = i;
+
 		}
-		else if (width > 0)
+		if(debut != 0 && (intermed[i] == 0 || i == block.w - 1))
 		{
-		
 			Block line;
-			line.w = width;
+			line.w = i - width;
 			line.h = height;
-			line.start = debut;
+		        line.start = debut;
 			pics[lines++] = line;
-		        width = 0;
+			width = 0;
 			debut = 0;
-                 }
-	
-        }
-	
+		}
+	}
         return pics;
 }
 
