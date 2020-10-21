@@ -18,11 +18,18 @@ struct Picture
 
 typedef struct Picture Picture;
 
+struct Block
+{
+	        int h,w,start;
+};
+
+typedef struct Block Block;
 Picture newPicture(const char *filename, char *filenamenew);
 void BlackAndWhite(Picture picture);
 Pixel* myPixel(Pixel* pic, int h , int w,int startw,int width);
-Picture* CaptureLine(const Picture picture);
-Picture* captureChar(const Picture picture);
+Block* CaptureLine(const Picture picture);
+Block* captureChar(const Pixel* pixels,Block block,int w);
 char* ChangeDimensionHead(char* head,int h, int w,int offset);
 void savePicture(Picture picture);
+Picture blockToPicture(Block block,Picture pic);
 #endif

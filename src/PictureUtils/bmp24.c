@@ -163,9 +163,9 @@ char* ChangeDimensionHead(char* head,int h, int w,int offset)
 }
 
 
-Picture* CaptureLine(const Picture picture)
+Block* CaptureLine(const Picture picture)
 {
-	Picture *pics = malloc(sizeof(Picture) *  picture.h);
+	Block *pics = malloc(sizeof(Block) *  picture.h);
 	int height = 0;
 	int lines = 0;
 	int width = picture.w;
@@ -188,26 +188,20 @@ Picture* CaptureLine(const Picture picture)
 		{
 			if(height == 0)
 			{
-				debut = i * width;
+				debut = i * width ;
 			}
 			height++;
 			color = 0;
 		}
 		else if (height > 0)
 		{
-			Picture line;
+			Block line;
 			line.w = width;
 			line.h = height;
-		        line.name = "line.bmp";
-			line.pixels = &picture.pixels[debut];
-			line.offset = picture.offset;
-			line.averagecolor = picture.averagecolor;
-			line.head = ChangeDimensionHead(picture.head, height, width, picture.offset);
+		        line.start = debut;
 			pics[lines++] = line;
 			height = 0;
 			debut = 0;
-			
-
 		}
 
 	}
@@ -229,30 +223,30 @@ Pixel* myPixel (Pixel* pic, int h , int w,int startw,int width)
 }
 
 
-Picture* captureChar(const Picture picture)
+Block* captureChar(const Pixel* pixels,Block block,int w)
 {
-	Picture *pics = malloc(sizeof(Picture) *  picture.w);
-        int height = picture.h;
+	Block *pics = malloc(sizeof(pics) *  block.w);
+        int height = block.h;
 	int lines = 0;
 	int width = 0;
 	int color = 0;
 	int debut = 0;
-	for(int i = 0; i < picture.w; i++)
+	for(int i = 0; i < block.w; i++)
 	{
 		int j = 0;
-		while(j < picture.h && color != 1)									                {
-			if(picture.pixels[j* picture.w + i].r == 0)
+		while(j < block.h && color != 1)
+		{
+			if(pixels[j* w + i+block.start].r == 0)
 			{
 				color = 1;
 			}
 			j++;
                 }
-		
-		if (color == 1 && i != picture.w - 1)
+		if (color == 1 && i != block.w - 1)
 		{
 			if(width == 0)
 			{
-				debut = i;
+				debut = i+block.start;
 			}
 			width++;
 			color = 0;
@@ -260,21 +254,29 @@ Picture* captureChar(const Picture picture)
 		else if (width > 0)
 		{
 		
-			Picture line;
+			Block line;
 			line.w = width;
 			line.h = height;
-			line.name = "line.bmp";
-			line.pixels = myPixel(picture.pixels,height,width,debut,picture.w);
-			line.offset = (4 - (width*3)%4)%4;
-			line.averagecolor = picture.averagecolor;
-			line.head = ChangeDimensionHead(picture.head, height, width, line.offset);
+			line.start = debut;
 			pics[lines++] = line;
 		        width = 0;
 			debut = 0;
                  }
-
+	
         }
+	
         return pics;
 }
 
+Picture blockToPicture(Block block,Picture pic)
+{
+	Picture result;
+	result.name = pic.name;
+	result.h = block.h;
+	result.w = block.w;
+	result.offset = (4-((block.w*3)%4))%4;
+	result.pixels = myPixel(pic.pixels, block.h,block.w, block.start, pic.w);
+	result.head =  ChangeDimensionHead(pic.head,block.h, block.w,result.offset);
+	return result;
 
+}
