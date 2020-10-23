@@ -12,7 +12,7 @@ struct Picture
 {
 	int h, w, offset;
 	char *name, *head;
-	float averagecolor;
+	float averageColor;
 	Pixel* pixels, *origine;
 };
 
@@ -24,11 +24,11 @@ struct Block
 };
 
 typedef struct Block Block;
-Picture newPicture(const char *filename, char *filenamenew);
+Picture newPicture(const char *fileName, char *fileNameNew);
 Pixel* myPixel(Pixel* pic, int h , int w,int startw,int width);
-Block* CaptureLine(Picture picture);
+Block* captureLine(Picture picture);
 Block* captureChar(Pixel* pixels,Block block,int w);
-char* ChangeDimensionHead(char* head,int h, int w,int offset);
+char* changeDimensionHead(char* head,int h, int w,int offset);
 void savePicture(Picture picture);
 Picture blockToPicture(Block block,Picture pic);
 int* browseImage(int, int, Pixel*, int, int, int);

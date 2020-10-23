@@ -12,7 +12,7 @@ void blackAndWhite(Picture picture)
 		color = (float)picture.pixels[i].r +	
 			(float)picture.pixels[i].g +
 			(float)picture.pixels[i].b / 3;
-		if(color > picture.averagecolor)
+		if(color > picture.averageColor)
 		{
 			picture.pixels[i].r = 255;
 			picture.pixels[i].g = 255;
@@ -151,8 +151,18 @@ void lowPassFilter(Picture picture)
 }
 
 
-
-
+Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
+{
+	Pixel* result = malloc(sizeof(pixel) * h * w);
+	for(int j = 0; j < newh; j++)
+	{
+		for(int i = 0; i < newh; i++)
+		{
+			result[i+j*newh] = pixel[i * (w / neww) + j*(h / newh) * h];
+		}
+	}
+	return result;
+}
 
 
 

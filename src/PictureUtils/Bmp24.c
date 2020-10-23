@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Bmp24.h"
-Picture newPicture(const char *filename,char *newfilename)
+#include "bmp24.h"
+Picture newPicture(const char *fileName,char *newFileName)
 	{
 		Picture picture;
-		FILE *file = fopen(filename,"rb");
+		FILE *file = fopen(fileName,"rb");
 		char* data = malloc(56);
 		int w = 0;
 		int h = 0;
@@ -27,7 +27,7 @@ Picture newPicture(const char *filename,char *newfilename)
 		taille = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file) 
 			+ 256 * 256 * 256 * fgetc(file);
 		picture.head = data;
-		picture.name = newfilename;
+		picture.name = newFileName;
 		fseek(file,18,SEEK_SET);
 		fseek(file,18,SEEK_SET);
 		
@@ -67,57 +67,55 @@ Picture newPicture(const char *filename,char *newfilename)
 		picture.pixels = pixels;
 		picture.origine = pixels;
 
-		picture.averagecolor = average/(h*w*3);
+		picture.averageColor = average/(h*w*3);
 		fclose(file);
 		return picture;
 	}
 
 void savePicture(Picture picture)
+{
+	FILE* file =fopen(picture.name,"wb+");
+	char *offset = "";
+	int w = picture.w;
+	int h = picture.h;
+	switch(picture.offset)
 	{
-		FILE* file =fopen(picture.name,"wb+");
-		char *offset = "";
-		int w = picture.w;
-		int h = picture.h;
-		switch(picture.offset)
-		{
-			case 0:
-				offset = "";
-				break;
-			case 1:
-				offset = "F";
-				break;
-			case 2:
-				offset = "0F";
-				break;
-			default:
-				offset = "00F";
-				break;
-		}
-		
-		for(int i = 0; i<54; i++)
-		{
-			fputc(picture.head[i],file);
-		}
+		case 0:
+			offset = "";
+			break;
+		case 1:
+			offset = "F";
+			break;
+		case 2:
+			offset = "0F";
+			break;
+		default:
+			offset = "00F";
+			break;
+	}
+	
+	for(int i = 0; i<54; i++)
+	{
+		fputc(picture.head[i],file);
+	}
 
-
-		for(int j = 0; j < h; j++)
-		{
-			for(int i = 0; i < w; i++)
-			{	
-				fputc(picture.pixels[i + j * w].b,file);
-				fputc(picture.pixels[i + j * w].g,file);
-				fputc(picture.pixels[i + j * w].r,file);
-				if(i == w - 1)
-				{
-					fputs(offset, file);
-				}
+	for(int j = 0; j < h; j++)
+	{
+		for(int i = 0; i < w; i++)
+		{	
+			fputc(picture.pixels[i + j * w].b,file);
+			fputc(picture.pixels[i + j * w].g,file);
+			fputc(picture.pixels[i + j * w].r,file);
+			if(i == w - 1)
+			{
+				fputs(offset, file);
 			}
-
 		}
+	}
 //		free(picture.origine);
 		free(picture.head);
 		fclose(file);
-	}
+}
 
 int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)
 {
@@ -152,9 +150,9 @@ int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)
 	
 	return intermed;
 }
-char* ChangeDimensionHead(char* head,int h, int w,int offset)
+char* changeDimensionHead(char* head,int h, int w,int offset)
 {
-	int sizeall = h * w * 3 + 54 + h * offset;
+	int sizeAll = h * w * 3 + 54 + h * offset;
 	int height = h;
 	int width = w;
 	int i = 0;
@@ -165,10 +163,10 @@ char* ChangeDimensionHead(char* head,int h, int w,int offset)
 	}
 	while (i <4)
 	{
-		rep[2+i] = (unsigned char) (sizeall%256);
+		rep[2+i] = (unsigned char) (sizeAll%256);
 		rep[18+i] = (unsigned char) (width%256);
 		rep[22+i] = (unsigned char) (height%256);
-		sizeall /= 256;
+		sizeAll /= 256;
 		height /= 256;
 		width /= 256;
 		i++;
@@ -177,7 +175,7 @@ char* ChangeDimensionHead(char* head,int h, int w,int offset)
 }
 
 
-Block* CaptureLine(Picture picture)
+Block* captureLine(Picture picture)
 {
 	Block *pics = malloc(sizeof(Block) *  picture.h);
 	int height = 0;
@@ -262,7 +260,7 @@ Picture blockToPicture(Block block,Picture pic)
 	result.w = block.w;
 	result.offset = (4-((block.w*3)%4))%4;
 	result.pixels = myPixel(pic.pixels, block.h,block.w, block.start, pic.w);
-	result.head =  ChangeDimensionHead(pic.head,block.h, block.w,result.offset);
+	result.head =  changeDimensionHead(pic.head,block.h, block.w,result.offset);
 	return result;
 
 }
