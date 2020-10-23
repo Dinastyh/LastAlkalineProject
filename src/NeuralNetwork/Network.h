@@ -6,7 +6,7 @@
 
 struct Neuron
 {
-    double nbWeights;
+    size_t nbWeights;
     double value, delta, error;
     double* weights;
 };
@@ -24,6 +24,9 @@ typedef struct Layer Layer;
 struct Network
 {
     size_t nbLayers;
+    size_t sizeInput;
+    size_t sizeOutput;
+    size_t sizeHidden;
     Layer* layers;
 };
 typedef struct Network Network;

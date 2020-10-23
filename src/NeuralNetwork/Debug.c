@@ -1,60 +1,28 @@
 #include "Debug.h"
-#include "Brain.h"
-#include <stdlib.h>
-#include <stdio.h>
 
-void print_layer(Neuron* layer, int choice) //0 is first layer, NUMBER_HIDDEN_LAYERS + 1 is last, else is hidden
+void print_layer(Layer layer)
 {
-    Neuron neuron;
-    switch (choice)
+    size_t nbNeurons = layer.nbNeurons;
+    size_t nbWeights = layer.neurons[0].nbWeights;
+    for(size_t i = 0; i < nbNeurons; i++)
     {
-        case 0:
-            printf("\n#### LAYER 0, SIZE : %d #### \n", SIZE_LAYERS);
-            for (int i = 0; i < SIZE_LAYERS; i++)
-            {
-                printf("() ");
-            }
-            printf("\n");
-            break;
-
-        case NUMBER_HIDDEN_LAYERS:
-            printf("\n#### LAST LAYER, SIZE : %d #### \n", SIZE_LAST_LAYER);
-            for (int i = 0; i < SIZE_LAST_LAYER; i++)
-            {
-                neuron = layer[i];
-                printf("(");
-                for(int j = 0; j < SIZE_LAYERS; j++)
-                {
-                    printf(" %lf", neuron.weights[j]);
-                }
-                printf(") ");
-            }
-            printf("\n");
-            break;
-        default:
-            printf("\n#### LAYER %d, SIZE : %d #### \n",choice,SIZE_LAYERS);
-            for (int i = 0; i < SIZE_LAYERS; i++)
-            {
-                neuron = layer[i];
-                printf("(");
-                for(int j = 0; j < SIZE_LAYERS; j++)
-                {
-                    printf(" %lf", neuron.weights[j]);
-                }
-                printf(") ");
-            }
-            printf("\n");
-            break;
+        printf("(");
+        for(size_t j = 0; j < nbWeights; j++)
+        {
+            printf("%lf",layer.neurons[i].weights[j]);
+        }
+        printf(") ");
     }
+    printf("\n");
 }
 
-void print_brain(Brain* brain)
+void printNetwork(Network* net)
 {
-    for (int i = 0; i < NUMBER_HIDDEN_LAYERS;i++)
+    for (size_t i = 0; i < net->nbLayers;i++)
     {
-        print_layer(brain->layers[i], i);
+        printf("##### LAYER %zu #####",i);
+        print_layer(net->layers[i]);
     }
-    print_layer(brain->last_layer, NUMBER_HIDDEN_LAYERS);
 }
 
 void print_vector(int size, double* data)
@@ -65,6 +33,7 @@ void print_vector(int size, double* data)
     }
 }
 
+#if 0
 void check_forward_propagation(Brain* brain)
 {
     double data[2] ={rand()%2, rand()%2};
@@ -75,7 +44,7 @@ void check_forward_propagation(Brain* brain)
     printf("Data Out\n");
     print_vector(1, end_data);
 }
-
+#endif
 /*
 void check_backpropagation(Brain* brain)
 {

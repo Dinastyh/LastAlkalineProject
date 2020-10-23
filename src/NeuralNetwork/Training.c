@@ -8,7 +8,7 @@ double sigmoid(double n)
 void updateNeuronValue(Neuron* neuron, Layer layer)
 {
     double result = 0.0;
-    for(int i = 0; i <= SIZE_LAYERS; i++)
+    for(int i = 0; i <= layer.nbNeurons; i++)
     {
         if (i == 0)
             result+= neuron->weights[i];

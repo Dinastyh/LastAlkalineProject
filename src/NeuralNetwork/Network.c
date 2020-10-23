@@ -2,22 +2,28 @@
 
 Network newNetwork(size_t sizeInput, size_t sizeHidden, size_t sizeOutput, size_t nbHiddenLayers)
 {
-    Network net = 
+    Network net =
     {
+	0,
+	0,
+	0,
 	0,
 	NULL
     };
     
-    net.nbLayers = nbHiddenLayers + 2;
+    net.nbLayers = nbHiddenLayers + 2; // hiddens + input + output
+    net.sizeInput = sizeInput;
+    net.sizeOutput = sizeOutput;
+    net.sizeHidden = sizeHidden;
     net.layers = calloc(net.nbLayers, sizeof(struct Layer));
+
     net.layers[0] = newLayer(sizeInput, NULL, &(net.layers[1]));
-    for(size_t i = 1; i<nbHiddenLayers+1; i++)
+    for(size_t i = 1; i < nbHiddenLayers+1; i++)
     {
-	size_t sizePrevious = sizeHidden;
-	size_t sizeNext = sizeHidden;
-	net.layers[i] = newLayer(sizeHidden, &(net.layers[i-1]), &(net.layers[i+1]));
+        net.layers[i] = newLayer(sizeHidden, &(net.layers[i-1]), &(net.layers[i+1]));
     }
     net.layers[net.nbLayers-1] = newLayer(sizeOutput, &(net.layers[net.nbLayers-2]), NULL);
+
     return net;
 }
 
@@ -34,10 +40,22 @@ Layer newLayer(size_t sizeLayer, Layer* previousLayer, Layer* nextLayer)
     layer.neurons = calloc(sizeLayer, sizeof(struct Layer));
     layer.nextLayer = nextLayer;
     layer.previousLayer = previousLayer;
-    for(size_t i = 0; i<sizeLayer; i++)
+    if(previousLayer)
     {
-	layer.neurons[i] = newNeuron(previousLayer->nbNeurons);
+        for(size_t i = 0; i < sizeLayer; i++)
+        {
+            layer.neurons[i] = newNeuron(previousLayer->nbNeurons);
+        }
     }
+    else
+    {
+        for(size_t i = 0; i < sizeLayer; i++)
+        {
+            layer.neurons[i] = newNeuron(-1);
+        }
+
+    }
+
     return layer;
 }
 
@@ -51,7 +69,7 @@ Neuron newNeuron(size_t nbWeights)
 	0,
 	NULL
     };
-    neuron.nbWeights = nbWeights;
+    neuron.nbWeights = nbWeights + 1; // nbweights = size layer + bias
     neuron.value = 0;
     neuron.delta = 0;
     neuron.error = 0;
@@ -63,7 +81,7 @@ void freeNetwork(Network* net)
 {
     for(size_t i = 0; i< net->nbLayers; i++)
     {
-	freeLayer(&(net->layers[i]));
+	    freeLayer(&(net->layers[i]));
     }
     free(net);
 }
@@ -72,7 +90,7 @@ void freeLayer(Layer* layer)
 {
     for(size_t i= 0; i< layer->nbNeurons; i++)
     {
-	free(&(layer->neurons[i]));
+	    free(&(layer->neurons[i]));
     }
 }
 
@@ -89,9 +107,9 @@ double boxMuller() //box-muller for gaussian distribution (polar method).
 
 void initNeuron(Neuron* neuron)
 {
-    for(size_t i =0; i<neuron->nbWeights; i++)
+    for(size_t i =0; i < neuron->nbWeights; i++)
     {
-	neuron->weights[i] = boxMuller();
+	    neuron->weights[i] = boxMuller();
     }
 }
 
@@ -99,9 +117,10 @@ void initNetwork(Network* net)
 {
     for(size_t i=0; i<net->nbLayers; i++)
     {
-	Layer layer = net->layers[i];
-	for(size_t j=0; i<layer.nbNeurons; j++)
-	{
-	    initNeuron(&(layer.neurons[j]));
-	}
-    }}
+        Layer layer = net->layers[i];
+        for(size_t j=0; i < layer.nbNeurons; j++)
+        {
+            initNeuron(&(layer.neurons[j]));
+        }
+    }
+}

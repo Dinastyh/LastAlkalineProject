@@ -3,13 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "Brain.h"
-#include "Neuron.h"
+#include "Network.h"
+//#include "Brain.h"
+//#include "Neuron.h"
 
-void print_layer(Neuron* layer, int choice);
-void print_brain(Brain* brain);
+void print_layer(Layer layer);
+void printNetwork(Network* net);
 void print_vector(int size, double* data);
-void check_forward_propagation(Brain* brain);
-void check_backpropagation(Brain* brain);
+//void check_forward_propagation(Brain* brain);
+//void check_backpropagation(Brain* brain);
 
 #endif

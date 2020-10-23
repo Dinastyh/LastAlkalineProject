@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "NeuralNetwork/Brain.h"
-#include "NeuralNetwork/Neuron.h"
+#include <time.h>
+//#include "NeuralNetwork/Brain.h"
+//#include "NeuralNetwork/Neuron.h"
+#include "NeuralNetwork/Network.h"
 #include "NeuralNetwork/Debug.h"
 #include "NeuralNetwork/write_read_brain.h"
 //#include "PictureUtils/bmp24.h"
@@ -10,17 +12,20 @@
 int main()
 {
     srand (time ( NULL));
-    Brain brain = NewBrain();
-    init_random_brain(&brain);
-    //Brain brain = read_brain("brain.txt");
-    print_brain(&brain);
-    //write_brain(&brain);
+    Network net = newNetwork(5,2,1,2);
+    initNetwork(&net);
+
+    printNetwork(&net);
+    writeNetwork(&net);
+
     //print_brain(&brain2);
-    
+    //Network net = readNetwork("network.txt");
+
     //printf("\n\n\n\n");
     //printf("###############Debug forward propagation##################\n");
     //check_forward_propagation(&brain);
 
+#if 0
     // TRAINING FOR XOR
     int nb_trainings = 10;
     for(int i = 0; i < nb_trainings;i++)
@@ -64,9 +69,7 @@ int main()
         printf("\n\n");
         backPropagation(&brain,label,4);
     }
-
-
-
+#endif
 
     return 0;
 }
