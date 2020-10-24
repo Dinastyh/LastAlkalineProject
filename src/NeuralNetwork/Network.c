@@ -16,14 +16,12 @@ Network newNetwork(size_t sizeInput, size_t sizeHidden, size_t sizeOutput, size_
     net.sizeOutput = sizeOutput;
     net.sizeHidden = sizeHidden;
     net.layers = calloc(net.nbLayers, sizeof(struct Layer));
-
     net.layers[0] = newLayer(sizeInput, NULL, &(net.layers[1]));
     for(size_t i = 1; i < nbHiddenLayers+1; i++)
     {
         net.layers[i] = newLayer(sizeHidden, &(net.layers[i-1]), &(net.layers[i+1]));
     }
     net.layers[net.nbLayers-1] = newLayer(sizeOutput, &(net.layers[net.nbLayers-2]), NULL);
-
     return net;
 }
 
@@ -51,7 +49,7 @@ Layer newLayer(size_t sizeLayer, Layer* previousLayer, Layer* nextLayer)
     {
         for(size_t i = 0; i < sizeLayer; i++)
         {
-            layer.neurons[i] = newNeuron(-1);
+            layer.neurons[i] = newNeuron(0);
         }
 
     }
@@ -118,7 +116,7 @@ void initNetwork(Network* net)
     for(size_t i=0; i<net->nbLayers; i++)
     {
         Layer layer = net->layers[i];
-        for(size_t j=0; i < layer.nbNeurons; j++)
+        for(size_t j=0; j < layer.nbNeurons; j++)
         {
             initNeuron(&(layer.neurons[j]));
         }

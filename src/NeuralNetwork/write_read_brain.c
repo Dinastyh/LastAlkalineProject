@@ -14,14 +14,13 @@ void writeNetwork(Network* net)
     {
         //store data concerning the network
         fprintf(netFile,"%zu %zu %zu %zu\n",net->nbLayers - 2, net->sizeInput, net->sizeOutput, net->sizeHidden);
-
         for (size_t i = 0; i < net->nbLayers; i++) // each layer
         {
             Layer layer = net->layers[i];
 
             for(size_t j = 0; j < layer.nbNeurons; j++) //each neuron
             {
-                Neuron neuron = layer.neurons[i];
+                Neuron neuron = layer.neurons[j];
 
                 fprintf(netFile,"(");
                 for(size_t k = 0; k < neuron.nbWeights; k++)

@@ -46,4 +46,47 @@ double meanSquareFunction(double* target, Layer layer)
 
 double backPropagation(Network* net)
 {
+    //Delta For outLayer
+    size_t nbLayers = net->nbLayers;
+    Layer* lastLayer =&(net->layers[net->nbLayers -1]);
+    for(size_t i =0; i<layer->nbNeurons; i++)
+    {
+        double value = lastLayer->neurons[i].value;
+        double error = lastLayer->neurons[i].error;
+        lastLayer.neurons[i].delta = value*(1-value)*error;
+    }
+    
+    //Delta for other Layer
+    for(size_t i = nbLayers-2; i >1; i--)
+    {
+        Layers* layer = &(net->layers[i]);
+        for(size_t j = 0; j < layer->nbNeurons; j++)
+        {
+            double value = layer->neurons[j].value;
+            double sum = 0;
+            Layer* nextLayer = &(net->layer[i+1]);
+            for(size_t k = 0; k < nextLayer.nbNeurons; i++)
+            {
+                sum += nextLayer->neurons[k].weights[j+1]*nextLayer->neurons[k].delta;
+            }
+            layer->neurons[j].delta = value*(1-value)*sum;
+        }
+    }
+    for(size_t i = 2; i < nbLayers; i++)
+    {
+        Layers* layer = &(net->layers[i]);
+        Layers* lastLayer = &(net->layers[i-1]);
+        for(size_t j = 0; j < layers->nbNeurons; j++)
+        {
+            for(size_t k = 0; k<= lastLayer.nbNeurons; k++)
+            {
+                double newInput;
+                if(k ==0)
+                    newInput=1;
+                else
+                    newInput=lastLayer.neurons[k-1].value;
+                layer.neurons[j].weights[k] += 1.1*layer.neurons[j].delta*newInput;
+            }
+        }
+    }
 }    
