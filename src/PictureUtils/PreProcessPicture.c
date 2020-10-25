@@ -104,13 +104,27 @@ void lowPassFilter(Picture picture)
 
 Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
 {
-		Pixel* result = malloc(sizeof(pixel) * h * w);
+		Pixel* result = malloc(sizeof(Pixel) * newh * neww);
+		double hf = (double) h;
+		double wf = (double) w;
+		double nhf =(double) newh;
+		double nwf =(double) neww;
+		double x = 0;
+		double y = 0;
+		double plusx = wf/nwf;
+		double plusy = hf/nhf;
+		printf("plus x:%f,plus y:%f \n",(float)plusx,(float)plusy);
 		for(int j = 0; j < newh; j++)
 		{
-				for(int i = 0; i < newh; i++)
+			for(int i = 0; i < neww; i++)
 				{
-						result[i + j * newh] = pixel[i * (w / neww) + j*(h / newh) * h];
+					
+					printf("x :%i, y: %i,i :%i,j: %i,x+y*h: %i,i+j*newh: %i\n",(int)x,(int)y,i,j,((int)x)+((int)y)*h,i + j * newh);
+					result[i + j * neww] = pixel[((int)x)+((int)y)*w ];
+					x += plusx;
 				}
+			y += plusy;
+			x= 0;
 		}
 		return result;
 }
