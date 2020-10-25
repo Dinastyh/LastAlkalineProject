@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Bmp24.h"
+#include "PreProcessPicture.h"
 Picture newPicture(const char *fileName,char *newFileName)
 {
 		Picture picture;
@@ -254,6 +255,62 @@ Tuple captureChar(Pixel* pixels,Block block,int w)
 			}
 		Tuple tuple;
 		tuple.block = pics;
+		tuple.length = lines;
+		return tuple;
+}
+
+Tuple captureBlock(Block block,Picture picture)
+{
+	Picture pic = blockToPicture(block,picture);
+	lowPassFilter(pic);
+	Block* blocks = malloc(sizeof(Block)*block.w);
+	int height = block.h;
+	int lines = 0;
+	int width = 0;
+	int color = 0;
+	int debut = 0;
+	int i;
+	for(int j = 0; j <block.w; j++)
+	{
+		i = 0;
+		while(i<height)
+		{
+			if(pic.pixels[i*block.w + j].r != 255)
+			{
+				debut = i*block.w + j + block.start;
+				i = height;
+				color = 1;
+			}
+		}
+
+		if(color == 1)
+		{
+			width +=1;
+			color = 0;
+		}
+		else if (width != 0)
+		{
+			Block word;
+			word.w = j - width;
+			word.h = block.h;
+			word.start = debut;
+			width = 0;
+			blocks[lines++] = word;
+		}
+
+	}
+
+	if (width != 0)
+	{
+		Block word;
+		word.w = block.w - width;
+		word.h = block.h;
+		word.start = debut;
+		width = 0;
+		blocks[lines++] = word;
+	}
+		Tuple tuple;
+		tuple.block = blocks;
 		tuple.length = lines;
 		return tuple;
 }
