@@ -12,24 +12,14 @@
 
 int main()
 {
-    srand (time ( NULL));
-    Network net = newNetwork(2,2,1,2);
-    initNetwork(&net);
+    Network net = demoWriteRead(5,3,1,5);
+    double input[5] = {1.0,0.2,0.6,0.0,0.8};
+    double desiredOutput[3] = {0.0,0.0,1.0};
+    demoTraining(&net, input, desiredOutput);
 
-    printNetwork(&net);
-    //printf("check \n");
-    //writeNetwork(&net);
-
-    //Network net2 = readNetwork("network.txt");
-    //printNetwork(&net2);
-
-    //printf("\n\n\n\n");
-    //printf("###############Debug forward propagation##################\n");
-    //check_forward_propagation(&brain);
-
-//#if 1
+#if 0
     // TRAINING FOR XOR
-    int nb_trainings = 500;
+
     for(int i = 0; i < nb_trainings;i++) // one training
     {
         printf("Training : %d\n",i);
@@ -81,7 +71,7 @@ int main()
 
 
     }
-//#endif
+#endif
 
     return 0;
 }

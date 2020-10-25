@@ -80,7 +80,7 @@ void backPropagation(Network* net)
             }
             printf(" layer %zu neuron %zu sum %lf\n",i,j,sum);
             layer->neurons[j].delta = value * (1 - value) * sum;
-            printf(" layer %zu, neuron %zu delta %lf\n",i,j,layer->neurons[j].delta);
+            printf(" layer %zu neuron %zu delta %lf\n",i,j,layer->neurons[j].delta);
         }
         //printf("coucou\n");
     }
