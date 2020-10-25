@@ -35,10 +35,10 @@ Layer newLayer(size_t sizeLayer, Layer* previousLayer, Layer* nextLayer)
 	NULL	
     };
     layer.nbNeurons = sizeLayer;
-    layer.neurons = calloc(sizeLayer, sizeof(struct Layer));
+    layer.neurons = calloc(sizeLayer, sizeof(struct Neuron));
     layer.nextLayer = nextLayer;
     layer.previousLayer = previousLayer;
-    if(previousLayer)
+    if(previousLayer != NULL)
     {
         for(size_t i = 0; i < sizeLayer; i++)
         {
@@ -67,7 +67,9 @@ Neuron newNeuron(size_t nbWeights)
 	0,
 	NULL
     };
-    neuron.nbWeights = nbWeights + 1; // nbweights = size layer + bias
+    if(nbWeights != 0)
+        nbWeights++;
+    neuron.nbWeights = nbWeights; // nbweights = size layer + bias
     neuron.value = 0;
     neuron.delta = 0;
     neuron.error = 0;
@@ -99,7 +101,7 @@ double boxMuller() //box-muller for gaussian distribution (polar method).
     double r = u * u + v * v;
 
     if (r == 0 || r > 1) 
-	return boxMuller();
+	    return boxMuller();
     return u * sqrt(-2 * log(r) / r) / 3;
 }
 

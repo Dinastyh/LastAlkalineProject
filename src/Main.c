@@ -12,10 +12,11 @@
 int main()
 {
     srand (time ( NULL));
-    Network net = newNetwork(5,2,1,2);
+    Network net = newNetwork(2,3,1,1);
     initNetwork(&net);
 
     printNetwork(&net);
+    printf("check \n");
     writeNetwork(&net);
 
     //print_brain(&brain2);
