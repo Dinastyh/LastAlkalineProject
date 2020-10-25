@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include "DisplayPicture.h"
 #include "Bmp24.h"
-
+#include "PreProcessPicture.h"
 void displayPicture(char *filename)
 {
 		// take relative || absolute path of a picture to display
@@ -65,6 +65,11 @@ void displaySegmentationPicture(char* filename)
 				for(int j = 0; j < ch.length; j++)
 					{
 						Picture carac = blockToPicture(ch.block[j], p);
+						carac.pixels = resize(carac.pixels, carac.w, carac.h, 28, 28);
+						carac.h = 28;
+						carac.w = 28;
+						carac.offset = 0;
+						carac.head =  changeDimensionHead(carac.head, 28, 28, 0);
 						savePicture(carac);
 						displayPicture(carac.name);
 					}
