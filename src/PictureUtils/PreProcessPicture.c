@@ -113,13 +113,11 @@ Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
 		double y = 0;
 		double plusx = wf/nwf;
 		double plusy = hf/nhf;
-		printf("plus x:%f,plus y:%f \n",(float)plusx,(float)plusy);
 		for(int j = 0; j < newh; j++)
 		{
 			for(int i = 0; i < neww; i++)
 				{
 					
-					printf("x :%i, y: %i,i :%i,j: %i,x+y*h: %i,i+j*newh: %i\n",(int)x,(int)y,i,j,((int)x)+((int)y)*h,i + j * newh);
 					result[i + j * neww] = pixel[((int)x)+((int)y)*w ];
 					x += plusx;
 				}
