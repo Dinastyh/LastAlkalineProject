@@ -12,7 +12,7 @@
 int main()
 {
     srand (time ( NULL));
-    Network net = newNetwork(2,3,1,1);
+    Network net = newNetwork(6,5,1,1);
     initNetwork(&net);
 
     printNetwork(&net);

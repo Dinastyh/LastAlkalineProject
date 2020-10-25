@@ -72,6 +72,7 @@ void backPropagation(Network* net)
             layer->neurons[j].delta = value*(1-value)*sum;
         }
     }
+    //Weights Update
     for(size_t i = 2; i < nbLayers; i++)
     {
         Layer* layer = &(net->layers[i]);
