@@ -13,7 +13,7 @@
 int main()
 {
     srand (time ( NULL));
-    Network net = newNetwork(2,2,1,1);
+    Network net = newNetwork(2,2,1,2);
     initNetwork(&net);
 
     printNetwork(&net);
@@ -29,13 +29,13 @@ int main()
 
 //#if 1
     // TRAINING FOR XOR
-    int nb_trainings = 1;
+    int nb_trainings = 500;
     for(int i = 0; i < nb_trainings;i++) // one training
     {
         printf("Training : %d\n",i);
         for(int j = 0; j < 4; j++) // one batch of 4
         {
-            int choice ={j}; //rand()%4
+            int choice ={j%4}; //rand()%4
             double label[1] = {0};
             double data[2] = {0.0,0.0};
             switch (choice)
@@ -62,13 +62,16 @@ int main()
             }
             printf("Data In :\n");
             print_vector(2,data);
+            printf("Forward prop start :\n");
             forwardPropagation(&net, data);
             double cost = meanSquareFunction(label, &net.layers[net.nbLayers-1]);
-            printf("Total cost : %lf\n\n", cost);
+            printf("Total cost : %lf\n", cost);
+            printf("Backprop start :\n");
             backPropagation(&net);
+            printf("### backprop end ###\n\n");
         }
-        gradientDescent(&net,0.5);
-
+        gradientDescent(&net,0.2);
+        printf("#### train end ####\n");
         //double endData[1] = {0};
 
         //printf("Data Out :\n");

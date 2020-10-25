@@ -31,7 +31,7 @@ void forwardPropagation(Network* net, double* data)
 	    for(size_t j = 0; j < layer->nbNeurons; j++)
 	    {
 	        updateNeuronValue(&(layer->neurons[j]), layer);
-	        printf("neuron value : %lf\n",layer->neurons[j].value);
+	        printf("layer %zu neuron %zu value %lf\n",i,j,layer->neurons[j].value);
 	    }
     }
 }
@@ -42,8 +42,8 @@ double meanSquareFunction(double* target, Layer* layer)
     for(size_t i = 0; i < layer->nbNeurons; i++)
     {
         double value = layer->neurons[i].value;
-        layer->neurons[i].error = target[i] - value;
-	    totalError += (target[i] - value)*(target[i] - value);
+        layer->neurons[i].error =  target[i] - value;
+	    totalError += (target[i] - value);
     }
     return totalError;
 }
@@ -59,12 +59,14 @@ void backPropagation(Network* net)
     {
         double value = lastLayer->neurons[i].value;
         double error = lastLayer->neurons[i].error;
-        printf("neuron %zu, error : %lf\n", i, error);
-        lastLayer->neurons[i].delta += value * (1 - value) * error;
+        printf("neuron %zu error %lf\n", i, error);
+        lastLayer->neurons[i].delta = value * (1 - value) * error;
+        printf("last layer neuron %zu delta %lf\n", i, lastLayer->neurons[i].delta);
     }
 
     //Delta for other Layer
-    for (size_t i = nbLayers - 2; i > 1; i--)
+    //printf("nbLayers is %zu\n",nbLayers);
+    for (size_t i = nbLayers - 2; i > 0; i--)
     {
         Layer *layer = &(net->layers[i]);
         for (size_t j = 0; j < layer->nbNeurons; j++)
@@ -72,22 +74,24 @@ void backPropagation(Network* net)
             double value = layer->neurons[j].value;
             double sum = 0;
             Layer *nextLayer = &(net->layers[i + 1]);
-            for (size_t k = 0; k < nextLayer->nbNeurons; i++) {
+            for (size_t k = 0; k < nextLayer->nbNeurons; k++)
+            {
                 sum += nextLayer->neurons[k].weights[j + 1] * nextLayer->neurons[k].delta;
             }
-            layer->neurons[j].delta += value * (1 - value) * sum;
-            printf("delta is %lf\n",layer->neurons[j].delta);
+            printf(" layer %zu neuron %zu sum %lf\n",i,j,sum);
+            layer->neurons[j].delta = value * (1 - value) * sum;
+            printf(" layer %zu, neuron %zu delta %lf\n",i,j,layer->neurons[j].delta);
         }
-        printf("coucou\n");
+        //printf("coucou\n");
     }
-    printf("coucou2\n");
+    //printf("coucou2\n");
 }
 
 //stochastic gradient descent
 void gradientDescent(Network* net, double learningRate)
 {
     size_t nbLayers = net->nbLayers;
-    for(size_t i = 2; i < nbLayers; i++)
+    for(size_t i = 1; i < nbLayers; i++)
     {
         Layer* layer = &(net->layers[i]);
         Layer* lastLayer = &(net->layers[i-1]);
@@ -101,6 +105,7 @@ void gradientDescent(Network* net, double learningRate)
                 else
                     newInput = lastLayer->neurons[k-1].value;
                 layer->neurons[j].weights[k] += learningRate*layer->neurons[j].delta*newInput;
+                layer->neurons[j].delta = 0;
             }
         }
     }
