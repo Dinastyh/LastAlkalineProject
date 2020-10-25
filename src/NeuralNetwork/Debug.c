@@ -9,7 +9,7 @@ void print_layer(Layer layer)
         printf("(");
         for(size_t j = 0; j < nbWeights; j++)
         {
-            printf("%lf",layer.neurons[i].weights[j]);
+            printf("%lf ",layer.neurons[i].weights[j]);
         }
         printf(") ");
     }

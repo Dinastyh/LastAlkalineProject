@@ -45,7 +45,7 @@ Layer newLayer(size_t sizeLayer, Layer* previousLayer, Layer* nextLayer)
             layer.neurons[i] = newNeuron(previousLayer->nbNeurons);
         }
     }
-    else
+    else //previous layer undefined (NULL)
     {
         for(size_t i = 0; i < sizeLayer; i++)
         {
@@ -115,10 +115,10 @@ void initNeuron(Neuron* neuron)
 
 void initNetwork(Network* net)
 {
-    for(size_t i=0; i<net->nbLayers; i++)
+    for(size_t i = 0; i < net->nbLayers; i++)
     {
         Layer layer = net->layers[i];
-        for(size_t j=0; j < layer.nbNeurons; j++)
+        for(size_t j = 0; j < layer.nbNeurons; j++)
         {
             initNeuron(&(layer.neurons[j]));
         }

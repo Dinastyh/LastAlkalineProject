@@ -19,8 +19,8 @@ int main()
     printf("check \n");
     writeNetwork(&net);
 
-    //print_brain(&brain2);
-    //Network net = readNetwork("network.txt");
+    Network net2 = readNetwork("network.txt");
+    printNetwork(&net2);
 
     //printf("\n\n\n\n");
     //printf("###############Debug forward propagation##################\n");
