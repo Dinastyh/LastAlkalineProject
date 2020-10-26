@@ -16,7 +16,6 @@ int main()
     initNetwork(&net);
 
     printNetwork(&net);
-    printf("check \n");
     writeNetwork(&net);
 
     Network net2 = readNetwork("network.txt");
