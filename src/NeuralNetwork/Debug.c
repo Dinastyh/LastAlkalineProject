@@ -33,6 +33,42 @@ void print_vector(int size, double* data)
     }
 }
 
+Network demoWriteRead(int sizeInput, int sizeOutput, int nbHidden, int sizeHidden)
+{
+    srand (time ( NULL));
+    Network net = newNetwork(sizeInput,sizeHidden,sizeOutput,nbHidden);
+    initNetwork(&net);
+    printNetwork(&net);
+
+    writeNetwork(&net);
+
+    Network net2 = readNetwork("network.txt");
+    printNetwork(&net2);
+
+    return net2;
+}
+
+void demoTraining(Network* net, double* input, double* desiredOutput)
+{
+    int nb_trainings = 500;
+    for (int i = 0; i < nb_trainings; i++) // one training
+    {
+        printf("Forward prop start :\n");
+        forwardPropagation(net, input);
+        double cost = meanSquareFunction(desiredOutput, &(net->layers[net->nbLayers-1]));
+        printf("Total cost : %lf\n", cost);
+        printf("Backpropagation start :\n");
+        backPropagation(net);
+        printf("### backpropagation end ###\n\n");
+
+        gradientDescent(net,0.3);
+    }
+    printf("#### training end ####\n");
+}
+
+
+
+
 #if 0
 void check_forward_propagation(Brain* brain)
 {
