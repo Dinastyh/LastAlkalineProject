@@ -30,7 +30,15 @@ void forwardPropagation(Network* net, double* data)
 	    Layer* layer = &(net->layers[i]);
 	    for(size_t j = 0; j < layer->nbNeurons; j++)
 	    {
-	        updateNeuronValue(&(layer->neurons[j]), layer);
+            double sum = 0;
+            for(size_t k = 0; k<= net->layers[i-1].nbNeurons; k++)
+            {
+                if (k == 0)
+                    sum += layer->neurons[j].weights[k];
+                else
+                    sum += layer->neurons[j].weights[k] * net->layers[i-1].neurons[k-1].value;
+            }
+            layer->neurons[j].value = 1 / (1 + exp(-sum));
 	        printf("layer %zu neuron %zu value %lf\n",i,j,layer->neurons[j].value);
 	    }
     }
@@ -78,14 +86,9 @@ void backPropagation(Network* net)
             {
                 sum += nextLayer->neurons[k].weights[j + 1] * nextLayer->neurons[k].delta;
             }
-            printf(" layer %zu neuron %zu sum %lf\n",i,j,sum);
             layer->neurons[j].delta = value * (1 - value) * sum;
-            printf(" layer %zu neuron %zu delta %lf\n",i,j,layer->neurons[j].delta);
         }
-        //printf("coucou\n");
     }
-    //Weights Update
-    //printf("coucou2\n");
 }
 
 //stochastic gradient descent

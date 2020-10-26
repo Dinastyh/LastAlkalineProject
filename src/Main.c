@@ -13,51 +13,52 @@
 int main()
 {
     srand (time ( NULL));
-    Network net = newNetwork(6,5,1,1);
+    Network net = newNetwork(2,2,4,1);
     initNetwork(&net);
 
     printNetwork(&net);
-    writeNetwork(&net);
+    //writeNetwork(&net);
 
-    Network net2 = readNetwork("network.txt");
-    printNetwork(&net2);
+    //Network net2 = readNetwork("network.txt");
+    //printNetwork(&net2);
 
     //printf("\n\n\n\n");
     //printf("###############Debug forward propagation##################\n");
     //check_forward_propagation(&brain);
-    Network net = demoWriteRead(5,3,1,5);
-    double input[5] = {1.0,0.2,0.6,0.0,0.8};
-    double desiredOutput[3] = {0.0,0.0,1.0};
-    demoTraining(&net, input, desiredOutput);
+    //Network net = demoWriteRead(5,3,1,5);
+    //double input[5] = {1.0,0.2,0.6,0.0,0.8};
+    //double desiredOutput[3] = {0.0,0.0,1.0};
+    //demoTraining(&net, input, desiredOutput);
 
-#if 0
     // TRAINING FOR XOR
-
-    for(int i = 0; i < nb_trainings;i++) // one training
+    int nbTrainings = 1000;
+    for(int i = 0; i < nbTrainings;i++) // one training
     {
         printf("Training : %d\n",i);
         for(int j = 0; j < 4; j++) // one batch of 4
         {
             int choice ={j%4}; //rand()%4
-            double label[1] = {0};
-            double data[2] = {0.0,0.0};
+            double label[4] = {0,0,0,0};
+            double data[2] = {0,0};
             switch (choice)
             {
                 case 0:
+                    label[0] = 1.0;
                     break;
                 case 1:
                     data[0] = 0.0;
                     data[1] = 1.0;
-                    label[0] = 1.0;
+                    label[1] = 1.0;
                     break;
                 case 2:
                     data[0] = 1.0;
                     data[1] = 0.0;
-                    label[0] = 1.0;
+                    label[2] = 1.0;
                     break;
                 case 3:
                     data[0] = 1.0;
                     data[1] = 1.0;
+                    label[3] = 1.0;
                     break;
                 default:
                     printf("choice random is not between 0 and 4]");
@@ -73,7 +74,7 @@ int main()
             backPropagation(&net);
             printf("### backprop end ###\n\n");
         }
-        gradientDescent(&net,0.2);
+        gradientDescent(&net,0.02);
         printf("#### train end ####\n");
         //double endData[1] = {0};
 
@@ -84,7 +85,5 @@ int main()
 
 
     }
-#endif
-
     return 0;
 }
