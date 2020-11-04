@@ -1,4 +1,9 @@
 #ifndef DISPLAYPICTURE
 #define DISPLAYPICTURE
-void DisplayPicture(const char *filename, int width, int height, int time);
+
+#include "Bmp24.h"
+
+void displayPicture(char *filename);
+void waitKeyPressed();
+void displaySegmentationPicture(char *filename);
 #endif
