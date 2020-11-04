@@ -30,23 +30,18 @@ int main()
         double label[1] = {0};
         if ((data[0] == 0.0 && data[1] == 1.0) || (data[0] == 1.0 && data[1] == 0.0))//xor
             label[0] = 1.0;
-
         double end_data[1] = {0};
         printf("Data In :\n");
         print_vector(2,data);
         forward_propagation(&brain, data, end_data);
         printf("Data Out :\n");
         print_vector(1, end_data);
-        //printf("Ground Truth :\n");
+        //printf("Ground Truth \n");
         //print_vector(1,label);
         printf("Total cost : %lf",mean_square_function(label,end_data));
         printf("\n\n");
         calculate_gradient(&brain,label);
         update_weights(&brain,0.2,1);
     }
-
-
-
-
     return 0;
 }
