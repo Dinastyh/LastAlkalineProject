@@ -92,57 +92,5 @@ int main()
         printLayerValues(net.layers[2]);
    }
 
-    printNetwork(&net);
-
-   /*
-    for (size_t i = 0; i < 10; i++)
-    {
-        double data[2] = {0.0, 0.0};
-        double target[1] = {0.0};
-        switch(i%4)
-        {
-            case 0:
-                target[0] = 0;
-            break;
-            case 1:
-                data[0] = 0.0;
-                data[1] = 1.0;
-                target[0] = 1.0;
-            break;
-            case 2:
-                data[0] = 1.0;
-                data[1] = 0.0;
-                target[0] = 1.0;
-            break;
-            case 3:
-                data[0] = 1.0;
-                data[1] = 1.0;
-                target[0] = 0;
-            break;
-        }
-
-        if((i < 10) || i > 1000000 - 10)
-        {
-            printf("Data In\n");
-            print_vector(2, data);
-            printf("Target\n");
-            print_vector(1, target);
-        }
-        
-        forwardPropagation(&net, data, target);
-        backPropagation(&net);
-        gradientDescent(&net, 12);
-
-        if((i < 10) || i > 1000000 - 10)
-        {   
-            double lastvalue = net.layers[2].neurons[0].value;
-            printf("last layer neuron %d value %lf\n",0,lastvalue);
-            printf("\n");
-            printNetwork(&net);
-        }
-        
-    }
-    */
-    
     return 0;
 }
