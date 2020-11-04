@@ -1,6 +1,8 @@
 #include "Debug.h"
+#include "write_read_brain.h"
+#include "Training.h"
 
-void print_layer(Layer layer)
+void printLayerWeigths(Layer layer)
 {
     size_t nbNeurons = layer.nbNeurons;
     size_t nbWeights = layer.neurons[0].nbWeights;
@@ -16,13 +18,44 @@ void print_layer(Layer layer)
     printf("\n");
 }
 
+void printLayerValues(Layer layer)
+{
+    for(size_t i = 0; i < layer.nbNeurons; i++)
+    {
+        printf("neuron %zu value : %lf ",i,layer.neurons[i].value);
+    }
+    printf("\n");
+}
+
+void printLayerDerivatives(Layer layer)
+{
+    size_t nbWheights = layer.neurons[0].nbWeights;
+
+    for(size_t i = 0; i < layer.nbNeurons; i++)
+    {
+        Neuron neuron = layer.neurons[i];
+        printf("neuron %zu ",i);
+        printf("dedout : %lf, ",neuron.dedout);
+        printf("doutdnet : %lf\n",neuron.doutdnet);
+
+        printf("delta weights : \n");
+        for(size_t i = 0; i < nbWheights; i++)
+        {
+            printf("%lf ",neuron.dw[i]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
 void printNetwork(Network* net)
 {
     for (size_t i = 0; i < net->nbLayers;i++)
     {
         printf("##### LAYER %zu #####",i);
-        print_layer(net->layers[i]);
+        printLayerWeigths(net->layers[i]);
     }
+    printf("\n");
 }
 
 void print_vector(int size, double* data)
@@ -33,6 +66,18 @@ void print_vector(int size, double* data)
     }
 }
 
+void checkForwardPropagation(Network* net, double* input, double* target)
+{
+    printf("Data In\n");
+    print_vector(net->sizeInput, input);
+    printf("Target\n");
+    print_vector(net->sizeOutput, target);
+    forwardPropagation(net, input, target);
+
+    //printLayerValues(net->layers[net->nbLayers-1]);
+}
+
+#if 0
 Network demoWriteRead(int sizeInput, int sizeOutput, int nbHidden, int sizeHidden)
 {
     srand (time ( NULL));
@@ -54,7 +99,7 @@ void demoTraining(Network* net, double* input, double* desiredOutput)
     for (int i = 0; i < nb_trainings; i++) // one training
     {
         printf("Forward prop start :\n");
-        forwardPropagation(net, input);
+        forwardPropagation(net, input, desiredOutput);
         double cost = meanSquareFunction(desiredOutput, &(net->layers[net->nbLayers-1]));
         printf("Total cost : %lf\n", cost);
         printf("Backpropagation start :\n");
@@ -66,24 +111,8 @@ void demoTraining(Network* net, double* input, double* desiredOutput)
     printf("#### training end ####\n");
 }
 
-
-
-
-#if 0
-void check_forward_propagation(Brain* brain)
-{
-    double data[2] ={rand()%2, rand()%2};
-    double end_data[1] = {0.0};
-    printf("Data In\n");
-    print_vector(2,data);
-    forward_propagation(brain, data, end_data);
-    printf("Data Out\n");
-    print_vector(1, end_data);
-}
 #endif
-/*
-void check_backpropagation(Brain* brain)
-{
-    
-}
-*/
+
+
+
+

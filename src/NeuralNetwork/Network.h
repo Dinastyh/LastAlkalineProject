@@ -7,15 +7,14 @@
 struct Neuron
 {
     size_t nbWeights;
-    double value, delta, error;
+    double value, dedout, doutdnet, dnetdw;
     double* weights;
+    double* dw;
 };
 typedef struct Neuron Neuron;
 
 struct Layer
 {
-    struct Layer* previousLayer;
-    struct Layer* nextLayer;
     size_t nbNeurons;
     Neuron* neurons;
 };
@@ -31,11 +30,14 @@ struct Network
 };
 typedef struct Network Network;
 Network newNetwork(size_t sizeInput, size_t sizeHidden, size_t sizeOutput, size_t nbHiddenLayers);
-Layer newLayer(size_t sizeLayer, Layer* previousLayer, Layer* nextLayer);
+Layer newLayer(size_t sizeLayer, size_t sizePreviousLayer);
 Neuron newNeuron(size_t nbWeights);
+
 void freeNetwork(Network* net);
 void freeLayer(Layer* layer);
+
 double boxMuller();
+
 void initNeuron(Neuron* Neuron);
 void initNetwork(Network* net);
 #endif

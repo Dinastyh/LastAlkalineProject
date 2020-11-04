@@ -41,7 +41,6 @@ void writeNetwork(Network* net)
     }
 }
 
-
 Network readNetwork(char* netName)
 {
     FILE* netFile = fopen(netName,"r"); //read only
