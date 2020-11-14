@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -pedantic -g
+CFLAGS = -Wall -pedantic -g
 EXEC = LastAlkalineProject
 OBJ = obj
 SRC = src
@@ -14,7 +14,7 @@ $(OBJ)/Main.o : $(SRC)/Main.c
 	$(CC) $(CFLAGS) -o $(OBJ)/Main.o -c $(SRC)/Main.c `pkg-config --cflags --libs gtk+-2.0`
 
 $(OBJ)/Ui.o : $(SRC)/Ui/Ui.c
-	$(CC) $(CFLAGS) -o $(OBJ)/Ui.o -c $(SRC)/Ui/Ui.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Ui.o -c $(SRC)/Ui/Ui.c `pkg-config --cflags --libs gtk+-2.0`
 
 clearOBJ :
 	rm -r $(OBJ)/*.o
