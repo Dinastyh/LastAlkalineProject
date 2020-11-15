@@ -6,7 +6,7 @@ void displayTxt(GtkWidget* container,char string[])
     gchar* stringUtf8 = g_locale_to_utf8(string, lenString(string), NULL, NULL, NULL);
     label = gtk_label_new(stringUtf8);
     g_free(stringUtf8);
-    gtk_container_add(GTK_CONTAINER(container), label);
+    gtk_box_pack_start(GTK_CONTAINER(container), label, FALSE, TRUE, 0);
     gtk_widget_show(label);
 }
 
