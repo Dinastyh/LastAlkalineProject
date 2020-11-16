@@ -139,16 +139,16 @@ int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)
 			}
 		int *intermed = calloc(w, sizeof(int));
 		for(int i = 0; i < w; i++)
-		{
+			{
 				for(int j = 0; j < h; j++)
-				{
+					{
 						if(pixels[j * width + i + start].r == 0)
 							{
 								intermed[i]++;
-							
+
 							}
-				}
-		}
+					}
+			}
 
 		return intermed;
 }
@@ -259,62 +259,6 @@ Tuple captureChar(Pixel* pixels,Block block,int w)
 		return tuple;
 }
 
-Tuple captureBlock(Block block,Picture picture)
-{
-	Picture pic = blockToPicture(block,picture);
-	lowPassFilter(pic, 3, 3);
-	Block* blocks = malloc(sizeof(Block)*block.w);
-	int height = block.h;
-	int lines = 0;
-	int width = 0;
-	int color = 0;
-	int debut = 0;
-	int i;
-	for(int j = 0; j <block.w; j++)
-	{
-		i = 0;
-		while(i<height)
-		{
-			if(pic.pixels[i*block.w + j].r != 255)
-			{
-				debut = i*block.w + j + block.start;
-				i = height;
-				color = 1;
-			}
-		}
-
-		if(color == 1)
-		{
-			width +=1;
-			color = 0;
-		}
-		else if (width != 0)
-		{
-			Block word;
-			word.w = j - width;
-			word.h = block.h;
-			word.start = debut;
-			width = 0;
-			blocks[lines++] = word;
-		}
-
-	}
-
-	if (width != 0)
-	{
-		Block word;
-		word.w = block.w - width;
-		word.h = block.h;
-		word.start = debut;
-		width = 0;
-		blocks[lines++] = word;
-	}
-		Tuple tuple;
-		tuple.block = blocks;
-		tuple.length = lines;
-		return tuple;
-}
-
 Picture blockToPicture(Block block,Picture pic)
 {
 		Picture result;
@@ -325,4 +269,80 @@ Picture blockToPicture(Block block,Picture pic)
 		result.pixels = myPixel(pic.pixels, block.h,block.w, block.start, pic.w);
 		result.head =  changeDimensionHead(pic.head,block.h, block.w,result.offset);
 		return result;
+}
+Tuple captureBlock(Pixel* pixel, Block block)
+{
+		Block* blocks = malloc(sizeof(Block)*block.w);
+		int height = block.h;
+		int lines = 0;
+		int width = 0;
+		int color = 0;
+		int debut = 0;
+		int average =0;
+		int i = 0;
+		int l = 0;
+		int *intermed = browseImage(block.w, block.h, pixel, block.w, 0, block.start);
+		for(int j = 0; j <block.w; j++)
+			{  
+				if(intermed[j] != 0)
+					{
+						color = 1;
+					}
+				if(intermed[j]==0 && color == 1)
+					{
+						l += 1;
+					}
+				else if (l != 0)
+					{
+						average += l;
+						l = 0;
+						i ++;
+					}
+			}
+		average = (int)(((float)average/(float)i)+0.5);
+		color =0;
+		for (int j = 0; j<block.w; j++)
+			{
+				if(intermed[j] != 0)
+					{
+						width ++;
+						if(color != 1)
+							{
+								debut = j;
+							}
+						color = 1;
+						i = 0;
+					}
+				else if(color == 1)
+					{
+						if (width > 0 && i>average)
+							{
+								Block word;
+								word.w = width;
+								word.h = block.h;
+								word.start = debut + block.start;
+								width = 0;
+								blocks[lines++] = word;
+								color = 0;
+							}
+						else
+							{
+								width ++;
+								i ++;
+							}
+					}
+			}
+		if (width != 0)
+			{
+				Block word;
+				word.w = width;
+				word.h = block.h;
+				word.start = debut + block.start;
+				width = 0;
+				blocks[lines++] = word;
+			}
+		Tuple tuple;
+		tuple.block = blocks;
+		tuple.length = lines;
+		return tuple;
 }
