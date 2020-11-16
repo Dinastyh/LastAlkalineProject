@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "PreProcessPicture.h"
-
+#include <math.h>
 
 
 void blackAndWhite(Picture picture)
@@ -84,11 +84,11 @@ void applyConvolutionToPicture(Picture picture, Convolution clt)
 }
 
 
-void lowPassFilter(Picture picture)
+void lowPassFilter(Picture picture, int line, int column)
 {
 		Convolution clt;
-		clt.l = 5;
-		clt.c = 5;
+		clt.l = line;
+		clt.c = column;
 		float normalize = (float)clt.l * (float)clt.c;
 		clt.matrix = malloc(sizeof(float) * clt.l * clt.c);
 		for(size_t i = 0; i < clt.l; i++)
@@ -127,6 +127,90 @@ Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
 		return result;
 }
 
-
-
+Picture rotate(Picture pic, int degree)
+{
+		Picture ref = pixelsToSquare(pic);
+		float rotation = (float)degree / (float)(360);
+		rotation *= 2 * (float)3.14;
+		double middlex = ref.w/2;
+		double middley = ref.h/2;
+		double currentx;
+		double currenty;
+		Pixel blc;
+		blc.r = 255;
+		blc.g = 255;
+		blc.b = 255;
+		Pixel *p = malloc(sizeof(Pixel) * ref.h * ref.w);
+		for(int k = 0; k < ref.h * ref.w; k++)
+		{
+				p[k] = blc;
+		}
+		for(double i = 0; i < ref.h; i++)
+		{
+				for(double j = 0; j < ref.w; j++)
+				{
+						currentx = cos(rotation) * (j - middlex) - sin(rotation) * (i - middley) + middlex;
+						currenty = sin(rotation) * (j - middlex) - cos(rotation) * (i - middley) + middley;
+						if(currentx >= 0 && currentx < ref.w && currenty >= 0 && currenty < ref.h )
+								p[(int)currenty * ref.w + (int)currentx] = ref.pixels[(int)i * ref.w + (int)j];
+				}
+		}
+		ref.pixels = p;
+		return ref;
+}
+Picture pixelsToSquare(Picture p)
+{
+		int w = p.w;
+		int h = p.h;
+		int max = w;
+		if(max<h)
+			 max = h;
+		max += 4 - max%4;
+		Pixel *pix = malloc(sizeof(Pixel) * max * max);
+		int debutx = (max - w)/2;
+		int debuty = (max - h)/2;
+		Pixel blc;
+		blc.r = 255;
+		blc.g = 255;
+		blc.b = 255;
+		long average = 0;
+		for(int k = 0; k < max * max; k++)
+		{
+				pix[k] = blc;
+			//	average += 255 * 3;
+		}
+		for(int i = 0; i < h; i++)
+		{
+				for(int k = 0; k < debutx; k++)
+				{
+						pix[(debuty + i) * max + k] = blc;
+						average += 255 * 3;
+				}
+				for(int j = 0; j < w; j++)
+				{
+						pix[(debuty + i) * max + j + debutx] = p.pixels[i * w + j];
+						average += p.pixels[i * w + j].r + p.pixels[i * w + j].g +  p.pixels[i * w + j].b;
+				}
+				for(int k = max - debutx; k < max; k++)
+				{
+						pix[(debuty + i) * max + k] = blc;
+						average += 255 * 3;
+				}
+		}
+		for(int k = max - debuty; k < debuty * max; k++)
+		{
+				pix[k] = blc;
+				average += 255 * 3;
+		}
+		Picture resul;
+		resul.w = max;
+		resul.h = max;
+		resul.pixels = pix;
+		resul.offset = 0;
+		resul.name = p.name;
+		resul.head = changeDimensionHead(p.head, max, max, 0);
+		resul.origine = p.origine;
+		resul.averageColor = (float)average / (float)(max * max * 3);
+		return resul;
+}
 

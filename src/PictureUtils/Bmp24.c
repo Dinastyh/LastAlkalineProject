@@ -53,11 +53,11 @@ Picture newPicture(const char *fileName,char *newFileName)
 					{
 						b =  fgetc(file);
 						g =  fgetc(file);
-						r =  fgetc(file); 
+						r =  fgetc(file);
 						pixel.r = r;
 						pixel.b = b;
 						pixel.g = g;
-						average += r + g + b; 
+						average += r + g + b;
 						pixels[i + j * w] = pixel;
 						if( i == w - 1)
 							{
@@ -262,7 +262,7 @@ Tuple captureChar(Pixel* pixels,Block block,int w)
 Tuple captureBlock(Block block,Picture picture)
 {
 	Picture pic = blockToPicture(block,picture);
-	lowPassFilter(pic);
+	lowPassFilter(pic, 3, 3);
 	Block* blocks = malloc(sizeof(Block)*block.w);
 	int height = block.h;
 	int lines = 0;
