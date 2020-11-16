@@ -1,10 +1,14 @@
 # Binaries
 obj/
+obj
 *.o
 
-#Prog
+# Prog
 LastAlkalineProject
 
-#Data Files
+# Annexes File
 *.bmp
-*.test
+*.txt
+
+# Clion
+.idea
