@@ -31,7 +31,7 @@ struct Tuple
 		int length;
 };
 typedef struct Tuple Tuple;
-
+int isPictureValid(const char *name);
 Picture newPicture(const char *fileName, char *fileNameNew);
 Pixel* myPixel(Pixel* pic, int h , int w,int startw,int width);
 Tuple captureLine(Picture picture);

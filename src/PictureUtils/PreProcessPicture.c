@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "PreProcessPicture.h"
 #include <math.h>
+#include "Bmp24.h"
 
 
 void blackAndWhite(Picture picture)
@@ -213,4 +214,89 @@ Picture pixelsToSquare(Picture p)
 		resul.averageColor = (float)average / (float)(max * max * 3);
 		return resul;
 }
-
+void upContrast(Picture picture)
+{
+		Convolution clt;
+		clt.l = 3;
+		clt.c = 3;
+		clt.matrix = malloc(sizeof(float) * 9);
+		for(int i = 0; i < 9; i++)
+		{
+				clt.matrix[i] = 0;
+				if(i%2 ==1)
+						clt.matrix[i] = -1;
+				else if(i == 4)
+				{
+						clt.matrix[i] = 5;
+				}
+		}
+		applyConvolutionToPicture(picture, clt);
+}
+void detectEdge(Picture picture)
+{
+		Convolution clt;
+		clt.l = 3;
+		clt.c = 3;
+		clt.matrix = malloc(sizeof(float) * 9);
+		for(int i = 0; i < 9; i++)
+		{
+				clt.matrix[i] = 0;
+				if(i%2 ==1)
+						clt.matrix[i] = 1;
+				else if(i == 4)
+				{
+						clt.matrix[i] = -4;
+				}
+		}
+		applyConvolutionToPicture(picture, clt);
+}
+void pushBack(Picture picture)
+{
+		Convolution clt;
+		clt.l = 3;
+		clt.c = 3;
+		clt.matrix = malloc(sizeof(float) * 9);
+		for(int i = 0; i < 9; i++)
+		{
+				clt.matrix[i] = 0;
+				if(i%2 ==1)
+				{
+						clt.matrix[i] = 1;
+						if(i == 3 || i == 7)
+							 clt.matrix[i] = -1;
+				}
+				else if(i == 4)
+				{
+						clt.matrix[i] = 1;
+				}
+				else if(i == 2)
+				{
+						clt.matrix[i] = 2;
+				}
+				else if(i == 6)
+				{
+						clt.matrix[i] = -2;
+				}
+		}
+		applyConvolutionToPicture(picture, clt);
+}
+void strengthenEdge(Picture picture)
+{
+		Convolution clt;
+		clt.l = 3;
+		clt.c = 3;
+		clt.matrix = malloc(sizeof(float) * 9);
+		for(int i = 0; i < 9; i++)
+		{
+				clt.matrix[i] = 0;
+				if(i == 4)
+				{
+						clt.matrix[i] = 1;
+				}
+				else if(i == 3)
+				{
+						clt.matrix[i] = -1;
+				}
+		}
+		applyConvolutionToPicture(picture, clt);
+}
