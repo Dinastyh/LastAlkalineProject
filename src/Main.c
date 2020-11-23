@@ -83,7 +83,7 @@ void onSelect(GtkWidget *pWidget, gpointer pData)
 }
 
 void takeFolder(GtkWidget* button, GtkWidget* fileSelection)
-{
+ 
     const gchar* path;
     GtkWidget* dialog;
     path = gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelection));
