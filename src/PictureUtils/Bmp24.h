@@ -41,4 +41,5 @@ char* changeDimensionHead(char* head,int h, int w,int offset);
 void savePicture(Picture picture);
 Picture blockToPicture(Block block,Picture pic);
 int* browseImage(int, int, Pixel*, int, int, int);
+int isPictureValid(const char* path);
 #endif
