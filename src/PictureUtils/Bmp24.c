@@ -86,7 +86,34 @@ Picture newPicture(const char *fileName,char *newFileName)
 		fclose(file);
 		return picture;
 }
-
+double* pictureToArray(char* name)
+{
+		double *r = malloc(sizeof(double) * 40 * 40);
+		short *inter = malloc(sizeof(short) * 40 * 40);
+		FILE *f = fopen(name, "rb");
+		int average = 0;
+		short intermed = 0;
+		fseek(f,54,SEEK_SET);
+		for(size_t i = 0; i < 40; i++)
+		{
+				for(size_t j = 0; j < 40; j++)
+				{
+						intermed = fgetc(f) + fgetc(f) + fgetc(f);
+						inter[i * 40 + j] = intermed;
+						average += intermed;
+				}
+		}
+		fclose(f);
+		average /= 1600;
+		for(size_t k = 0; k < 1600; k++)
+		{
+				r[k] = 0;
+				if(inter[k] < average)
+					 r[k] += 1;
+		}
+		free(inter);
+		return r;
+}
 void savePicture(Picture picture)
 {
 		FILE* file =fopen(picture.name,"wb+");

@@ -40,9 +40,9 @@ Pixel applyConvolutionToPixel(int w, int h, int width, int height, Convolution c
 	  int currentC;
 		int milieuMatrix = clt.l / 2;
 		float inter;
-		for(size_t l = 0; l < line; l++)
+		for(int l = 0; l < line; l++)
 		{
-				for(size_t c = 0; c < column; c++)
+				for(int c = 0; c < column; c++)
 				{
 						currentL = l + h - milieuMatrix;
 						currentC = c + w - milieuMatrix;
@@ -71,9 +71,9 @@ void applyConvolutionToPicture(Picture picture, Convolution clt)
 		inter.g = 0;
 		inter.b = 0;
 		Pixel *convoluted = myPixel(picture.pixels, picture.h, picture.w, 0, picture.w);
-		for(size_t h = 0; h < picture.h; h++)
+		for(int h = 0; h < picture.h; h++)
 		{
-				for(size_t w = 0; w < picture.w; w++)
+				for(int w = 0; w < picture.w; w++)
 				{
 						inter = applyConvolutionToPixel(w, h, picture.w, picture.h, clt, convoluted);
 						picture.pixels[h * picture.w + w].r = inter.r;
@@ -92,9 +92,9 @@ void lowPassFilter(Picture picture, int line, int column)
 		clt.c = column;
 		float normalize = (float)clt.l * (float)clt.c;
 		clt.matrix = malloc(sizeof(float) * clt.l * clt.c);
-		for(size_t i = 0; i < clt.l; i++)
+		for(int i = 0; i < clt.l; i++)
 		{
-				for(size_t j = 0; j < clt.c; j++)
+				for(int j = 0; j < clt.c; j++)
 				{
 						clt.matrix[i * clt.c + j] = 1.0f/normalize;
 				}
@@ -178,7 +178,7 @@ Picture pixelsToSquare(Picture p)
 		for(int k = 0; k < max * max; k++)
 		{
 				pix[k] = blc;
-			//	average += 255 * 3;
+				average += 255 * 3;
 		}
 		for(int i = 0; i < h; i++)
 		{
