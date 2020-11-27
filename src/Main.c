@@ -35,8 +35,8 @@ int main()
     printLayerDerivatives(net.layers[1]);
     printLayerDerivatives(net.layers[2]);
     */
-    double data[sizeInput];
-    double target[sizeOutput];
+    double *data = malloc(sizeInput*sizeof(double));
+    double *target = calloc(sizeOutput * sizeof(double));
 
     size_t nbEpoch = 100;
 

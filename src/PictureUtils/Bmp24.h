@@ -1,0 +1,45 @@
+#ifndef H_GL_BMP24
+#define H_GL_BMP24
+
+struct Pixel
+{
+		int r,g,b;
+};
+
+typedef struct Pixel Pixel;
+
+struct Picture
+{
+		int h, w, offset;
+		char *name, *head;
+		float averageColor;
+		Pixel* pixels, *origine;
+};
+
+typedef struct Picture Picture;
+
+struct Block
+{
+		int h,w,start;
+};
+
+typedef struct Block Block;
+
+struct Tuple
+{
+		Block *block;
+		int length;
+};
+typedef struct Tuple Tuple;
+int isPictureValid(const char *name);
+Picture newPicture(const char *fileName, char *fileNameNew);
+double* pictureToArray(char* filename);
+Pixel* myPixel(Pixel* pic, int h , int w,int startw,int width);
+Tuple captureLine(Picture picture);
+Tuple captureBlock(Pixel* pixel, Block block);
+Tuple captureChar(Pixel* pixels,Block block,int w);
+char* changeDimensionHead(char* head,int h, int w,int offset);
+void savePicture(Picture picture);
+Picture blockToPicture(Block block,Picture pic);
+int* browseImage(int, int, Pixel*, int, int, int);
+#endif
