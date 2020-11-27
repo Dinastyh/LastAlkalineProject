@@ -11,7 +11,7 @@ void displayTxt(GtkWidget* container,char string[])
     gtk_widget_show(label);
 }
 
-void displayPicture(GtkWidget* container, const char* path)
+void displayPictureGTK(GtkWidget* container, const char* path)
 {
     GtkWidget* picture = gtk_image_new_from_file(path);
     displayClear(container);

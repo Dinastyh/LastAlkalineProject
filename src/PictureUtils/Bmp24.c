@@ -5,11 +5,12 @@
 
 int isPictureValid(const char* path)
 {
-    File *f = fopen(name, "r");
+    FILE *f = fopen(path, "r");
 	if(fgetc(f) != 'B' || fgetc(f) != 'M')
 		return 0;
 	return 1;
 }
+
 Picture newPicture(const char *fileName,char *newFileName)
 {
 		Picture picture;
