@@ -1,4 +1,6 @@
 #include "Training.h"
+#include "Network.h"
+
 
 double sigmoid(double n)
 {
@@ -42,7 +44,7 @@ void forwardPropagation(Network* net, double* data, double* target)
                     sum += layer->neurons[j].weights[k] * net->layers[i-1].neurons[k-1].value;
             }
             layer->neurons[j].value = 1 / (1 + exp(-sum));
-	        printf("layer %zu neuron %zu value %lf\n",i,j,layer->neurons[j].value);
+	        //printf("layer %zu neuron %zu value %lf\n",i,j,layer->neurons[j].value);
 	    }
     }
 
@@ -64,6 +66,18 @@ double meanSquareFunction(Layer* layer, double* target)
     {
         double value = layer->neurons[i].value;
         layer->neurons[i].dedout = 0.5 * (target[i] - value) * (target[i] - value);
+	    totalError += (target[i] - value);
+    }
+    return totalError;
+}
+
+double logarithmicCostFunction(Layer* layer, double* target)
+{
+    double totalError;
+    for(size_t i = 0; i < layer->nbNeurons; i++)
+    {
+        double value = layer->neurons[i].value;
+        layer->neurons[i].dedout = value - target[i];
 	    totalError += (target[i] - value);
     }
     return totalError;
@@ -133,7 +147,7 @@ void backPropagation(Network* net)
 }
 
 //stochastic gradient descent
-void gradientDescent(Network* net, double learningRate)
+void gradientDescent(Network* net, double learningRate, double lambda, size_t batchSize) // lambda is regularization param
 {
     size_t nbLayers = net->nbLayers;
     for(size_t i = 1; i < nbLayers; i++)
@@ -144,9 +158,38 @@ void gradientDescent(Network* net, double learningRate)
             Neuron* neuron = &layer->neurons[j];
             for(size_t k = 0; k < neuron->nbWeights; k++)
             {
-                neuron->weights[k] -= learningRate * neuron->dedout * neuron->doutdnet 
-                                    * neuron->dw[k];
+                neuron->weights[k] = neuron->weights[k] - learningRate * neuron->dedout * neuron->doutdnet 
+                                    * neuron->dw[k] - learningRate* lambda * neuron->weights[k];
             }
         }
     }
-}    
+}
+
+void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement)
+{
+    size_t nbOutput = net->sizeOutput;
+    
+    for(size_t i = 0; i < nbEpoch; i++)
+    {
+        for(size_t j = 0; j < batchSize; j++)
+        {
+            //choose random data, forward prop and label
+            int rndint = rand() % nbElement;
+            
+            double *data = malloc(net->sizeInput * sizeof(double));
+            data = picturetoarray("Dataset/rndint.bmp");
+
+            double *target = calloc(nbOutput, sizeof(double));
+            int label = rndint % nbOutput;
+            target[label] = 1.0;
+
+            forwardPropagation(&net, data, target);
+            backPropagation(&net);
+            
+        }
+        double learningRate = 0.5;
+        double regularizationParam = 0.5/nbElement;
+        
+        gradientDescent(&net, learningRate, regularizationParam, batchSize);
+    }
+}

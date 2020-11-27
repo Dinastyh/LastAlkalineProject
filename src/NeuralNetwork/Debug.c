@@ -77,6 +77,76 @@ void checkForwardPropagation(Network* net, double* input, double* target)
     //printLayerValues(net->layers[net->nbLayers-1]);
 }
 
+int forwardPropagationTest(Network* net, double* data)
+{
+    Layer* layer = &(net->layers[0]); //first layer
+
+    for(size_t i = 0; i < layer->nbNeurons; i++)
+    {
+	    layer->neurons[i].value = data[i];
+    }
+
+    for(size_t i = 1; i < net->nbLayers; i++)
+    {
+	    layer = &(net->layers[i]);
+	    for(size_t j = 0; j < layer->nbNeurons; j++)
+	    {
+            double sum = 0;
+            for(size_t k = 0; k<= net->layers[i-1].nbNeurons; k++)
+            {
+                if (k == 0)
+                    sum += layer->neurons[j].weights[k];
+                else
+                    sum += layer->neurons[j].weights[k] * net->layers[i-1].neurons[k-1].value;
+            }
+            layer->neurons[j].value = 1 / (1 + exp(-sum));
+	    }
+    }
+
+    int predictedResult = 0;
+    double max = 0;
+    layer = &(net->layers[net->nbLayers - 1]); //last layer
+
+    for(size_t i = 0; i < net->sizeOutput; i++)
+    {
+        if(layer->neurons[i].value > max)
+        {
+            max = layer->neurons[i].value;
+            predictedResult = i;
+        }
+    }
+
+    return predictedResult;
+}
+
+void TestNetwork(Network* net, char *directoryName, size_t nbElement)
+{
+    size_t nbSuccess = 0;
+    size_t nbFailure = 0;
+    int nbOutput = net->sizeOutput;
+    int predictedResult;
+    double *data = malloc(net->sizeInput * sizeof(double));
+
+    for(size_t i = 0; i < nbElement; i++)
+    {
+        data = picturetoArray("directoryName/i.bmp");
+        int label = i % nbOutput;
+
+        predictedResult = forwardPropagationTest(net, data);
+        if (predictedResult == label)
+        {
+            nbSuccess++;
+        }
+        else
+        {
+            nbFailure++;
+        }
+    }
+    printf("nbSuccess = %zu, nbFailure = %zu\n", nbSuccess, nbFailure);
+    double accuracy = (nbSuccess - nbFailure)/nbElement;
+    printf("Accuracy = %lf\n", accuracy);
+}
+
 #if 0
 Network demoWriteRead(int sizeInput, int sizeOutput, int nbHidden, int sizeHidden)
 {

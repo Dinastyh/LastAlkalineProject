@@ -95,22 +95,24 @@ void freeLayer(Layer* layer)
     }
 }
 
-double boxMuller() //box-muller for gaussian distribution (polar method).
+double drand()
 {
-    double u = ((double) rand() / (RAND_MAX)) * 2 - 1;
-    double v = ((double) rand() / (RAND_MAX)) * 2 - 1;
-    double r = u * u + v * v;
+    return (rand() /RAND_MAX);
+}
 
-    if (r == 0 || r > 1) 
-	    return boxMuller();
-    return u * sqrt(-2 * log(r) / r) / 3;
+double boxMuller() //random_normal mean 0 variance 1
+{
+    return sqrt(-2*log(drand())) * cos(2*M_PI*drand());
 }
 
 void initNeuron(Neuron* neuron)
 {
-    for(size_t i = 0; i < neuron->nbWeights; i++)
+    int nbWeigth = neuron->nbWeights;
+    
+    neuron->weights[0] = boxMuller();
+    for(size_t i = 1; i < nbWeigth; i++)
     {
-	    neuron->weights[i] = ((double) rand() / (RAND_MAX)) * 4 - 2;
+	    neuron->weights[i] = boxMuller() /sqrt(nbWeigth);
     }
 }
 
