@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include "Bmp24.h"
 #include "PreProcessPicture.h"
+
+int isPictureValid(const char *name)
+{
+		FILE *f = fopen(name, "r");
+		if(fgetc(f) != 'B' || fgetc(f) != 'M')
+			 return 0;
+		return 1;
+}
+
 Picture newPicture(const char *fileName,char *newFileName)
 {
 		Picture picture;
@@ -19,11 +28,17 @@ Picture newPicture(const char *fileName,char *newFileName)
 			{
 				data[i] = fgetc(file);
 			}
-		if (data[0] != 'B' || data[1] != 'M')
-			{
-				printf("wrong format");
-
-			}
+		if(isPictureValid(fileName) == 0)
+		{
+				picture.h = 0;
+				picture.w = 0;
+				picture.offset = 0;
+				picture.name = "";
+				picture.pixels = malloc(1);
+				picture.origine = picture.pixels;
+				picture.averageColor = 0;
+				return picture;
+		}
 		fseek(file, 2, SEEK_SET);
 		taille = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file)
 			+ 256 * 256 * 256 * fgetc(file);
@@ -46,7 +61,6 @@ Picture newPicture(const char *fileName,char *newFileName)
 			}
 		Pixel *pixels = malloc(sizeof(Pixel) * h * w);
 		fseek(file,54,SEEK_SET);
-		int i = 0;
 		for(int j = 0; j < h; j++)
 			{
 				for(int i = 0; i < w; i++)
@@ -72,7 +86,34 @@ Picture newPicture(const char *fileName,char *newFileName)
 		fclose(file);
 		return picture;
 }
-
+double* pictureToArray(char* name)
+{
+		double *r = malloc(sizeof(double) * 40 * 40);
+		short *inter = malloc(sizeof(short) * 40 * 40);
+		FILE *f = fopen(name, "rb");
+		int average = 0;
+		short intermed = 0;
+		fseek(f,54,SEEK_SET);
+		for(size_t i = 0; i < 40; i++)
+		{
+				for(size_t j = 0; j < 40; j++)
+				{
+						intermed = fgetc(f) + fgetc(f) + fgetc(f);
+						inter[i * 40 + j] = intermed;
+						average += intermed;
+				}
+		}
+		fclose(f);
+		average /= 1600;
+		for(size_t k = 0; k < 1600; k++)
+		{
+				r[k] = 0;
+				if(inter[k] < average)
+					 r[k] += 1;
+		}
+		free(inter);
+		return r;
+}
 void savePicture(Picture picture)
 {
 		FILE* file =fopen(picture.name,"wb+");
@@ -120,8 +161,6 @@ void savePicture(Picture picture)
 
 int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)
 {
-		int j = 0;
-
 		if(line == 1)
 			{
 				int *intermed = calloc(h, sizeof(int));
@@ -183,7 +222,6 @@ Tuple captureLine(Picture picture)
 		int height = 0;
 		int lines = 0;
 		int width = picture.w;
-		int color = 0;
 		int debut = 0;
 		int *intermed = browseImage(picture.w, picture.h, picture.pixels, picture.w, 1, 0);
 		for(int i = 0; i < picture.h; i++)
@@ -232,7 +270,6 @@ Tuple captureChar(Pixel* pixels,Block block,int w)
 		int height = block.h;
 		int lines = 0;
 		int width = 0;
-		int color = 0;
 		int debut = 0;
 		int *intermed = browseImage(block.w, block.h, pixels, w, 0, block.start);
 		for(int i = 0; i < block.w; i++)
@@ -281,7 +318,7 @@ Tuple captureBlock(Pixel* pixel, Block block)
 		int average =0;
 		int i = 0;
 		int l = 0;
-		int *intermed = browseImage(block.w, block.h, pixel, block.w, 0, block.start);
+		int *intermed = browseImage(block.w, height, pixel, block.w, 0, block.start);
 		for(int j = 0; j <block.w; j++)
 			{  
 				if(intermed[j] != 0)
