@@ -7,43 +7,38 @@
 #include "NeuralNetwork/Training.h"
 #include "NeuralNetwork/Debug.h"
 #include "NeuralNetwork/write_read_brain.h"
+#include "PictureUtils/Bmp24.h"
 
 int main()
 {
+    #if 0
     size_t sizeInput = 40 * 40;
     size_t sizeOutput = 66;
     
     Network net = newNetwork(sizeInput, 80, sizeOutput, 3);
-    initNetwork(&net);
-    printNetwork(&net);
-    writeNetwork(&net);
     
-    /*
+    initNetwork(&net);
+    writeNetwork(&net);
+    #endif
+
+    #if 1
     Network net = readNetwork("network.txt");
-    printNetwork(&net);
-    */
+    //printNetwork(&net);
+    #endif
 
-    /*
-    checkForwardPropagation(&net, input, target);
-    printLayerValues(net.layers[0]);
-    printLayerValues(net.layers[1]);
-    printLayerValues(net.layers[2]);
+    #if 0
+    size_t nbEpoch = 1000000;
+    size_t nbElement = 52536;
+    size_t batchSize = 1;
+    training(&net, nbEpoch, batchSize, nbElement);
+    writeNetwork(&net);
+    #endif
 
-    printf("\n");
-    backPropagation(&net);
+    #if 1
+    size_t nbTestElement = 52536;
 
-    printLayerDerivatives(net.layers[1]);
-    printLayerDerivatives(net.layers[2]);
-    */
-    double *data = malloc(sizeInput*sizeof(double));
-    double *target = calloc(sizeOutput * sizeof(double));
-
-    size_t nbEpoch = 100;
-
-   
-    checkForwardPropagation(&net, data, target);
-    printLayerValues(net.layers[2]);
-   
-
+    TestNetwork(&net, nbTestElement);
+    #endif
+    
     return 0;
 }

@@ -1,6 +1,8 @@
+#include <string.h>
 #include "Training.h"
 #include "Network.h"
-
+#include "../PictureUtils/Bmp24.h"
+#include "write_read_brain.h"
 
 double sigmoid(double n)
 {
@@ -158,8 +160,8 @@ void gradientDescent(Network* net, double learningRate, double lambda, size_t ba
             Neuron* neuron = &layer->neurons[j];
             for(size_t k = 0; k < neuron->nbWeights; k++)
             {
-                neuron->weights[k] = neuron->weights[k] - learningRate * neuron->dedout * neuron->doutdnet 
-                                    * neuron->dw[k] - learningRate* lambda * neuron->weights[k];
+                neuron->weights[k] = (neuron->weights[k] - learningRate * neuron->dedout * neuron->doutdnet 
+                                    * neuron->dw[k] - learningRate* lambda * neuron->weights[k])/batchSize;
             }
         }
     }
@@ -168,28 +170,41 @@ void gradientDescent(Network* net, double learningRate, double lambda, size_t ba
 void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement)
 {
     size_t nbOutput = net->sizeOutput;
-    
+    double *data = malloc(net->sizeInput * sizeof(double));
+
     for(size_t i = 0; i < nbEpoch; i++)
     {
+        if(i % 5000 == 0)
+            printf("Epoch %ld\n", i);
+        if(i % 52536 == 0)
+                writeNetwork(net);
         for(size_t j = 0; j < batchSize; j++)
         {
             //choose random data, forward prop and label
-            int rndint = rand() % nbElement;
-            
-            double *data = malloc(net->sizeInput * sizeof(double));
-            data = picturetoarray("Dataset/rndint.bmp");
+            //int rndint = rand() % nbElement;
+            size_t iterator = i % nbElement;
+
+            char filenameStart[30] = "dataset/";
+            char id[10];
+            sprintf(id, "%zu", iterator);
+            strcat(filenameStart, id);
+            strcat(filenameStart, ".bmp");
+            //printf("filename %s\n", filenameStart);
+
+            pictureToArray(data, filenameStart);
 
             double *target = calloc(nbOutput, sizeof(double));
-            int label = rndint % nbOutput;
+            int label = iterator % nbOutput;
             target[label] = 1.0;
 
-            forwardPropagation(&net, data, target);
-            backPropagation(&net);
-            
+            forwardPropagation(net, data, target);
+            backPropagation(net);
+            free(target);
         }
-        double learningRate = 0.5;
-        double regularizationParam = 0.5/nbElement;
+        double learningRate = 1;
+        double regularizationParam = 0; // 1/(10 * nbElement);
         
-        gradientDescent(&net, learningRate, regularizationParam, batchSize);
+        gradientDescent(net, learningRate, regularizationParam, batchSize);
     }
+    free(data);
 }

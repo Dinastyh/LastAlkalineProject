@@ -12,3 +12,4 @@ src/save/
 
 # Clion
 .idea
+.vscode/

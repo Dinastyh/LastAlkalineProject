@@ -7,13 +7,8 @@ PIC = /PictureUtils
 
 all : $(EXEC)
 
-<<<<<<< HEAD
-$(EXEC) : $(OBJ)/Main.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Network.o $(OBJ)/Training.o
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Network.o $(OBJ)/Training.o -lm
-=======
-$(EXEC) : $(OBJ)/Main.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Bmp24.o $(OBJ)/DisplayPicture.o $(OBJ)/PreProcessPicture
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Brain.o $(OBJ)/Neuron.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Bmp24.o $(OBJ)/DisplayPicture.o $(OBJ)/PreProcessPicture.o -lm `sdl2-config --libs --cflags`
->>>>>>> Picture
+$(EXEC) : $(OBJ)/Main.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Network.o $(OBJ)/Training.o $(OBJ)/Bmp24.o $(OBJ)/PreProcessPicture.o $(OBJ)/DisplayPicture.o
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Network.o $(OBJ)/Training.o $(OBJ)/Bmp24.o $(OBJ)/PreProcessPicture.o $(OBJ)/DisplayPicture.o -lm `sdl2-config --libs --cflags`
 
 $(OBJ)/Main.o : $(SRC)/Main.c
 	$(CC) $(CFLAGS) -o $(OBJ)/Main.o -c $(SRC)/Main.c
@@ -27,16 +22,17 @@ $(OBJ)/Debug.o : $(SRC)/NeuralNetwork/Debug.c
 $(OBJ)/write_read_brain.o : $(SRC)/NeuralNetwork/write_read_brain.c
 	$(CC) $(CFLAGS) -o $(OBJ)/write_read_brain.o -c $(SRC)/NeuralNetwork/write_read_brain.c
 
-<<<<<<< HEAD
 $(OBJ)/Training.o : $(SRC)/NeuralNetwork/Training.c
 	$(CC) $(CFLAGS) -o $(OBJ)/Training.o -c $(SRC)/NeuralNetwork/Training.c
-=======
+
 $(OBJ)/Bmp24.o : $(SRC)$(PIC)/bmp24.c
-	$(CC) -o $(OBJ)/Bmp24.o -c $(SRC)$(PIC)/bmp24.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Bmp24.o -c $(SRC)$(PIC)/bmp24.c
 
 $(OBJ)/PreProcessPicture.o : $(SRC)$(PIC)/PreProcessPicture.c
-	$(CC) -o $(OBJ)/PreProcessPicture.o -c $(SRC)$(PIC)/PreProcessPicture.c
->>>>>>> Picture
+	$(CC) $(CFLAGS) -o $(OBJ)/PreProcessPicture.o -c $(SRC)$(PIC)/PreProcessPicture.c
+
+$(OBJ)/DisplayPicture.o : $(SRC)$(PIC)/DisplayPicture.c
+	$(CC) $(CFLAGS) -o $(OBJ)/DisplayPicture.o -c $(SRC)$(PIC)/DisplayPicture.c
 
 clearOBJ :
 	rm -r $(OBJ)/*.o

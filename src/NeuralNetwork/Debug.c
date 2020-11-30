@@ -1,6 +1,8 @@
+#include <string.h>
 #include "Debug.h"
 #include "write_read_brain.h"
 #include "Training.h"
+#include "../PictureUtils/Bmp24.h"
 
 void printLayerWeigths(Layer layer)
 {
@@ -62,7 +64,7 @@ void print_vector(int size, double* data)
 {
     for(int i = 0; i< size; i++)
     {
-	    printf("Data[%d] = %lf\n",i,data[i]);
+	    printf("Data[%d] = %lf", i, data[i]);
     }
 }
 
@@ -109,28 +111,40 @@ int forwardPropagationTest(Network* net, double* data)
 
     for(size_t i = 0; i < net->sizeOutput; i++)
     {
+        //printf("last layer values %lf ",layer->neurons[i].value);
         if(layer->neurons[i].value > max)
         {
             max = layer->neurons[i].value;
             predictedResult = i;
         }
     }
-
+    printf("\n");
     return predictedResult;
 }
 
-void TestNetwork(Network* net, char *directoryName, size_t nbElement)
+void TestNetwork(Network* net, size_t nbElement)
 {
-    size_t nbSuccess = 0;
-    size_t nbFailure = 0;
+    double nbSuccess = 0;
+    double nbFailure = 0;
     int nbOutput = net->sizeOutput;
     int predictedResult;
     double *data = malloc(net->sizeInput * sizeof(double));
-
+    size_t offset = 0; //264;
     for(size_t i = 0; i < nbElement; i++)
     {
-        data = picturetoArray("directoryName/i.bmp");
+
+        char filename[100] = "dataset/";
+        char id[10];
+        sprintf(id, "%ld", i + offset);
+        //printf("id : %s\n", id);
+        strcat(filename, id);
+        strcat(filename, ".bmp");
+        //printf("filename : %s\n", filename);
+
+        pictureToArray(data, filename);
         int label = i % nbOutput;
+
+        
 
         predictedResult = forwardPropagationTest(net, data);
         if (predictedResult == label)
@@ -142,8 +156,8 @@ void TestNetwork(Network* net, char *directoryName, size_t nbElement)
             nbFailure++;
         }
     }
-    printf("nbSuccess = %zu, nbFailure = %zu\n", nbSuccess, nbFailure);
-    double accuracy = (nbSuccess - nbFailure)/nbElement;
+    printf("nbSuccess = %lf, nbFailure = %lf\n", nbSuccess, nbFailure);
+    double accuracy = (nbElement - nbFailure)/nbElement;
     printf("Accuracy = %lf\n", accuracy);
 }
 

@@ -97,7 +97,7 @@ void freeLayer(Layer* layer)
 
 double drand()
 {
-    return (rand() /RAND_MAX);
+    return (double)rand()/RAND_MAX;
 }
 
 double boxMuller() //random_normal mean 0 variance 1
@@ -107,7 +107,7 @@ double boxMuller() //random_normal mean 0 variance 1
 
 void initNeuron(Neuron* neuron)
 {
-    int nbWeigth = neuron->nbWeights;
+    size_t nbWeigth = neuron->nbWeights;
     
     neuron->weights[0] = boxMuller();
     for(size_t i = 1; i < nbWeigth; i++)
@@ -118,7 +118,7 @@ void initNeuron(Neuron* neuron)
 
 void initNetwork(Network* net)
 {
-    srand ( time(NULL) );
+    srand (time(NULL));
     for(size_t i = 0; i < net->nbLayers; i++)
     {
         Layer* layer = &net->layers[i];
