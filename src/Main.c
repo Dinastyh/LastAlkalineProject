@@ -5,12 +5,12 @@
 #include "Ui/Ui.h"
 #include <stdbool.h>
 #include "Managers/Manager.h"
-#define bool unsigned int
+#define NUMBERPRO 4
 static gchar* file = NULL;
-static gchar* txt;
+static gchar* txt = NULL;
 static GtkWidget* displayCenter;
-static bool status[] = {0, 0, 0, 0};
-static size_t sizetProcessing = 4;
+static bool status[] = {false, false, false, false};
+static gchar* nameProcessing[]= {"test", "test2","test3", "test4"};
 //Funtion
 void onDestroy(GtkWidget *pWidget, gpointer pData);
 void onExecute(GtkWidget *pWidget, gpointer pData);
@@ -18,7 +18,7 @@ void onSelect(GtkWidget *pWidget, gpointer pData);
 void onSave(GtkWidget *pWidget, gpointer pData);
 void takeFolder(GtkWidget *button, GtkWidget* fileSelection);
 void onProcessing(GtkWidget *pWidget, gpointer pData);
-void onCheckPro(GtkCellRendererToggle* cell, gchar* arg1, gpointer data);
+void onCheckPro(GtkWidget* button, gpointer data);
 void setFile(gchar* path);
 gchar* getFile();
 void setTxt(gchar* text);
@@ -37,7 +37,7 @@ int main(int argc,char** argv)
     GtkTreeViewColumn *pColumn;
     GtkWidget *pListView;
     gtk_init(&argc, &argv);
-    char* nameProcessing[]= {"test", "test2","test3", "test4"};
+    GtkWidget* proBtns[]={NULL, NULL, NULL, NULL};
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -51,54 +51,38 @@ int main(int argc,char** argv)
     saveBtn = gtk_button_new_with_label("Save");
     processingBtn = gtk_button_new_with_label("Processing");
 
-    g_signal_connect(G_OBJECT(exeBtn), "released", G_CALLBACK(onExecute), NULL);
-    g_signal_connect(G_OBJECT(selectBtn), "released", G_CALLBACK(onSelect), NULL);
-    g_signal_connect(G_OBJECT(saveBtn), "released", G_CALLBACK(onSave), NULL);
-    g_signal_connect(G_OBJECT(processingBtn),"released", G_CALLBACK(onProcessing), NULL);
-    
-
-    //Define Store
-    processingStore = gtk_list_store_new(2,G_TYPE_STRING ,G_TYPE_BOOLEAN);
-    pListView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(processingStore));
-
-    //Adding first Column to the view
-    pCellRenderer = gtk_cell_renderer_text_new();
-    pColumn = gtk_tree_view_column_new_with_attributes("Processing", pCellRenderer,"text",0, NULL);
-    gtk_tree_view_column_set_sort_column_id(pColumn,0);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(pListView), pColumn);
-    //Adding second column to the view
-    pCellRenderer = gtk_cell_renderer_toggle_new();
-    
-    pColumn = gtk_tree_view_column_new_with_attributes(
-        "Check", pCellRenderer,
-        "active", 1,
-        NULL);
-    gtk_tree_view_column_set_sort_column_id(pColumn,0);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(pListView), pColumn);
-    //Adding element in store
-    for(size_t i= 0;i<sizetProcessing; i++) 
-    {
-        GtkTreeIter pIter;
-        //char* name= nameProcessing[i];
-        gtk_list_store_append(processingStore, &pIter);
-        gtk_list_store_set(processingStore, &pIter,0 ,nameProcessing[i],1,FALSE, -1);
-    }
-    g_signal_connect(G_OBJECT(pCellRenderer), "toggled", G_CALLBACK(onCheckPro), pListView);
     //Define box's
     GtkWidget* toolsBarre = gtk_hbox_new(FALSE, 0);
     GtkWidget* center = gtk_hbox_new(FALSE,0);
     GtkWidget* container = gtk_vbox_new(FALSE,0);
-    displayCenter = gtk_vbox_new(FALSE,0);
+    GtkWidget* processingBarre = gtk_vbox_new(FALSE,0);
+    displayCenter = gtk_vbox_new(FALSE,0); 
+
+    //Connect tool's barre
+    g_signal_connect(G_OBJECT(exeBtn), "released", G_CALLBACK(onExecute), NULL);
+    g_signal_connect(G_OBJECT(selectBtn), "released", G_CALLBACK(onSelect), NULL);
+    g_signal_connect(G_OBJECT(saveBtn), "released", G_CALLBACK(onSave), NULL);
+    g_signal_connect(G_OBJECT(processingBtn),"released", G_CALLBACK(onProcessing), NULL);
+
     //Add button on toolsBarre
     gtk_box_pack_start(GTK_BOX(toolsBarre), selectBtn, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(toolsBarre), exeBtn, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(toolsBarre), saveBtn, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(toolsBarre), processingBtn, FALSE, FALSE, 0);
+
+    //Define butons + connect to callback
+    for(int i = NUMBERPRO-1; i> -1; i--)
+    {
+        proBtns[i] = gtk_check_button_new_with_label(nameProcessing[i]);
+        g_signal_connect(G_OBJECT(proBtns[i]), "released", G_CALLBACK(onCheckPro), NULL);
+        gtk_box_pack_start(GTK_BOX(processingBarre), proBtns[i], FALSE, FALSE, 0);
+    }
+
+    //Add box in container
     gtk_box_pack_start(GTK_BOX(container), toolsBarre, FALSE, FALSE, 0);
-    
-    gtk_box_pack_start(GTK_BOX(center), displayCenter, FALSE, FALSE,0);
-    gtk_box_pack_start(GTK_BOX(center), pListView, FALSE, FALSE,0);
-    gtk_box_pack_start(GTK_BOX(container), center, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(center), processingBarre, FALSE, FALSE,0);
+    gtk_box_pack_start(GTK_BOX(center), displayCenter, TRUE, TRUE,0);
+    gtk_box_pack_start(GTK_BOX(container), center, TRUE, TRUE, 0);
 
     //Add on Window
     gtk_container_add(GTK_CONTAINER(window), container);
@@ -141,6 +125,7 @@ void takeFolder(GtkWidget* button, GtkWidget* fileSelection)
         gtk_widget_destroy(fileSelection);
         return;
     }
+    gtk_widget_destroy(fileSelection);
     displayPictureGTK(displayCenter, path);
 }
 
@@ -156,24 +141,53 @@ void onProcessing(GtkWidget *pWidget, gpointer pData)
         gtk_widget_destroy(window);
         return;
     }
-    preview(getFile(), status, sizetProcessing);
+    preview(getFile(), status, NUMBERPRO);
 
 }
 void onSave(GtkWidget *pWidget, gpointer pData)
 {
-    exit(EXIT_SUCCESS);
+    if(getTxt()==NULL)
+    {
+        GtkWidget* dialog;
+        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "You must run the texe detection before save it");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        gtk_widget_destroy(window);
+        return;
+    }
+    FILE* saveFile = fopen("out.lap", "w");
+    if(saveFile != NULL)
+    {
+        fputs(getTxt(), saveFile);
+        fclose(saveFile);
+    }
+    else
+    {
+        GtkWidget* dialog;
+        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "File can't be save, please check if you have the permission to to it");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        gtk_widget_destroy(window);
+        return;
+    }
+
 }
 
-void onCheckPro(GtkCellRendererToggle* cell, gchar* arg1, gpointer data)
+void onCheckPro(GtkWidget* button, gpointer data)
 {
-    gboolean *val;
-    GtkTreeIter* iter;
-    GtkTreeModel *model;
-    model = gtk_tree_view_get_model(GTK_TREE_VIEW(data));
-    if(gtk_tree_model_get_iter(model, iter, arg1)==false)
-        return;
-    gtk_tree_model_get(model, iter, 1, val, -1);
-    gtk_list_store_set(GTK_LIST_STORE(model), iter, 1, !*val, -1);
+    size_t index = 0;
+    gchar* name = gtk_button_get_label(GTK_BUTTON(button));
+    for(size_t i =0; i<NUMBERPRO; i++)
+    {
+        if(name == nameProcessing[i])
+        {
+            index = i;
+            break;
+        }
+    }
+    status[index] = !status[index];
 }
 
 void setFile(gchar* path)
