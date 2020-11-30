@@ -86,9 +86,8 @@ Picture newPicture(const char *fileName,char *newFileName)
 		fclose(file);
 		return picture;
 }
-double* pictureToArray(char* name)
+void pictureToArray(double *data, char* name)
 {
-		double *r = malloc(sizeof(double) * 40 * 40);
 		short *inter = malloc(sizeof(short) * 40 * 40);
 		FILE *f = fopen(name, "rb");
 		int average = 0;
@@ -107,13 +106,13 @@ double* pictureToArray(char* name)
 		average /= 1600;
 		for(size_t k = 0; k < 1600; k++)
 		{
-				r[k] = 0;
+				data[k] = 0;
 				if(inter[k] < average)
-					 r[k] += 1;
+					 data[k] += 1;
 		}
 		free(inter);
-		return r;
 }
+
 void savePicture(Picture picture)
 {
 		FILE* file =fopen(picture.name,"wb+");

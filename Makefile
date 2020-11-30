@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -pedantic -g
 EXEC = LastAlkalineProject

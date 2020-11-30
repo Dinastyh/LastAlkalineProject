@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "PreProcessPicture.h"
 #include <math.h>
-#include "Bmp24.h"
+#include "PreProcessPicture.h"
 
 
 void blackAndWhite(Picture picture)
