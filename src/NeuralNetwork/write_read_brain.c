@@ -1,5 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "write_read_brain.h"
+#include "../PictureUtils/Bmp24.h"
+#include "Debug.h"
 
 void writeNetwork(Network* net)
 {
@@ -82,5 +84,48 @@ Network readNetwork(char* netName)
         exit(1);
     }
     return net;
+}
+
+char charFromImage(Network* net, char* filename)
+{
+    char c;
+    double *data = malloc(net->sizeInput * sizeof(double));
+    pictureToArray(data, filename);
+
+    int result = forwardPropagationTest(net, data);
+    if(result >= 4 && result <= 13)
+    {
+        c = result + 44; // '0' - 4
+    }
+    else if(result >= 14 && result <= 39)
+    {
+        c = result + 51;
+    }
+    else if(result >= 40 && result <= 65)
+    {
+        c = result + 57;
+    }
+    else
+    {
+        switch (result)
+        {
+        case 0:
+            c = '!';
+            break;
+        case 1:
+            c = '.';
+            break;
+        case 2:
+            c = ':';
+            break;
+        case 3:
+            c = '?';
+            break;
+        default:
+            c = '/'; //error if c is /
+            break;
+        }
+    }
+    return c;
 }
 

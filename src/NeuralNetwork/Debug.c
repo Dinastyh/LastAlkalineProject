@@ -118,7 +118,7 @@ int forwardPropagationTest(Network* net, double* data)
             predictedResult = i;
         }
     }
-    printf("\n");
+    //printf("\n");
     return predictedResult;
 }
 
@@ -130,21 +130,27 @@ void TestNetwork(Network* net, size_t nbElement)
     int predictedResult;
     double *data = malloc(net->sizeInput * sizeof(double));
     size_t offset = 0; //264;
+
     for(size_t i = 0; i < nbElement; i++)
     {
+        FILE *source, *target;
+        int sourceLength;
 
-        char filename[100] = "dataset/";
+        char filename[200] = "datasetNoRotationNoOffset/";
+        char failname[100] = "failures/";
         char id[10];
         sprintf(id, "%ld", i + offset);
         //printf("id : %s\n", id);
         strcat(filename, id);
+        strcat(failname, id);
         strcat(filename, ".bmp");
-        //printf("filename : %s\n", filename);
+        strcat(failname, ".bmp");
+
+        if((i+offset) % 500 == 0)
+            printf("filename : %s\n", filename);
 
         pictureToArray(data, filename);
         int label = i % nbOutput;
-
-        
 
         predictedResult = forwardPropagationTest(net, data);
         if (predictedResult == label)
@@ -154,6 +160,21 @@ void TestNetwork(Network* net, size_t nbElement)
         else
         {
             nbFailure++;
+            source = fopen(filename, "rb");
+
+            fseek(source, 0, SEEK_END);
+            sourceLength = ftell(source);
+
+            fseek(source, 0, SEEK_SET);
+            target = fopen(failname, "wb"); 
+
+            for(int j = 0; j < sourceLength; j++)
+            {
+                fputc(fgetc(source), target);
+            }
+
+            fclose(source);
+            fclose(target);
         }
     }
     printf("nbSuccess = %lf, nbFailure = %lf\n", nbSuccess, nbFailure);
