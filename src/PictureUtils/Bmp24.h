@@ -32,6 +32,13 @@ struct Tuple
 };
 typedef struct Tuple Tuple;
 
+struct Data
+{
+		void *thing;
+		int length;
+};
+typedef struct Data Data;
+
 int isPictureValid(const char *name);
 Picture newPicture(const char *fileName, char *fileNameNew);
 void pictureToArray(double* data, char* filename);

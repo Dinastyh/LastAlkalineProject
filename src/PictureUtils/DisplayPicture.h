@@ -5,5 +5,5 @@
 void displayPicture(char *filename);
 void waitKeyPressed();
 void displaySegmentationPicture(char *filename);
-double**** createData(Picture *p);
+Data createData(Picture *p);
 #endif

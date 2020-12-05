@@ -76,23 +76,31 @@ void displaySegmentationPicture(char* filename)
 			}
 }
 
-double**** createData(Picture *p)
+Data createData(Picture *p)
 {
 		Tuple tpline = captureLine(p);
-		double**** data = malloc(sizeof(double*) * tpline.length);
-		for(int i = 0; i < tpline.length; i++)
+		Data* dataLines = malloc(sizeof(Data) * tpline.length);
+		Data data;
+		data.length = tpline.length;
+		for(int i = tpline.length - 1; i > -1; i--)
 		{
 				Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
-				double*** lines = malloc(sizeof(double*) * tpword.length);
+				Data* lines = malloc(sizeof(Data) * tpword.length);
+				Data line;
+				line.length = tpword.length;
 				for(int j = 0; j < tpword.length; j++)
 				{
 						Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
-						double** words = malloc(sizeof(double*) * tpchar.length);
+						Data* words = malloc(sizeof(Data) * tpchar.length);
+						Data word;
+						word.length = tpchar.length;
 						for(int k = 0; k < tpchar.length; k++)
 						{
 								Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
 								oneChar.pixels = resize(oneChar.pixels, oneChar.w, oneChar.h, 40, 40);
 								double* pixChar = malloc(sizeof(double) * 1600);
+								Data charactere;
+								charactere.length = 1600;
 								for(int m = 0; m < 1600; m++)
 								{
 										if(oneChar.pixels[m].r == 0)
@@ -104,11 +112,15 @@ double**** createData(Picture *p)
 												pixChar[m] = 0;
 										}
 								}
-								words[k] = pixChar;
+								charactere.thing = (double*)pixChar;
+								words[k] = charactere;
 						}
-						lines[j] = words;
+						word.thing = (Data*)words;
+						lines[j] = word;
 				}
-				data[i] = lines;
+				line.thing = (Data*)lines;
+				dataLines[tpline.length - i - 1] = line;
 		}
+		data.thing = (Data*)dataLines;
 		return data;
 }
