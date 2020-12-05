@@ -127,4 +127,5 @@ void initNetwork(Network* net)
             initNeuron(&(layer->neurons[j]));
         }
     }
+    printf("Init done\n");
 }

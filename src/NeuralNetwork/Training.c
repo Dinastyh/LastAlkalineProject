@@ -167,7 +167,7 @@ void gradientDescent(Network* net, double learningRate, double lambda, size_t ba
     }
 }
 
-void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement)
+void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement, double learningRate)
 {
     size_t nbOutput = net->sizeOutput;
     double *data = malloc(net->sizeInput * sizeof(double));
@@ -176,7 +176,7 @@ void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement)
     {
         if(i % 5000 == 0)
             printf("Epoch %ld\n", i);
-        if(i % 52536 == 0)
+        if(i % 50000 == 0)
                 writeNetwork(net);
         for(size_t j = 0; j < batchSize; j++)
         {
@@ -184,7 +184,7 @@ void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement)
             //int rndint = rand() % nbElement;
             size_t iterator = i % nbElement;
 
-            char filenameStart[30] = "dataset/";
+            char filenameStart[100] = "datasetNoRotationNoOffset/";
             char id[10];
             sprintf(id, "%zu", iterator);
             strcat(filenameStart, id);
@@ -201,9 +201,8 @@ void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement)
             backPropagation(net);
             free(target);
         }
-        double learningRate = 1;
-        double regularizationParam = 0; // 1/(10 * nbElement);
         
+        double regularizationParam = 1/100; // tried 1/1k
         gradientDescent(net, learningRate, regularizationParam, batchSize);
     }
     free(data);

@@ -4,5 +4,5 @@
 
 void writeNetwork(Network* net);
 Network readNetwork(char* netName);
-
+char charFromImage(Network* net, char* filename);
 #endif
