@@ -113,13 +113,13 @@ void pictureToArray(double *data, char* name)
 		free(inter);
 }
 
-void savePicture(Picture picture)
+void savePicture(Picture *picture)
 {
-		FILE* file =fopen(picture.name,"wb+");
+		FILE* file =fopen(picture->name,"wb+");
 		char *offset = "";
-		int w = picture.w;
-		int h = picture.h;
-		switch(picture.offset)
+		int w = picture->w;
+		int h = picture->h;
+		switch(picture->offset)
 			{
 				case 0:
 						offset = "";
@@ -137,16 +137,16 @@ void savePicture(Picture picture)
 
 		for(int i = 0; i<54; i++)
 			{
-				fputc(picture.head[i],file);
+				fputc(picture->head[i],file);
 			}
 
 		for(int j = 0; j < h; j++)
 			{
 				for(int i = 0; i < w; i++)
 					{	
-						fputc(picture.pixels[i + j * w].b,file);
-						fputc(picture.pixels[i + j * w].g,file);
-						fputc(picture.pixels[i + j * w].r,file);
+						fputc(picture->pixels[i + j * w].b,file);
+						fputc(picture->pixels[i + j * w].g,file);
+						fputc(picture->pixels[i + j * w].r,file);
 						if(i == w - 1)
 							{
 								fputs(offset, file);
@@ -154,7 +154,7 @@ void savePicture(Picture picture)
 					}
 			}
 		//		free(picture.origine);
-		free(picture.head);
+		free(picture->head);
 		fclose(file);
 }
 
@@ -215,15 +215,15 @@ char* changeDimensionHead(char* head,int h, int w,int offset)
 }
 
 
-Tuple captureLine(Picture picture)
+Tuple captureLine(Picture *picture)
 {
-		Block *pics = malloc(sizeof(Block) *  picture.h);
+		Block *pics = malloc(sizeof(Block) *  picture->h);
 		int height = 0;
 		int lines = 0;
-		int width = picture.w;
+		int width = picture->w;
 		int debut = 0;
-		int *intermed = browseImage(picture.w, picture.h, picture.pixels, picture.w, 1, 0);
-		for(int i = 0; i < picture.h; i++)
+		int *intermed = browseImage(picture->w, picture->h, picture->pixels, picture->w, 1, 0);
+		for(int i = 0; i < picture->h; i++)
 			{
 				if(intermed[i] != 0 && debut == 0)
 					{
@@ -231,7 +231,7 @@ Tuple captureLine(Picture picture)
 						height = i;
 
 					}
-				if(debut != 0 && (intermed[i] == 0 || i == picture.h - 1))
+				if(debut != 0 && (intermed[i] == 0 || i == picture->h - 1))
 					{
 						Block line;
 						line.w = width;
@@ -263,22 +263,22 @@ Pixel* myPixel (Pixel* pic, int h , int w,int startw,int width)
 }
 
 
-Tuple captureChar(Pixel* pixels,Block block,int w)
+Tuple captureChar(Pixel* pixels,Block *block,int w)
 {
-		Block *pics = malloc(sizeof(Block) *  block.w);
-		int height = block.h;
+		Block *pics = malloc(sizeof(Block) *  block->w);
+		int height = block->h;
 		int lines = 0;
 		int width = 0;
 		int debut = 0;
-		int *intermed = browseImage(block.w, block.h, pixels, w, 0, block.start);
-		for(int i = 0; i < block.w; i++)
+		int *intermed = browseImage(block->w, block->h, pixels, w, 0, block->start);
+		for(int i = 0; i < block->w; i++)
 			{
 				if(intermed[i] != 0 && debut == 0)
 					{
-						debut = i + block.start;
+						debut = i + block->start;
 						width = i;
 					}
-				if(debut != 0 && (intermed[i] == 0 || i == block.w - 1))
+				if(debut != 0 && (intermed[i] == 0 || i == block->w - 1))
 					{
 						Block line;
 						line.w = i - width;
@@ -290,26 +290,26 @@ Tuple captureChar(Pixel* pixels,Block block,int w)
 					}
 			}
 		Tuple tuple;
-		tuple.block = pics;
+		tuple.block= pics;
 		tuple.length = lines;
 		return tuple;
 }
 
-Picture blockToPicture(Block block,Picture pic)
+Picture blockToPicture(Block *block,Picture *pic)
 {
 		Picture result;
-		result.name = pic.name;
-		result.h = block.h;
-		result.w = block.w;
-		result.offset = (4-((block.w*3)%4))%4;
-		result.pixels = myPixel(pic.pixels, block.h,block.w, block.start, pic.w);
-		result.head =  changeDimensionHead(pic.head,block.h, block.w,result.offset);
+		result.name = pic->name;
+		result.h = block->h;
+		result.w = block->w;
+		result.offset = (4-((block->w*3)%4))%4;
+		result.pixels = myPixel(pic->pixels, block->h,block->w, block->start, pic->w);
+		result.head =  changeDimensionHead(pic->head,block->h, block->w,result.offset);
 		return result;
 }
-Tuple captureBlock(Pixel* pixel, Block block)
+Tuple captureBlock(Pixel* pixel, Block *block)
 {
-		Block* blocks = malloc(sizeof(Block)*block.w);
-		int height = block.h;
+		Block* bck = malloc(sizeof(Block)*block->w);
+		int height = block->h;
 		int lines = 0;
 		int width = 0;
 		int color = 0;
@@ -317,8 +317,8 @@ Tuple captureBlock(Pixel* pixel, Block block)
 		int average =0;
 		int i = 0;
 		int l = 0;
-		int *intermed = browseImage(block.w, height, pixel, block.w, 0, block.start);
-		for(int j = 0; j <block.w; j++)
+		int *intermed = browseImage(block->w, height, pixel, block->w, 0, block->start);
+		for(int j = 0; j <block->w; j++)
 			{  
 				if(intermed[j] != 0)
 					{
@@ -337,7 +337,7 @@ Tuple captureBlock(Pixel* pixel, Block block)
 			}
 		average = (int)(((float)average/(float)i)+0.5);
 		color =0;
-		for (int j = 0; j<block.w; j++)
+		for (int j = 0; j<block->w; j++)
 			{
 				if(intermed[j] != 0)
 					{
@@ -355,10 +355,10 @@ Tuple captureBlock(Pixel* pixel, Block block)
 							{
 								Block word;
 								word.w = width;
-								word.h = block.h;
-								word.start = debut + block.start;
+								word.h = block->h;
+								word.start = debut + block->start;
 								width = 0;
-								blocks[lines++] = word;
+								bck[lines++] = word;
 								color = 0;
 							}
 						else
@@ -372,13 +372,13 @@ Tuple captureBlock(Pixel* pixel, Block block)
 			{
 				Block word;
 				word.w = width;
-				word.h = block.h;
-				word.start = debut + block.start;
+				word.h = block->h;
+				word.start = debut + block->start;
 				width = 0;
-				blocks[lines++] = word;
+				bck[lines++] = word;
 			}
 		Tuple tuple;
-		tuple.block = blocks;
+		tuple.block= bck;
 		tuple.length = lines;
 		return tuple;
 }

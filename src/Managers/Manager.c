@@ -14,7 +14,7 @@ void preview(const char* path, unsigned int status[], size_t len)
 {
     Picture picture = newPicture(path, "tmp.bmp");
     //Faut rajouter tous les pretraitement ici
-    savePicture(picture);
+    savePicture(&picture);
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Preview"); 
     char* newPath = malloc(100*sizeof(char));
