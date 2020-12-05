@@ -52,3 +52,15 @@ void onExit(GtkWidget* button, gpointer data)
     g_list_free(children);
     gtk_widget_destroy(window);
 }
+
+//char* managerExec(const char* path)
+//{
+//    Picture picture = newPicture(path, "tmpi.bmp");
+//    Network net = readNetwork(network096Regu.txt);
+//    double** data  = NULL;
+//    size_t = 
+        
+//    freeNetwork(&net);
+//}
+
+
