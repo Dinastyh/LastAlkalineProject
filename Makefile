@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic -g
+CFLAGS = -Wall -Wextra -pedantic -g
 EXEC = LastAlkalineProject
 OBJ = obj
 SRC = src
@@ -8,32 +7,26 @@ PIC = /PictureUtils
 
 all : $(EXEC)
 
-$(EXEC) : $(OBJ)/Main.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Bmp24.o $(OBJ)/DisplayPicture.o $(OBJ)/PreProcessPicture $(OBJ)/Network.c $(OBJ)/Training.o
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Network.o $(OBJ)/Neuron.o $(OBJ)/Debug.o $(OBJ)/write_read_brain.o $(OBJ)/Bmp24.o $(OBJ)/Training.o $(OBJ)/DisplayPicture.o $(OBJ)/PreProcessPicture.o -lm `sdl2-config --libs --cflags`
+$(EXEC) : $(OBJ)/Main.o $(OBJ)/Ui.o $(OBJ)/Manager.o $(OBJ)/Bmp24.o $(OBJ)/DisplayPicture.o $(OBJ)/PreProcessPicture.o
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)/Main.o $(OBJ)/Ui.o $(OBJ)/Manager.o $(OBJ)/Bmp24.o $(OBJ)/DisplayPicture.o $(OBJ)/PreProcessPicture.o `pkg-config --cflags --libs gtk+-2.0` -lm `sdl2-config --libs --cflags`
 
 $(OBJ)/Main.o : $(SRC)/Main.c
-	$(CC) $(CFLAGS) -o $(OBJ)/Main.o -c $(SRC)/Main.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Main.o -c $(SRC)/Main.c `pkg-config --cflags --libs gtk+-2.0`
 
-$(OBJ)/write_read_brain.o : $(SRC)/NeuralNetwork/write_read_brain.c
-    $(CC) $(CFLAGS) -o $(OBJ)/write_read_brain.o -c $(SRC)/NeuralNetwork/write_read_brain.c
+$(OBJ)/Ui.o : $(SRC)/Ui/Ui.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Ui.o -c $(SRC)/Ui/Ui.c `pkg-config --cflags --libs gtk+-2.0`
 
-$(OBJ)/Network.o : $(SRC)/NeuralNetwork/Network.c
-	$(CC) $(CFLAGS) -o $(OBJ)/Network.o -c $(SRC)/NeuralNetwork/Network.c
+$(OBJ)/Manager.o : $(SRC)/Managers/Manager.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Manager.o -c $(SRC)/Managers/Manager.c `pkg-config --cflags --libs gtk+-2.0`
 
-$(OBJ)/Debug.o : $(SRC)/NeuralNetwork/Debug.c
-	$(CC) $(CFLAGS) -o $(OBJ)/Debug.o -c $(SRC)/NeuralNetwork/Debug.c
+$(OBJ)/Bmp24.o : $(SRC)$(PIC)/Bmp24.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Bmp24.o -c $(SRC)$(PIC)/Bmp24.c -lm `sdl2-config --libs --cflags`
 
-$(OBJ)/write_read_brain.o : $(SRC)/NeuralNetwork/write_read_brain.c
-	$(CC) $(CFLAGS) -o $(OBJ)/write_read_brain.o -c $(SRC)/NeuralNetwork/write_read_brain.c
-
-$(OBJ)/Bmp24.o : $(SRC)$(PIC)/bmp24.c
-	$(CC) -o $(OBJ)/Bmp24.o -c $(SRC)$(PIC)/bmp24.c
+$(OBJ)/DisplayPicture.o : $(SRC)$(PIC)/DisplayPicture.c
+	$(CC) $(CFLAGS) -o $(OBJ)/DisplayPicture.o -c $(SRC)$(PIC)/DisplayPicture.c -lm `sdl2-config --libs --cflags`
 
 $(OBJ)/PreProcessPicture.o : $(SRC)$(PIC)/PreProcessPicture.c
-	$(CC) -o $(OBJ)/PreProcessPicture.o -c $(SRC)$(PIC)/PreProcessPicture.c
-
-$(OBJ)/Training.o : $(SRC)/NeuralNetwork/Training.c
-	$(CC) $(CFLAGS) -o $(OBJ)/Training.o -c $(SRC)/NeuralNetwork/Training.c
+	$(CC) $(CFLAGS) -o $(OBJ)/PreProcessPicture.o -c $(SRC)$(PIC)/PreProcessPicture.c -lm `sdl2-config --libs --cflags`
 
 clearOBJ :
 	rm -r $(OBJ)/*.o
