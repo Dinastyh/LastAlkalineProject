@@ -6,15 +6,47 @@
 int isPictureValid(const char *name)
 {
 		FILE *f = fopen(name, "r");
-		if(fgetc(f) != 'B' || fgetc(f) != 'M')
-			 return 0;
-		return 1;
+		int color = 0;
+		if(fgetc(f) == 'B' && fgetc(f) == 'M')
+		{
+				fseek(f, 26, SEEK_CUR);
+				color = fgetc(f) + fgetc(f) * 256;
+				if(color == 24)
+				{
+						return 1;
+				}
+		}
+		else if(fgetc(f) == 137 && fgetc(f) == 'P' && fgetc(f) == 'N' && fgetc(f) == 'G'
+								&& fgetc(f) == 13 && fgetc(f) == 10 && fgetc(f) == 26 && fgetc(f) == 10)
+		{
+				fseek(f, 16,SEEK_CUR);
+				color = fgetc(f) * fgetc(f);
+				if(color == 2)
+					 return 2;
+		}
+		return 0;
 }
 
 Picture newPicture(const char *fileName,char *newFileName)
 {
+		FILE* f = fopen(fileName, "r");
+		int resul = isPictureValid(fileName);
+		if(resul == 1)
+		{
+				Picture p = bmp24ToPicture(f);
+				p.name = newFileName;
+				return p;
+		}
+		else if(resul == 2)
+		{
+				Picture p = pngToPicture(f);
+				p.name = newFileName;
+				return p;
+		}
+}
+Picture bmp24ToPicture(FILE* f)
+{
 		Picture picture;
-		FILE *file = fopen(fileName,"rb");
 		char* data = malloc(56);
 		int w = 0;
 		int h = 0;
@@ -26,32 +58,20 @@ Picture newPicture(const char *fileName,char *newFileName)
 		Pixel pixel;
 		for(int i = 0; i < 54; i++)
 			{
-				data[i] = fgetc(file);
+				data[i] = fgetc(f);
 			}
-		if(isPictureValid(fileName) == 0)
-		{
-				picture.h = 0;
-				picture.w = 0;
-				picture.offset = 0;
-				picture.name = "";
-				picture.pixels = malloc(1);
-				picture.origine = picture.pixels;
-				picture.averageColor = 0;
-				return picture;
-		}
-		fseek(file, 2, SEEK_SET);
-		taille = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file)
-			+ 256 * 256 * 256 * fgetc(file);
+		fseek(f, 2, SEEK_SET);
+		taille = fgetc(f) + 256 *fgetc(f) + 256 * 256 * fgetc(f)
+			+ 256 * 256 * 256 * fgetc(f);
 		picture.head = data;
-		picture.name = newFileName;
-		fseek(file,18,SEEK_SET);
-		fseek(file,18,SEEK_SET);
+		fseek(f,18,SEEK_SET);
+		fseek(f,18,SEEK_SET);
 
-		w = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file)
-			+ 256 * 256 * 256 * fgetc(file);
+		w = fgetc(f) + 256 *fgetc(f) + 256 * 256 * fgetc(f)
+			+ 256 * 256 * 256 * fgetc(f);
 
-		h = fgetc(file) + 256 *fgetc(file) + 256 * 256 * fgetc(file)
-			+ 256 * 256 * 256 * fgetc(file);
+		h = fgetc(f) + 256 *fgetc(f) + 256 * 256 * fgetc(f)
+			+ 256 * 256 * 256 * fgetc(f);
 		picture.h = h;
 		picture.w = w;
 		for(int i = 0; i < 4; i++)
@@ -60,14 +80,14 @@ Picture newPicture(const char *fileName,char *newFileName)
 					 picture.offset = i;
 			}
 		Pixel *pixels = malloc(sizeof(Pixel) * h * w);
-		fseek(file,54,SEEK_SET);
+		fseek(f,54,SEEK_SET);
 		for(int j = 0; j < h; j++)
 			{
 				for(int i = 0; i < w; i++)
 					{
-						b =  fgetc(file);
-						g =  fgetc(file);
-						r =  fgetc(file);
+						b =  fgetc(f);
+						g =  fgetc(f);
+						r =  fgetc(f);
 						pixel.r = r;
 						pixel.b = b;
 						pixel.g = g;
@@ -75,17 +95,22 @@ Picture newPicture(const char *fileName,char *newFileName)
 						pixels[i + j * w] = pixel;
 						if( i == w - 1)
 							{
-								fseek(file, picture.offset, SEEK_CUR);
+								fseek(f, picture.offset, SEEK_CUR);
 							}
 					}
 			}
 		picture.pixels = pixels;
 		picture.origine = pixels;
-
 		picture.averageColor = average/(h*w*3);
-		fclose(file);
 		return picture;
 }
+
+Picture pngToPicture(FILE* f)
+{
+		Picture p;
+		return p;
+}
+
 void pictureToArray(double *data, char* name)
 {
 		short *inter = malloc(sizeof(short) * 40 * 40);
