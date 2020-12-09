@@ -22,6 +22,7 @@ void strengthenEdge(Picture picture);
 void pushBack(Picture picture);
 void detectEdge(Picture picture);
 void upContrast(Picture picture);
+Picture detectAngle(Picture picture);
 Picture rotate(Picture picture, int degree);
 Picture pixelsToSquare(Picture p);
 #endif
