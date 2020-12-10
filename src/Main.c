@@ -27,6 +27,7 @@ void setFile(gchar* path);
 
 int main(int argc,char** argv)
 {
+    gtk_rc_parse("theme/gnome-breeze-master/Breeze-dark-gtk/gtk-2.0/gtkrc");
     GtkWidget* window;
     GtkWidget* exeBtn;
     GtkWidget* selectBtn;
@@ -56,6 +57,7 @@ int main(int argc,char** argv)
     GtkWidget* center = gtk_hbox_new(FALSE,0);
     GtkWidget* container = gtk_vbox_new(FALSE,0);
     GtkWidget* processingBarre = gtk_vbox_new(FALSE,0);
+    gtk_container_set_border_width(GTK_CONTAINER(processingBarre), 10);
     displayCenter = gtk_vbox_new(FALSE,0); 
 
     //Connect tool's barre
@@ -99,7 +101,19 @@ void onDestroy(GtkWidget *pWidget, gpointer pData)
 
 void onExecute(GtkWidget *pWidget, gpointer pData)
 {
-    exit(EXIT_SUCCESS);
+    if(!loadPicture(getFile()))
+    {
+        GtkWidget* dialog;
+        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Please select a file");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        gtk_widget_destroy(window);
+        return;
+    }
+    char* output = managerExec(getFile(), status,NUMBERPRO);
+    setTxt(output);
+    displayTxt(displayCenter, output);    
 }
 void onSelect(GtkWidget *pWidget, gpointer pData)
 {
@@ -202,6 +216,8 @@ gchar* getFile()
 
 void setTxt(gchar* text)
 {
+    if(txt != NULL)
+        free(txt);
     txt = text;
 }
 

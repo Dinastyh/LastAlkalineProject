@@ -39,7 +39,6 @@ void writeNetwork(Network* net)
             printf("writeNetwork: fclose failed\n");
             exit(2);
         }
-        printf("#####\nwriteNetwork : net_file closed \n#####\n");
     }
 }
 
@@ -75,7 +74,6 @@ Network readNetwork(char* netName)
         }
 
         fclose(netFile);
-        printf("####\nreadNetwork : reading complete\n####\n");
     }
 
     else

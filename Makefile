@@ -29,7 +29,7 @@ $(OBJ)/PreProcessPicture.o : $(SRC)$(PIC)/PreProcessPicture.c
 	$(CC) $(CFLAGS) -o $(OBJ)/PreProcessPicture.o -c $(SRC)$(PIC)/PreProcessPicture.c -lm `sdl2-config --libs --cflags`
 
 $(OBJ)/Network.o : $(SRC)/NeuralNetwork/Network.c
-	$(CC) $(CFLAGS) -o $(OBJ)/Network.o -c $(SRC)/NeuralNetwork/Network.c
+	$(CC) $(CFLAGS) -o $(OBJ)/Network.o -c $(SRC)/NeuralNetwork/Network.c `pkg-config --cflags --libs gtk+-2.0`
 
 $(OBJ)/Debug.o : $(SRC)/NeuralNetwork/Debug.c
 	$(CC) $(CFLAGS) -o $(OBJ)/Debug.o -c $(SRC)/NeuralNetwork/Debug.c

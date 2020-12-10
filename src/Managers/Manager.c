@@ -61,29 +61,56 @@ void onExit(GtkWidget* button, gpointer data)
     gtk_widget_destroy(window);
 }
 
-char* managerExec(const char* path, unsigned int status[], size_t len)
+char* managerExec(const char* path, unsigned int status[], size_t lenStatus)
 {
+    char* output = malloc(sizeof(char));
+    output[0]='\0';
     Picture picture = newPicture(path, "tmp.bmp");
     Network net = readNetwork("network096Regu.txt");
-    processingBasic(&picture, status, len);
+    processingBasic(&picture, status, lenStatus);
     Data data = createData(&picture);
-    char back = '\n';
+    char back = '\n'; 
     char space = ' ';
-    char* output = ""; 
+    size_t len = 0;
+    char* control = NULL;
     for(int i = 0; i< data.length; i++)
     {
-        if(i!=0)
-            strncat(output,&back,1);
-        Data* line = data.thing+i;
+        //Check for add \n
+        if(i!=0){
+            len++;
+            control = realloc(output, sizeof(char)*(len+1));
+            if(control)
+            {
+                output = control;
+                control = NULL;
+            }
+            output[len-1]=back;
+            output[len]='\0';
+        }
+        //open line
+        Data* line = &((Data*)(data.thing))[i];
         for(int j = 0; j< line->length; j++)
         {
-            if(j!=0)
-                strncat(output,&space,1);
-            Data* word = line->thing+j;
+            //Check pour add space
+            if(j!=0){
+                len++;
+                control = realloc(output, sizeof(char)*(len+1));
+                if(control)
+                {
+                    output = control;
+                    control = NULL;
+                }
+                output[len-1]=space;
+                output[len]='\0';
+            }
+            //open word
+            Data* word = &((Data*)(line->thing))[j];
             for(int k=0; k<word->length; k++)
             {
-                Data* charactere = word->thing+k;
+                //open cheractere
+                Data* charactere = &((Data*)(word->thing))[k];
                 int result = forwardPropagationTest(&net, charactere->thing);
+                //Filtre result
                 char c;
                 if(result >= 4 && result <= 13)
                 {
@@ -109,19 +136,28 @@ char* managerExec(const char* path, unsigned int status[], size_t len)
                             break;
                         case 2:
                             c = ':';
-                            break;
-                        case 3:
-                            c = '?';
-                            break;
+                            break; 
+                        case 3: c = '?'; 
+                                break;
                         default:
-                            c = '/'; //error if c is /
-                            break;
+                                c = '/'; //error if c is /
+                                break;
                     }
                 }
-                strncat(output,&c,1);
+                //Append result filtre
+                len++;
+                control = realloc(output, sizeof(char)*(len+1));
+                if(control)
+                {
+                    output = control;
+                    control = NULL;
+                }
+                output[len-1]=c;
+                output[len] = '\0';
             }
         }
     }
+
     freeNetwork(&net);
     return output;
 }

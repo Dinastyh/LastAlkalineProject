@@ -1,6 +1,5 @@
 #include "Network.h"
 #include <time.h>
-
 Network newNetwork(size_t sizeInput, size_t sizeHidden, size_t sizeOutput, size_t nbHiddenLayers)
 {
     Network net =
@@ -83,15 +82,17 @@ void freeNetwork(Network* net)
     for(size_t i = 0; i< net->nbLayers; i++)
     {
 	    freeLayer(&(net->layers[i]));
+        free(net->layers[i].neurons);
     }
-    free(net);
+    free(net->layers);
 }
 
 void freeLayer(Layer* layer)
 {
     for(size_t i= 0; i< layer->nbNeurons; i++)
     {
-	    free(&(layer->neurons[i]));
+        free(layer->neurons[i].dw);
+        free(layer->neurons[i].weights);
     }
 }
 
