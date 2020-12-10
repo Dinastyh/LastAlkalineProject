@@ -65,11 +65,7 @@ void displaySegmentationPicture(char* filename)
 				for(int j = 0; j < ch.length; j++)
 					{
 						Picture carac = blockToPicture(&(ch.block[j]), &p);
-						carac.pixels = resize(carac.pixels, carac.w, carac.h, 28, 28);
-						carac.h = 28;
-						carac.w = 28;
-						carac.offset = 0;
-						carac.head =  changeDimensionHead(carac.head, 28, 28, 0);
+						resize(&carac, 28, 28);
 						savePicture(&carac);
 						displayPicture(carac.name);
 					}
@@ -97,10 +93,7 @@ Data createData(Picture *p)
 						for(int k = 0; k < tpchar.length; k++)
 						{
 								Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
-								oneChar.pixels = resize(oneChar.pixels, oneChar.w, oneChar.h, 40, 40);
-								oneChar.w = 40;
-								oneChar.h = 40;
-								oneChar.head = changeDimensionHead(oneChar.head, 40, 40, 0);
+								resize(&oneChar, 40, 40);
 								double* pixChar = malloc(sizeof(double) * 1600);
 								Data charactere;
 								charactere.length = 1600;

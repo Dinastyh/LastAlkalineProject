@@ -101,73 +101,16 @@ void lowPassFilter(Picture picture, int line, int column)
     applyConvolutionToPicture(picture, clt);
 }
 
-Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
+void resize(Picture *p, int neww, int newh)
 {
-    Pixel* result = malloc(sizeof(Pixel) * newh * neww);
-    int max = w;
-    Pixel* newpixel = pixel;
-    if (h != w){
-        if(max < h)
-        {
-            max = h;
-        }
-        Pixel* newpixel = malloc(sizeof(Pixel) * max * max);
-        Pixel p;
-        p.r = 255;
-        p.g = 255;
-        p.b = 255;
-        int diff = (max - w)/2;
-        if (max == h)
-        {
-            for(int i = 0; i <max; i ++)
-            {
-                for(int j = 0; j < diff; j++)
-                {
-                    newpixel[j + i * max] = p;
-                }
-                for(int j = diff; j < w + diff; j++)
-                {
-                    newpixel[j + i * max] = pixel[j - diff + i * max];
-                }
-                for(int j = w + diff; j < max; j++)
-                {
-                    newpixel[j + i * max] = p;
-                }
-            }
-        }
 
-        else
-        {
-            diff = (max - h)/2;
-            for(int i = 0; i < diff; i++)
-            {
-                for(int j = 0; j < max; j++)
-                {
-                    newpixel[j + i * max] = p;
-                }
-            }
-            for(int i = 0; i < h; i++)
-            {
-                for(int j = 0; j < w; j++)
-                {
-                    newpixel[j + i * (max + diff)] = pixel[j + i * w];
-                }
-            }
-            for(int i = h; i < max; i++)
-            {
-                for(int j = 0; j < max; j++)
-                {
-                    newpixel[j + i * max] = p;
-                }
-            }
-
-        }
-
-    }
-    double hf = (double) max;
-    double wf = (double) max;
+   
+	*p = pixelsToSquare(*p);
+	double hf = (double) p->h;
+    double wf = (double) p->w;
     double nhf =(double) newh;
     double nwf =(double) neww;
+    Pixel *result = malloc(sizeof(Pixel)*neww*newh);
     double x = 0;
     double y = 0;
     double plusx = wf/nwf;
@@ -179,7 +122,7 @@ Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
     {
         while(i < neww && b== 0)
         {                
-            result[i + j * neww] = newpixel[((int)x)+((int)y)*w ];
+            result[i + j * neww] = p->pixels[((int)x)+((int)y)*p->w ];
             x += plusx;
             i++;
         }
@@ -188,11 +131,11 @@ Pixel* resize(Pixel* pixel,int w, int h, int neww, int newh)
         j ++;
         i = 0;
     }
-    if(max!= h || max !=w)
-    {
-        free(newpixel);
-    }
-    return result;
+        free(p->pixels);
+ p->head = changeDimensionHead(p->head, newh, neww, (4-(neww*newh*3)%4));
+ p->h = newh;
+ p->w = neww;
+ p->pixels = result;
 }
 
 Picture rotate(Picture pic, int degree)
