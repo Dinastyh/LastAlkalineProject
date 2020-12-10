@@ -4,25 +4,25 @@
 #include "PreProcessPicture.h"
 
 
-void blackAndWhite(Picture picture)
+void blackAndWhite(Picture *picture)
 {
 		float color;
-		for(int i = 0; i < picture.h * picture.w; i++)
+		for(int i = 0; i < picture->h * picture->w; i++)
 		{
-				color =((float)picture.pixels[i].r +
-								(float)picture.pixels[i].g +
-								(float)picture.pixels[i].b) / 3;
-				if(color > picture.averageColor)
+				color =((float)picture->pixels[i].r +
+								(float)picture->pixels[i].g +
+								(float)picture->pixels[i].b) / 3;
+				if(color > picture->averageColor)
 				{
-						picture.pixels[i].r = 255;
-						picture.pixels[i].g = 255;
-						picture.pixels[i].b = 255;
+						picture->pixels[i].r = 255;
+						picture->pixels[i].g = 255;
+						picture->pixels[i].b = 255;
 				}
 				else
 				{
-						picture.pixels[i].r = 0;
-						picture.pixels[i].b = 0;
-						picture.pixels[i].g = 0;
+						picture->pixels[i].r = 0;
+						picture->pixels[i].b = 0;
+						picture->pixels[i].g = 0;
 				}
 		}
 }

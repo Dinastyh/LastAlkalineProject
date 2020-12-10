@@ -10,7 +10,7 @@ struct Convolution
 };
 typedef struct Convolution Convolution;
 
-void blackAndWhite(Picture picture);
+void blackAndWhite(Picture* picture);
 Pixel* resize(Pixel* pixel, int w, int h, int neww, int newh);
 
 Pixel applyConvolutionToPixel(int w, int h, int width, int height, Convolution matrix, Pixel *pixels);
