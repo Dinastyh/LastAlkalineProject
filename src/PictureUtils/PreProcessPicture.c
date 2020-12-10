@@ -362,26 +362,25 @@ Picture detectionAngle(Picture pic,Tuple* l)
 	pic = rotate(pic ,   angle);
 	
 	Tuple line = captureLine(pic);
-	pic = rotate(pic,90);
-	Tuple line2 = captureLine(pic);
+	Picture pic1 = rotate(pic,90);
+	Tuple line2 = captureLine(pic1);
 	*l = line2;
 	if(line.length > line2.length)
 	{
-		pic = rotate(pic,270);
 		*l = line;
+		free(pic1.pixels);
+		return pic;
 	}
-	return pic;
+	free(pic.pixels);
+	return pic1;
 }
 
 float variance(Picture pic, Tuple l)
 {
 	float* debut = malloc(sizeof(float) * l.length);
 	float moyenne = 0;
-	printf("start : %i\n",pic.w);
 	for(int w = 0; w < l.length; w++)
 	{
-		printf("start : %i\n",l.block[w].start);
-		printf("pixel : %i\n",pic.pixels[l.block[w].start].g);
 		for(int j = 0; j < l.block[w].w; j++)
 		{
 			for(int i = 0; i < l.block[w].h; i++)
@@ -406,8 +405,6 @@ float variance(Picture pic, Tuple l)
 		var += (debut[w] - moyenne) * (debut[w] - moyenne);
 	}
 	free(debut);
-	printf("moyenne = %f\n",var);
-	printf("var = %f\n",var);
 	return var / (float) l.length;
 }
 
@@ -415,8 +412,6 @@ Picture invertDetection(Picture pic1, Picture pic2, Tuple l1, Tuple l2)
 {
 	float var1 = variance(pic1, l1);
 	float var2 = variance(pic2, l2);
-	printf("var1 : %f\n",var1);
-	printf("var2 : %f\n",var2);
 	if (var1 > var2) 
 	{
 		free(pic1.pixels);
