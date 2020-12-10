@@ -16,36 +16,12 @@ int isPictureValid(const char *name)
 						return 1;
 				}
 		}
-		else if(fgetc(f) == 137 && fgetc(f) == 'P' && fgetc(f) == 'N' && fgetc(f) == 'G'
-								&& fgetc(f) == 13 && fgetc(f) == 10 && fgetc(f) == 26 && fgetc(f) == 10)
-		{
-				fseek(f, 16,SEEK_CUR);
-				color = fgetc(f) * fgetc(f);
-				if(color == 2)
-					 return 2;
-		}
 		return 0;
 }
 
 Picture newPicture(const char *fileName,char *newFileName)
 {
 		FILE* f = fopen(fileName, "r");
-		int resul = isPictureValid(fileName);
-		if(resul == 1)
-		{
-				Picture p = bmp24ToPicture(f);
-				p.name = newFileName;
-				return p;
-		}
-		else if(resul == 2)
-		{
-				Picture p = pngToPicture(f);
-				p.name = newFileName;
-				return p;
-		}
-}
-Picture bmp24ToPicture(FILE* f)
-{
 		Picture picture;
 		char* data = malloc(56);
 		int w = 0;
@@ -99,16 +75,11 @@ Picture bmp24ToPicture(FILE* f)
 							}
 					}
 			}
+		picture.name = newFileName;
 		picture.pixels = pixels;
 		picture.origine = pixels;
 		picture.averageColor = average/(h*w*3);
 		return picture;
-}
-
-Picture pngToPicture(FILE* f)
-{
-		Picture p;
-		return p;
 }
 
 void pictureToArray(double *data, char* name)
@@ -178,9 +149,10 @@ void savePicture(Picture *picture)
 							}
 					}
 			}
-		//		free(picture.origine);
-		free(picture->head);
+		//free(picture->origine);
+		//free(picture->head);
 		fclose(file);
+		//free(picture->pixels);
 }
 
 int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)

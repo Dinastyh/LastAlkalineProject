@@ -299,3 +299,87 @@ void strengthenEdge(Picture picture)
 		}
 		applyConvolutionToPicture(picture, clt);
 }
+void denoizing(Picture *p)
+{
+		double* mask = malloc(sizeof(double)* 9);
+		mask[0] = (double)1/(double)16;
+		mask[1] = (double)2/(double)16;
+		mask[2] = (double)1/(double)16;
+		mask[3] = (double)2/(double)16;
+		mask[4] = (double)4/(double)16;
+		mask[5] = (double)2/(double)16;
+		mask[6] = (double)1/(double)16;
+		mask[7] = (double)2/(double)16;
+		mask[8] = (double)1/(double)16;
+		int w = p->w;
+		Pixel* ia = p->pixels;
+		int h = p->h;
+		Pixel inter;
+		Pixel *autre = myPixel(ia, h, w, 0, w);
+		for(int i = 0; i < h; i++)
+		{
+				for(int j = 0; j < w; j++)
+				{
+						inter =  denoizingMedianWeight(mask, autre, j , i, w, h);
+						ia[i * w + j].r = inter.r;
+						ia[i * w + j].b = inter.b;
+						ia[i * w + j].g = inter.g;
+				}
+		}
+		free(autre);
+}
+Pixel denoizingMedianWeight(double *m1, Pixel *m2, int w, int h, int width, int height)
+{
+		int currentX;
+		int currentY;
+		double median[9];
+		Pixel matrixOfPixels[9];
+		Pixel interP;
+		for(int i = 0; i < 3; i++)
+		{
+				currentY = h + i - 1;
+				for(int j = 0; j < 3; j++)
+				{
+						currentX = w + j - 1;
+						if(currentX > -1 && currentX < width && currentY > -1 && currentY < height)
+						{
+								interP = m2[currentY * width + currentX];
+								matrixOfPixels[i * 3 + j] = interP;
+								median[i * 3 + j] = ((double)interP.r + (double)interP.g + (double)interP.b) * m1[i * 3 + j];
+						}
+				}
+		}
+		int aud = 0;
+		int end = 0;
+		double current;
+		int currentIndex = 0;
+		while(!((aud == 4 && end == 4) || (aud == 5 && end == 4)) && currentIndex < 10)
+		{
+				current = median[currentIndex];
+				aud = 0;
+				end = 0;
+				for(int k = 0; k < 9; k++)
+				{
+						if(k != currentIndex)
+						{
+								if(current > median[k])
+									 end++;
+								else
+									 aud++;
+						}
+				}
+				currentIndex++;
+		}
+		Pixel x = matrixOfPixels[currentIndex - 1];
+		x.r = (int)((double)x.r * m1[currentIndex - 1]);
+		x.g = (int)((double)x.g * m1[currentIndex - 1]);
+		x.b = (int)((double)x.b * m1[currentIndex - 1]);
+		if(x.r > 255)
+			 x.r = 255;
+		if(x.b > 255)
+			 x.b = 255;
+		if(x.g > 255)
+			 x.g = 255;
+		return x;
+}
+
