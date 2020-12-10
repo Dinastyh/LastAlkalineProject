@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "PreProcessPicture.h"
+#include <math.h>
+#include "Bmp24.h"
 
 
 void blackAndWhite(Picture picture)
@@ -298,4 +299,167 @@ void strengthenEdge(Picture picture)
 				}
 		}
 		applyConvolutionToPicture(picture, clt);
+}
+Picture detectionAngle(Picture pic,Tuple* l)
+{
+	double angle = 0;
+	int x1 = 0;
+	int x2 = 0;
+	int y1 = pic.h-1;
+	int y2 = pic.h-1;
+	int b = 0;
+	int w = pic.w;
+	int h = pic.h;
+	Pixel* pixel = pic.pixels;
+	while(b == 0 && x1 < w)
+	{
+		y1 = h-1;
+		while(b == 0 && y1 > -1)
+		{
+			
+			if(pixel[y1*w+x1].g == 255)
+			{
+				y1--;
+
+			}
+			else
+			{
+				b = 1;
+			}
+		}
+			x1 ++;
+	}
+	b= 0;
+	while(b == 0 && y2 > -1)
+	{
+		x2 = 0;
+		while(b == 0 && x2 < w)
+		{
+			if(pixel[y2*w+x2].r == 255)
+			{
+				x2++;
+			}
+			else
+			{
+				b = 1;
+			}
+		}
+			y2 --;
+	}
+
+	double y1y2 = fabs((double) (y1 - y2));
+       	double x1x2 = fabs((double) (x1 - x2));
+	if(x1x2 == 0)
+	{
+		x1x2 = 0.00001;
+	}	
+	angle = fabs(y1y2)/fabs(x1x2);
+	// this line is equal to angle = cos(angle we want)
+	printf("angle : %f, x1 :%d x2: %d y1: %d y2: %d\n",angle,x1,x2,y1,y2);
+	angle = atan(angle) * 57.2958;
+    	//57.2958 approximatly equal to 180/pi
+	printf("angle : %f\n", angle);
+	pic = rotate(pic ,   angle);
+	
+	Tuple line = captureLine(pic);
+	pic = rotate(pic,90);
+	Tuple line2 = captureLine(pic);
+	*l = line2;
+	if(line.length > line2.length)
+	{
+		pic = rotate(pic,270);
+		*l = line;
+	}
+	return pic;
+}
+
+float variance(Picture pic, Tuple l)
+{
+	float* debut = malloc(sizeof(float) * l.length);
+	float moyenne = 0;
+	printf("start : %i\n",pic.w);
+	for(int w = 0; w < l.length; w++)
+	{
+		printf("start : %i\n",l.block[w].start);
+		printf("pixel : %i\n",pic.pixels[l.block[w].start].g);
+		for(int j = 0; j < l.block[w].w; j++)
+		{
+			for(int i = 0; i < l.block[w].h; i++)
+			{
+				if(pic.pixels[l.block[w].start + i*pic.w + j].g == 0)
+				{
+					printf("i = %i\n",i);
+					printf("j = %i\n",j);
+					debut[w] = (float) j;
+					moyenne += (float) j;
+					i = l.block[w].h;
+					j = l.block[w].w;
+				}
+			}
+
+		}
+	}
+	moyenne = moyenne / (float) l.length;
+	float var = 0;
+	for(int w = 0 ; w < l.length; w++)
+	{
+		var += (debut[w] - moyenne) * (debut[w] - moyenne);
+	}
+	free(debut);
+	printf("moyenne = %f\n",var);
+	printf("var = %f\n",var);
+	return var / (float) l.length;
+}
+
+Picture invertDetection(Picture pic1, Picture pic2, Tuple l1, Tuple l2)
+{
+	float var1 = variance(pic1, l1);
+	float var2 = variance(pic2, l2);
+	printf("var1 : %f\n",var1);
+	printf("var2 : %f\n",var2);
+	if (var1 > var2) 
+	{
+		free(pic1.pixels);
+		free(l1.block);
+		return pic2;
+	}
+	free(pic2.pixels);
+	free(l2.block);
+	return pic1;
+}
+
+Picture detectAngle(Picture pic)
+{
+	Tuple line1 ;
+	Tuple line2 ;
+	Picture pic1 = detectionAngle(pic,&line1);
+	Picture pic2 = detectionAngle(rotate(pic,180),&line2);
+	free(pic.pixels);
+	if(line1.length < line2.length)
+	{
+		free(pic1.pixels);
+		free(line1.block);
+		pic1 = rotate(pic2, 180);
+		line1 = captureLine(pic1);
+		return invertDetection(pic1,pic2,line1,line2);
+	}
+	if (line2.length < line1.length)
+	{
+		free(pic2.pixels);
+		free(line2.block);
+		pic2 = rotate(pic1, 180);
+		line2 = captureLine(pic2);
+		return invertDetection(pic1,pic2,line1,line2);
+	}
+
+	Picture pic3 = rotate(pic2, 180);
+	Tuple line3 = captureLine(pic3);
+	pic2 = invertDetection(pic3,pic2,line3,line2);
+	pic3 = rotate(pic1, 180);
+	line3 = captureLine(pic1);
+	pic2 = invertDetection(pic3,pic1,line3,line1);
+
+
+	return invertDetection(pic2,pic1,line2,line1);
+
 }
