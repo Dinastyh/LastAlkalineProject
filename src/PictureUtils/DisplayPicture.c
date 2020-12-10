@@ -98,6 +98,9 @@ Data createData(Picture *p)
 						{
 								Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
 								oneChar.pixels = resize(oneChar.pixels, oneChar.w, oneChar.h, 40, 40);
+								oneChar.w = 40;
+								oneChar.h = 40;
+								oneChar.head = changeDimensionHead(oneChar.head, 40, 40, 0);
 								double* pixChar = malloc(sizeof(double) * 1600);
 								Data charactere;
 								charactere.length = 1600;
@@ -114,6 +117,8 @@ Data createData(Picture *p)
 								}
 								charactere.thing = (double*)pixChar;
 								words[k] = charactere;
+								savePicture(&oneChar);
+								displayPicture("tmp.bmp");
 						}
 						word.thing = (Data*)words;
 						lines[j] = word;
