@@ -7,7 +7,7 @@
 void blackAndWhite(Picture *picture)
 {
     float color;
-		upContrast(*picture);
+		upContrast(picture);
 		for(int i = 0; i < picture->h * picture->w; i++)
     {
         color =((float)picture->pixels[i].r +
@@ -64,28 +64,28 @@ Pixel applyConvolutionToPixel(int w, int h, int width, int height, Convolution c
     return pixel;
 }
 
-void applyConvolutionToPicture(Picture picture, Convolution clt)
+void applyConvolutionToPicture(Picture *picture, Convolution clt)
 {
     Pixel inter;
     inter.r = 0;
     inter.g = 0;
     inter.b = 0;
-    Pixel *convoluted = myPixel(picture.pixels, picture.h, picture.w, 0, picture.w);
-    for(int h = 0; h < picture.h; h++)
+    Pixel *convoluted = myPixel(picture->pixels, picture->h, picture->w, 0, picture->w);
+    for(int h = 0; h < picture->h; h++)
     {
-        for(int w = 0; w < picture.w; w++)
+        for(int w = 0; w < picture->w; w++)
         {
-            inter = applyConvolutionToPixel(w, h, picture.w, picture.h, clt, convoluted);
-            picture.pixels[h * picture.w + w].r = inter.r;
-            picture.pixels[h * picture.w + w].b = inter.b;
-            picture.pixels[h * picture.w + w].g = inter.g;
+            inter = applyConvolutionToPixel(w, h, picture->w, picture->h, clt, convoluted);
+            picture->pixels[h * picture->w + w].r = inter.r;
+            picture->pixels[h * picture->w + w].b = inter.b;
+            picture->pixels[h * picture->w + w].g = inter.g;
         }
     }
     free(convoluted);
 }
 
 
-void lowPassFilter(Picture picture, int line, int column)
+void lowPassFilter(Picture *picture, int line, int column)
 {
     Convolution clt;
     clt.l = line;
@@ -224,7 +224,7 @@ Picture pixelsToSquare(Picture p)
     resul.averageColor = (float)average / (float)(max * max * 3);
     return resul;
 }
-void upContrast(Picture picture)
+void upContrast(Picture *picture)
 {
     Convolution clt;
     clt.l = 3;
@@ -242,7 +242,7 @@ void upContrast(Picture picture)
     }
     applyConvolutionToPicture(picture, clt);
 }
-void detectEdge(Picture picture)
+void detectEdge(Picture *picture)
 {
     Convolution clt;
     clt.l = 3;
@@ -260,7 +260,7 @@ void detectEdge(Picture picture)
     }
     applyConvolutionToPicture(picture, clt);
 }
-void pushBack(Picture picture)
+void pushBack(Picture *picture)
 {
     Convolution clt;
     clt.l = 3;
@@ -290,7 +290,7 @@ void pushBack(Picture picture)
     }
     applyConvolutionToPicture(picture, clt);
 }
-void strengthenEdge(Picture picture)
+void strengthenEdge(Picture *picture)
 {
     Convolution clt;
     clt.l = 3;
