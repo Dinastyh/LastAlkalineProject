@@ -24,4 +24,7 @@ Picture rotate(Picture picture, int degree);
 Picture pixelsToSquare(Picture p);
 void denoizing(Picture *p);
 Pixel denoizingMedianWeight(double *m1, Pixel *m2, int w, int h, int width, int height);
+void grayscale(Picture *p);
+void grayscaleLuminate(Picture *p);
+void invert(Picture *p);
 #endif

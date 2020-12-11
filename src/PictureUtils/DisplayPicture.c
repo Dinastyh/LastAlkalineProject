@@ -4,6 +4,7 @@
 #include "DisplayPicture.h"
 #include "Bmp24.h"
 #include "PreProcessPicture.h"
+#include <string.h>
 void displayPicture(char *filename)
 {
 		// take relative || absolute path of a picture to display
@@ -79,46 +80,143 @@ Data createData(Picture *p)
 		Data data;
 		data.length = tpline.length;
 		for(int i = tpline.length - 1; i > -1; i--)
-		{
+			{
 				Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
 				Data* lines = malloc(sizeof(Data) * tpword.length);
 				Data line;
 				line.length = tpword.length;
 				for(int j = 0; j < tpword.length; j++)
-				{
+					{
 						Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
 						Data* words = malloc(sizeof(Data) * tpchar.length);
 						Data word;
 						word.length = tpchar.length;
 						for(int k = 0; k < tpchar.length; k++)
-						{
+							{
 								Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
 								resize(&oneChar, 40, 40);
 								double* pixChar = malloc(sizeof(double) * 1600);
 								Data charactere;
 								charactere.length = 1600;
 								for(int m = 0; m < 1600; m++)
-								{
+									{
 										if(oneChar.pixels[m].r == 0)
-										{
+											{
 												pixChar[m] = 1;
-										}
+											}
 										else
-										{
+											{
 												pixChar[m] = 0;
-										}
-								}
+											}
+									}
 								charactere.thing = (double*)pixChar;
 								words[k] = charactere;
 								savePicture(&oneChar);
 								displayPicture("tmp.bmp");
-						}
+							}
 						word.thing = (Data*)words;
 						lines[j] = word;
-				}
+					}
 				line.thing = (Data*)lines;
 				dataLines[tpline.length - i - 1] = line;
-		}
+			}
 		data.thing = (Data*)dataLines;
 		return data;
+}
+void create66Picture()
+{
+		char header[20];
+		strcat(header, "datasetPages/0.bmp");
+		char charac[16];
+		strcat(charac, "TimBG/0.bmp");
+		size_t filePassed = 0;
+		size_t lenFileName = 11;
+		size_t lenFile = 18;
+		size_t semi, semiI;
+		while(filePassed < 10)
+			{
+				FILE* f = fopen(header, "r");
+				if(f != NULL)
+				{
+						printf("%s\n", header);
+						Picture p2 = newPicture(header, charac);
+						Picture *p = &p2;
+						Tuple tpline = captureLine(p);
+						blackAndWhite(p);
+		//				denoizing(p);
+						for(int i = tpline.length - 1; i > -1; i--)
+							{
+								Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
+								for(int j = 0; j < tpword.length; j++)
+									{
+										Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
+										for(int k = 0; k < tpchar.length; k++)
+											{
+												Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
+												resize(&oneChar, 40, 40);
+												savePicture(&oneChar);
+	//											displayPicture(charac);
+												printf("%s\n", charac);
+												if(incrementerString(charac, &lenFileName) == 1)
+												{
+														semiI = lenFileName;
+														while(charac[semiI - 1] != '/')
+														{
+																charac[semiI] = charac[semiI - 1];
+																semiI -= 1;
+														}
+														charac[semiI] = '1';
+												}
+												free(oneChar.pixels);
+												free(oneChar.head);
+												p->name = charac;
+											}
+									}
+							}
+		//				savePicture(p);
+		//				displayPicture(charac);
+		//				p2 = newPicture(header, charac);
+		//				p = &p2;
+						free(p->pixels);
+						free(p->head);
+						fclose(f);
+				}
+				if(incrementerString(header, &lenFile) == 1)
+				{
+						semi = lenFile;
+						while(header[semi - 1] != '/')
+						{
+								header[semi] = header[semi - 1];
+								semi -= 1;
+						}
+						header[semi] = '1';
+				}
+				filePassed++;
+			}
+}
+char incrementerString(char* deb, size_t *len)
+{
+		int parcours = *len - 5;
+		char current = 1;
+		while(deb[parcours] != 47 && current == 1)
+			{
+				current = deb[parcours] ;
+				current += 1;
+				if(current > 57)
+				{
+						deb[parcours] = (char)48;
+						current = 1;
+				}
+				else
+				{
+						deb[parcours] = (char)current;
+				}
+				parcours--;
+			}
+		if(current == 1)
+			{
+				*len += 1;
+				return 1;
+			}
+		return 0;
 }

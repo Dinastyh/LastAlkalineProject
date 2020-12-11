@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "Bmp24.h"
 #include "PreProcessPicture.h"
-
+#include "DisplayPicture.h"
 int isPictureValid(const char *name)
 {
 		FILE *f = fopen(name, "r");
@@ -69,12 +69,12 @@ Picture newPicture(const char *fileName,char *newFileName)
 						pixel.g = g;
 						average += r + g + b;
 						pixels[i + j * w] = pixel;
-						if( i == w - 1)
-							{
+						if(i == w - 1)
+						{
 								fseek(f, picture.offset, SEEK_CUR);
-							}
-					}
-			}
+						}
+				}
+		}
 		picture.name = newFileName;
 		picture.pixels = pixels;
 		picture.origine = pixels;
@@ -84,29 +84,71 @@ Picture newPicture(const char *fileName,char *newFileName)
 
 void pictureToArray(double *data, char* name)
 {
-		short *inter = malloc(sizeof(short) * 40 * 40);
+		Picture p;
+		p.name = "oke.bmp";
 		FILE *f = fopen(name, "rb");
-		int average = 0;
-		short intermed = 0;
-		fseek(f,54,SEEK_SET);
-		for(size_t i = 0; i < 40; i++)
-		{
-				for(size_t j = 0; j < 40; j++)
+		fseek(f, 2, SEEK_SET);
+		int taille = fgetc(f) + 256 *fgetc(f) + 256 * 256 * fgetc(f)
+			+ 256 * 256 * 256 * fgetc(f);
+		fseek(f,18,SEEK_SET);
+
+		int w = fgetc(f) + 256 *fgetc(f) + 256 * 256 * fgetc(f)
+			+ 256 * 256 * 256 * fgetc(f);
+
+		int h = fgetc(f) + 256 *fgetc(f) + 256 * 256 * fgetc(f)
+			+ 256 * 256 * 256 * fgetc(f);
+		int offset = 0;
+		for(int i = 0; i < 4; i++)
+			{
+				if((taille - 54 - (h * w * 3 + h * i)) == 0)
 				{
-						intermed = fgetc(f) + fgetc(f) + fgetc(f);
-						inter[i * 40 + j] = intermed;
-						average += intermed;
+					offset = i;
+				}
+			}
+		char head[54];
+		fseek(f, 0, SEEK_SET);
+		for(size_t k = 0; k < 54; k++)
+		{
+				head[k] = fgetc(f);
+		}
+
+		unsigned long average = 0;
+		int r, g, b;
+		Pixel pixel[h * w];
+		for(int i = 0; i < h; i++)
+		{
+				for(int j = 0; j < w; j++)
+				{
+						b = fgetc(f);
+						g = fgetc(f);
+						r = fgetc(f);
+						pixel[i * w + j].r = r;
+						pixel[i * w + j].b = b;
+						pixel[i * w + j].g = g;
+						average += r + g + b;
+						if(j == w - 1)
+							 fseek(f, offset, SEEK_CUR);
+				}
+		}
+		average /= (w * h * 3);
+		p.offset = offset;
+		p.averageColor = (int)average;
+		p.h = h;
+		p.w = w;
+		p.head = head;
+		p.pixels = pixel;
+		blackAndWhite(&p);
+		resize(&p, 40, 40);
+		for(size_t i = 0; i < 1600; i++)
+		{
+				if(p.pixels[i].r == 0)
+						data[i] = 1;
+				else
+				{
+						data[i] = 0;
 				}
 		}
 		fclose(f);
-		average /= 1600;
-		for(size_t k = 0; k < 1600; k++)
-		{
-				data[k] = 0;
-				if(inter[k] < average)
-					 data[k] += 1;
-		}
-		free(inter);
 }
 
 void savePicture(Picture *picture)

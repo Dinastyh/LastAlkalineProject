@@ -7,11 +7,12 @@
 void blackAndWhite(Picture *picture)
 {
     float color;
-    for(int i = 0; i < picture->h * picture->w; i++)
+		upContrast(*picture);
+		for(int i = 0; i < picture->h * picture->w; i++)
     {
         color =((float)picture->pixels[i].r +
                 (float)picture->pixels[i].g +
-                (float)picture->pixels[i].b) / 3;
+                (float)picture->pixels[i].b) / (float)3;
         if(color > picture->averageColor)
         {
             picture->pixels[i].r = 255;
@@ -104,9 +105,8 @@ void lowPassFilter(Picture picture, int line, int column)
 void resize(Picture *p, int neww, int newh)
 {
 
-   
-	*p = pixelsToSquare(*p);
-	double hf = (double) p->h;
+    *p = pixelsToSquare(*p);
+    double hf = (double) p->h;
     double wf = (double) p->w;
     double nhf =(double) newh;
     double nwf =(double) neww;
@@ -121,7 +121,7 @@ void resize(Picture *p, int neww, int newh)
     while(j <newh && b == 0)
     {
         while(i < neww && b== 0)
-        {                
+        {
             result[i + j * neww] = p->pixels[((int)x)+((int)y)*p->w ];
             x += plusx;
             i++;
@@ -393,4 +393,52 @@ Pixel denoizingMedianWeight(double *m1, Pixel *m2, int w, int h, int width, int 
         x.g = 255;
     return x;
 }
-
+void grayscale(Picture *p)
+{
+		int gray;
+		Pixel pix;
+		for(int i = 0; i < p->h; i++)
+		{
+				for(int j = 0; j < p->w; j++)
+				{
+						pix = p->pixels[i * p->w + j];
+						gray = pix.r + pix.g + pix.b;
+						pix.r = gray;
+						pix.b = gray;
+						pix.g = gray;
+						p->pixels[i * p->w + j] = pix;
+				}
+		}
+}
+void grayscaleLuminate(Picture *p)
+{
+		int gray;
+		Pixel pix;
+		for(int i = 0; i < p->h; i++)
+		{
+				for(int j = 0; j < p->w; j++)
+				{
+						pix = p->pixels[i * p->w + j];
+						gray = (int)((float)pix.r * 0.2627f + (float)pix.g * 0.6780f + (float)pix.b * 0.0593f);
+						pix.r = gray;
+						pix.b = gray;
+						pix.g = gray;
+						p->pixels[i * p->w + j] = pix;
+				}
+		}
+}
+void invert(Picture *p)
+{
+		Pixel pix;
+		for(int i = 0; i < p->h; i++)
+		{
+				for(int j = 0; j < p->w; j++)
+				{
+						pix = p->pixels[i * p->w + j];
+						pix.r -= 255;
+						pix.b -= 255;
+						pix.g -= 255;
+						p->pixels[i * p->w + j] = pix;
+				}
+		}
+}
