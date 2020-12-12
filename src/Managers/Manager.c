@@ -17,7 +17,8 @@ void processingBasic(Picture* picture, unsigned int status[], size_t len)
 
 void preview(const char* path, unsigned int status[], size_t len)
 {
-    Picture picture = newPicture(path, "tmp.bmp");
+    
+    Picture picture = newPicture(path, "tmp.bmp"); 
     //PreProcesseing
     processingBasic(&picture, status, len);
     savePicture(&picture);
@@ -38,7 +39,7 @@ void preview(const char* path, unsigned int status[], size_t len)
     gtk_box_pack_start(GTK_BOX(box), exitBtn, FALSE, FALSE,0);
     gtk_container_add(GTK_CONTAINER(window), box);
     gtk_widget_show_all(window);
-    //remove(newPath);
+    remove("tmp.bmp");
     free(newPath);
 }
 

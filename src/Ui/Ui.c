@@ -38,9 +38,11 @@ size_t lenString(char string[])
 void displayClear(GtkWidget* container)
 {
     GList *children, *iter;
+    g_print("ta mere ne bug pas\n");
     children = gtk_container_get_children(GTK_CONTAINER(container));
     while(children)
     {
+        g_print("aller bug");
         gtk_widget_destroy(children->data);
         children = g_list_next(children);
     }

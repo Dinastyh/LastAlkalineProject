@@ -11,12 +11,16 @@ static gchar* txt = NULL;
 static GtkWidget* displayCenter;
 static bool status[] = {false, false, false, false};
 static gchar* nameProcessing[]= {"test", "test2","test3", "test4"};
+static GtkWidget* proBtns[]={NULL, NULL, NULL, NULL};
+static GtkWidget* exeBtn;
+static GtkWidget* selectBtn;
+static GtkWidget* saveBtn;
+static GtkWidget* processingBtn;
 //Funtion
 void onDestroy(GtkWidget *pWidget, gpointer pData);
 void onExecute(GtkWidget *pWidget, gpointer pData);
 void onSelect(GtkWidget *pWidget, gpointer pData);
 void onSave(GtkWidget *pWidget, gpointer pData);
-void takeFolder(GtkWidget *button, GtkWidget* fileSelection);
 void onProcessing(GtkWidget *pWidget, gpointer pData);
 void onCheckPro(GtkWidget* button, gpointer data);
 void setFile(gchar* path);
@@ -28,17 +32,12 @@ void setFile(gchar* path);
 int main(int argc,char** argv)
 {
     gtk_rc_parse("theme/gnome-breeze-master/Breeze-dark-gtk/gtk-2.0/gtkrc");
-    GtkWidget* window;
-    GtkWidget* exeBtn;
-    GtkWidget* selectBtn;
-    GtkWidget* saveBtn;
-    GtkWidget* processingBtn;
+    GtkWidget* window; 
     GtkListStore* processingStore;
     GtkCellRenderer *pCellRenderer;
     GtkTreeViewColumn *pColumn;
     GtkWidget *pListView;
-    gtk_init(&argc, &argv);
-    GtkWidget* proBtns[]={NULL, NULL, NULL, NULL};
+    gtk_init(&argc, &argv); 
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -58,13 +57,17 @@ int main(int argc,char** argv)
     GtkWidget* container = gtk_vbox_new(FALSE,0);
     GtkWidget* processingBarre = gtk_vbox_new(FALSE,0);
     gtk_container_set_border_width(GTK_CONTAINER(processingBarre), 10);
-    displayCenter = gtk_vbox_new(FALSE,0); 
+    displayCenter = gtk_vbox_new(FALSE,0);
+    //Disable some btn
+    gtk_widget_set_sensitive(exeBtn, FALSE);
+    gtk_widget_set_sensitive(saveBtn, FALSE);
+    gtk_widget_set_sensitive(processingBtn, FALSE);
 
     //Connect tool's barre
-    g_signal_connect(G_OBJECT(exeBtn), "released", G_CALLBACK(onExecute), NULL);
-    g_signal_connect(G_OBJECT(selectBtn), "released", G_CALLBACK(onSelect), NULL);
-    g_signal_connect(G_OBJECT(saveBtn), "released", G_CALLBACK(onSave), NULL);
-    g_signal_connect(G_OBJECT(processingBtn),"released", G_CALLBACK(onProcessing), NULL);
+    g_signal_connect(G_OBJECT(exeBtn), "released", G_CALLBACK(onExecute), window);
+    g_signal_connect(G_OBJECT(selectBtn), "released", G_CALLBACK(onSelect), window);
+    g_signal_connect(G_OBJECT(saveBtn), "released", G_CALLBACK(onSave), window);
+    g_signal_connect(G_OBJECT(processingBtn),"released", G_CALLBACK(onProcessing), window);
 
     //Add button on toolsBarre
     gtk_box_pack_start(GTK_BOX(toolsBarre), selectBtn, FALSE, FALSE, 0);
@@ -76,6 +79,7 @@ int main(int argc,char** argv)
     for(int i = NUMBERPRO-1; i> -1; i--)
     {
         proBtns[i] = gtk_check_button_new_with_label(nameProcessing[i]);
+        gtk_widget_set_sensitive(proBtns[i], FALSE);
         g_signal_connect(G_OBJECT(proBtns[i]), "released", G_CALLBACK(onCheckPro), NULL);
         gtk_box_pack_start(GTK_BOX(processingBarre), proBtns[i], FALSE, FALSE, 0);
     }
@@ -104,66 +108,78 @@ void onExecute(GtkWidget *pWidget, gpointer pData)
     if(!loadPicture(getFile()))
     {
         GtkWidget* dialog;
-        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        GtkWidget* window = pData;
         dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Please select a file");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
-        gtk_widget_destroy(window);
         return;
     }
     char* output = managerExec(getFile(), status,NUMBERPRO);
     setTxt(output);
-    displayTxt(displayCenter, output);    
-}
-void onSelect(GtkWidget *pWidget, gpointer pData)
-{
-    GtkWidget* fileSelection =  gtk_file_selection_new(g_locale_to_utf8("Select a file", -1, NULL, NULL, NULL));
-    gtk_widget_show(fileSelection);
-    gtk_window_set_modal(GTK_WINDOW(fileSelection), TRUE);
-    g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelection)->ok_button), "released", G_CALLBACK(takeFolder), fileSelection);
-    g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelection)->cancel_button), "released", G_CALLBACK(gtk_widget_destroy), fileSelection);
+    displayTxt(displayCenter, output);
+    setFile(NULL);
+    gtk_widget_set_sensitive(exeBtn, FALSE);
+    gtk_widget_set_sensitive(selectBtn,TRUE);
+    gtk_widget_set_sensitive(saveBtn, TRUE);
+    gtk_widget_set_sensitive(processingBtn, FALSE);
+    for(int i = NUMBERPRO-1; i> -1; i--)
+    {
+        gtk_widget_set_sensitive(proBtns[i], FALSE);
+    }
 }
 
-void takeFolder(GtkWidget* button, GtkWidget* fileSelection)
-{ 
-    const gchar* path;
-    path = gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelection));
-    setFile(path);
-    //If the file is not a Bmp24
-    if(!loadPicture(path))
+void onSelect(GtkWidget *pWidget, gpointer pData)
+{
+    GtkWidget* window = pData;
+    GtkWidget* fileSelection = gtk_file_chooser_dialog_new("Selection File", window, GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"), GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT, NULL);
+    if(gtk_dialog_run(GTK_DIALOG(fileSelection)) == GTK_RESPONSE_ACCEPT)
     {
-        GtkWidget* dialog;
-        dialog = gtk_message_dialog_new(GTK_WINDOW(fileSelection), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "You have selected :\n%s\nThis file is not a Bmp24, please try another file", path);
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
-        gtk_widget_destroy(fileSelection);
-        return;
+        gchar* path = NULL;
+        path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fileSelection));
+        if(!loadPicture(path))
+        {
+            GtkWidget* dialog;
+            dialog = gtk_message_dialog_new(GTK_WINDOW(fileSelection), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "You have selected :\n%s\nThis file is not a Bmp24, please try another file", path);
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            gtk_widget_destroy(fileSelection);
+            setFile(NULL);
+            return;
+        }
+        setFile(path);
+        g_print("Path: %s\n",getFile());
+        displayPictureGTK(displayCenter, path);
     }
     gtk_widget_destroy(fileSelection);
-    displayPictureGTK(displayCenter, path);
+    gtk_widget_set_sensitive(exeBtn, TRUE);
+    gtk_widget_set_sensitive(selectBtn, FALSE);
+    gtk_widget_set_sensitive(processingBtn, TRUE);
+    for(int i = NUMBERPRO-1; i> -1; i--)
+    {
+        gtk_widget_set_sensitive(proBtns[i], TRUE);
+    }
 }
 
 void onProcessing(GtkWidget *pWidget, gpointer pData)
 {
-    if(!loadPicture(getFile()))
+    if(!getFile())
     {
         GtkWidget* dialog;
-        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        GtkWidget* window = pData;
         dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Please select a file");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
-        gtk_widget_destroy(window);
+        setFile(NULL);
         return;
     }
     preview(getFile(), status, NUMBERPRO);
-
 }
 void onSave(GtkWidget *pWidget, gpointer pData)
 {
     if(getTxt()==NULL)
     {
         GtkWidget* dialog;
-        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        GtkWidget* window = pData;
         dialog = gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "You must run the texe detection before save it");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
@@ -216,8 +232,6 @@ gchar* getFile()
 
 void setTxt(gchar* text)
 {
-    if(txt != NULL)
-        free(txt);
     txt = text;
 }
 
