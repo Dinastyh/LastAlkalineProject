@@ -6,7 +6,6 @@
 
 void blackAndWhite(Picture *picture)
 {
-	printf("YEETTTT\n");
     float color;
 		upContrast(picture);
 		for(int i = 0; i < picture->h * picture->w; i++)
@@ -122,22 +121,20 @@ void resize(Picture *p, int neww, int newh)
     double y2= 1.0;
     double color;
     double average = 0;
+    
     while(j <newh)
     {
         while(i < neww)
         {
-		color = ((double) p->pixels[(int)x1 * p->w + (int)y1].g)*(x1 - x2 +1.0)*(y1 -  y2 + 1.0);
-		color += ((double) p->pixels[(int)x2 * p->w + (int)y1].g)*(-x1 +  x2)*(y1 -  y2 + 1.0);
-		color += ((double) p->pixels[(int)x2 * p->w + (int)y2].g)*(-x1 +  x2)*(-y1 +  y2);
-		color += ((double) p->pixels[(int)x1 * p->w +(int) y2].g)*(x1 - x2 +1.0)*(-y1 + y2);
+		color = ((double) p->pixels[(int)x1 * p->w + (int)y1].g)*(x2-x1)*(y2 - y1);
+		color += ((double) p->pixels[(int)x2 * p->w + (int)y1].g)*(x1 -x2 +1.0)*(y2-y1);	
+		color += ((double) p->pixels[(int)x2 * p->w + (int)y2].g)*(x1-x2 +1.0)*(y1 - y2 +1.0);	
+		color += ((double) p->pixels[(int)x1 * p->w +(int) y2].g)*(x2-x1)*(y1 - y2 +1.0);	
 
 		result[i*neww + j].r = (int) color;
 		result[i*neww + j].g = (int) color;
 		result[i*neww + j].b = (int) color;
-		if(color != 0.0 && (int)color != 255)
-		{
-			printf("x1 = %f,x2 = %f,y1= %f,y2= %f, color =%f\n",x1,x2,y1,y2,color);
-		}
+
 		average += color;
             x1 += plusx;
 	    if( x1 > x2)
