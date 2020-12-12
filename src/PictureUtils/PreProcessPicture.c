@@ -6,6 +6,7 @@
 
 void blackAndWhite(Picture *picture)
 {
+	printf("YEETTTT\n");
     float color;
 		upContrast(picture);
 		for(int i = 0; i < picture->h * picture->w; i++)
@@ -111,31 +112,68 @@ void resize(Picture *p, int neww, int newh)
     double nhf =(double) newh;
     double nwf =(double) neww;
     Pixel *result = malloc(sizeof(Pixel)*neww*newh);
-    double x = 0;
-    double y = 0;
     double plusx = wf/nwf;
     double plusy = hf/nhf;
-    int b = 0;
     int j = 0;
     int i = 0;
-    while(j <newh && b == 0)
+    double x1 = 0;
+    double  x2 = 1.0;
+    double y1 = 0;
+    double y2= 1.0;
+    double color;
+    double average = 0;
+    while(j <newh)
     {
-        while(i < neww && b== 0)
+        while(i < neww)
         {
-            result[i + j * neww] = p->pixels[((int)x)+((int)y)*p->w ];
-            x += plusx;
+		color = ((double) p->pixels[(int)x1 * p->w + (int)y1].g)*(x1 - x2 +1.0)*(y1 -  y2 + 1.0);
+		color += ((double) p->pixels[(int)x2 * p->w + (int)y1].g)*(-x1 +  x2)*(y1 -  y2 + 1.0);
+		color += ((double) p->pixels[(int)x2 * p->w + (int)y2].g)*(-x1 +  x2)*(-y1 +  y2);
+		color += ((double) p->pixels[(int)x1 * p->w +(int) y2].g)*(x1 - x2 +1.0)*(-y1 + y2);
+
+		result[i*neww + j].r = (int) color;
+		result[i*neww + j].g = (int) color;
+		result[i*neww + j].b = (int) color;
+		if(color != 0.0 && (int)color != 255)
+		{
+			printf("x1 = %f,x2 = %f,y1= %f,y2= %f, color =%f\n",x1,x2,y1,y2,color);
+		}
+		average += color;
+            x1 += plusx;
+	    if( x1 > x2)
+	    {
+		    x2 = (float)((int) x1) +1.0;
+		    if(x2 == p->w)
+		    {
+			    x2 --;
+		    }
+	    }
             i++;
+
         }
-        y += plusy;
-        x= 0;
+        y1 += plusy;
+        x1= 0;
+	x2 = 1.0;
         j ++;
-        i = 0;
+        i = 0; 
+	if( y1 > y2)
+	    {
+		    y2 = (float)((int)y1) +1.0; 
+		    if(y2 == p->h)
+		    {
+			    y2 --;
+		    }
+
+	    }
+
     }
         free(p->pixels);
- p->head = changeDimensionHead(p->head, newh, neww, (4-(neww*newh*3)%4));
+ p->head = changeDimensionHead(p->head, newh, neww, (4-(neww*newh*3)%4)%4);
  p->h = newh;
  p->w = neww;
  p->pixels = result;
+ p->averageColor = average/ (float)(neww * newh);
+ blackAndWhite(p);
 }
 
 Picture rotate(Picture pic, int degree)
