@@ -177,14 +177,14 @@ void training(Network* net, size_t nbEpoch, size_t batchSize, size_t nbElement, 
         if(i % 5000 == 0)
             printf("Epoch %ld\n", i);
         if(i % 50000 == 0)
-                writeNetwork(net);
+            writeNetwork(net);
         for(size_t j = 0; j < batchSize; j++)
         {
             //choose random data, forward prop and label
             //int rndint = rand() % nbElement;
             size_t iterator = i % nbElement;
 
-            char filenameStart[100] = "datasetNoRotationNoOffset/";
+            char filenameStart[100] = "TimBG/";
             char id[10];
             sprintf(id, "%zu", iterator);
             strcat(filenameStart, id);

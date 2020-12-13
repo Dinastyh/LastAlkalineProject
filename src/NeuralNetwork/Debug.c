@@ -136,7 +136,7 @@ void TestNetwork(Network* net, size_t nbElement)
         FILE *source, *target;
         int sourceLength;
 
-        char filename[200] = "datasetNoRotationNoOffset/";
+        char filename[200] = "TimBG/";
         char failname[100] = "failures/";
         char id[10];
         sprintf(id, "%ld", i + offset);
