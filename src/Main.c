@@ -5,15 +5,15 @@
 #include "Ui/Ui.h"
 #include <stdbool.h>
 #include "Managers/Manager.h"
-#define NUMBERPRO 10
+#define NUMBERPRO 11
 static gchar* file = NULL;
 static gchar* txt = NULL;
 static GtkWidget* displayCenter;
 static bool status[NUMBERPRO] = {0};
 static gchar* nameProcessing[]= {"Gray scale", "Strenghen edge","Detect Edge",
     "Up contrast", "Push Back", "Low pass filter", "Invert",
-    "Gray scale luminate", "Rotate 90", "Rotate 180"};
-static GtkWidget* proBtns[]={NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL};
+    "Gray scale luminate", "Rotate 90", "Rotate 180", "Automatic rotate"};
+static GtkWidget* proBtns[]={NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL};
 static GtkWidget* exeBtn;
 static GtkWidget* selectBtn;
 static GtkWidget* saveBtn;
@@ -199,7 +199,7 @@ void onSave(GtkWidget *pWidget, gpointer pData)
         return;
     }
     GtkWidget* fileSelection = gtk_file_chooser_dialog_new("Selection File", window, 
-            GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"), GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT, NULL);
+            GTK_FILE_CHOOSER_ACTION_SAVE, ("_Cancel"), GTK_RESPONSE_CANCEL, ("_Save"), GTK_RESPONSE_ACCEPT, NULL);
     if(gtk_dialog_run(GTK_DIALOG(fileSelection)) == GTK_RESPONSE_ACCEPT)
     {
         gchar* path = NULL;
