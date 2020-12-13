@@ -111,8 +111,6 @@ Data createData(Picture *p)
 									}
 								charactere.thing = (double*)pixChar;
 								words[k] = charactere;
-								savePicture(&oneChar);
-								displayPicture("tmp.bmp");
 							}
 						word.thing = (Data*)words;
 						lines[j] = word;
@@ -133,30 +131,25 @@ void create66Picture()
 		size_t lenFileName = 11;
 		size_t lenFile = 18;
 		size_t semi, semiI;
-		while(filePassed < 10)
+		while(filePassed < 200)
 			{
 				FILE* f = fopen(header, "r");
 				if(f != NULL)
 				{
-						printf("%s\n", header);
-						Picture p2 = newPicture(header, charac);
-						Picture *p = &p2;
-						Tuple tpline = captureLine(p);
-						blackAndWhite(p);
-		//				denoizing(p);
+						Picture p = newPicture(header, charac);
+						blackAndWhite(&p);
+						Tuple tpline = captureLine(&p);
 						for(int i = tpline.length - 1; i > -1; i--)
 							{
-								Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
+								Tuple tpword = captureBlock(p.pixels, &(tpline.block[i]));
 								for(int j = 0; j < tpword.length; j++)
 									{
-										Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
+										Tuple tpchar = captureChar(p.pixels, &(tpword.block[j]), p.w);
 										for(int k = 0; k < tpchar.length; k++)
 											{
-												Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
+												Picture oneChar = blockToPicture(&(tpchar.block[k]), &p);
 												resize(&oneChar, 40, 40);
 												savePicture(&oneChar);
-	//											displayPicture(charac);
-												printf("%s\n", charac);
 												if(incrementerString(charac, &lenFileName) == 1)
 												{
 														semiI = lenFileName;
@@ -169,16 +162,12 @@ void create66Picture()
 												}
 												free(oneChar.pixels);
 												free(oneChar.head);
-												p->name = charac;
+												p.name = charac;
 											}
 									}
 							}
-		//				savePicture(p);
-		//				displayPicture(charac);
-		//				p2 = newPicture(header, charac);
-		//				p = &p2;
-						free(p->pixels);
-						free(p->head);
+						free(p.pixels);
+						free(p.head);
 						fclose(f);
 				}
 				if(incrementerString(header, &lenFile) == 1)

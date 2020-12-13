@@ -27,4 +27,11 @@ Pixel denoizingMedianWeight(double *m1, Pixel *m2, int w, int h, int width, int 
 void grayscale(Picture *p);
 void grayscaleLuminate(Picture *p);
 void invert(Picture *p);
+double sumRGBPixel(Pixel *p);
+double varianceP(Picture *p);
+
+Picture detectionAngle(Picture pic, Tuple* l);
+float variance(Picture pic, Tuple l);
+Picture invertDetection(Picture pic1, Picture pic2, Tuple l1, Tuple l2);
+void detecAngle(Picture *picture);
 #endif
