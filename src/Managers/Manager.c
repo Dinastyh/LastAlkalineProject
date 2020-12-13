@@ -10,14 +10,36 @@ int loadPicture(const char* path)
     return true;
 }
 
-void processingBasic(Picture* picture, unsigned int status[], size_t len)
+void processingBasic(Picture* picture, bool status[], size_t len)
 {
+
     blackAndWhite(picture);
+    detectAngle(picture);
+    if(status[0])
+        {grayscale(picture);}
+    if(status[1])
+        {strengthenEdge(picture);}
+    if(status[2])
+        {detectEdge(picture);}
+    if(status[3])
+        {upContrast(picture);}
+    if(status[4])
+        {pushBack(picture);}
+    if(status[5])
+        {lowPassFilter(picture, 3, 3);}
+    if(status[6])
+        invert(picture);
+    if(status[7])
+        {grayscaleLuminate(picture);}
+    if(status[8])
+        {*picture = rotate(*picture, 90.0);}
+    if(status[9])
+        {*picture = rotate(*picture, 180.0);}
 } 
 
-void preview(const char* path, unsigned int status[], size_t len)
+void preview(const char* path, bool status[], size_t len)
 {
-    
+
     Picture picture = newPicture(path, "tmp.bmp"); 
     //PreProcesseing
     processingBasic(&picture, status, len);
@@ -62,7 +84,7 @@ void onExit(GtkWidget* button, gpointer data)
     gtk_widget_destroy(window);
 }
 
-char* managerExec(const char* path, unsigned int status[], size_t lenStatus)
+char* managerExec(const char* path, bool status[], size_t lenStatus)
 {
     char* output = malloc(sizeof(char));
     output[0]='\0';

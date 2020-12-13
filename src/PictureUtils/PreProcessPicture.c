@@ -554,8 +554,6 @@ float varianceAngle(Picture pic, Tuple l)
 						{
 								if(pic.pixels[l.block[w].start + i*pic.w + j].g == 0)
 								{
-										printf("i = %i\n",i);
-										printf("j = %i\n",j);
 										debut[w] = (float) j;
 										moyenne += (float) j;
 										i = l.block[w].h;
