@@ -421,3 +421,184 @@ Tuple captureBlock(Pixel* pixel, Block *block)
 		tuple.length = lines;
 		return tuple;
 }
+
+void colorImage(Pixel* pix,int h ,int w,int* v, int* fw, int* sv,int* sw)
+{
+	int b = 0;
+	while (b == 0)
+	{
+		b = 1;
+		for(int i = 0; i< h; i++)
+		{
+			for(int j =0; j <w ;j++)
+			{
+				if(pix[i*w+j].g == 0 && pix[i*w+j].b == 0 && pix[i*w+j].r == 255)
+				{
+					pix[i*w+j].g = 255;
+			      	 	pix[i*w+j].r = 0;
+					if( i>0 && pix[(i - 1) * w + j].g == 0 && pix[(i - 1) * w + j].b ==0 && pix[(i - 1) * w + j].r == 0)	
+					{
+						pix[(i - 1) * w + j].r = 255;
+					}
+					if( j>0 && pix[(i) * w + j-1].g == 0 && pix[(i) * w + j-1].b ==0 && pix[i * w + j-1].r == 0)	
+					{
+						pix[i  * w + j-1].r = 255;
+					}
+					if( i<h-1 && pix[(i + 1) * w + j].g == 0 && pix[(i + 1) * w + j].b ==0 && pix[(i + 1) * w + j].r == 0)	
+					{
+						pix[(i + 1) * w + j].r = 255;
+					}
+					if( j<w-1 && pix[i * w + j+1].g == 0 && pix[i  * w + j+1].b ==0 && pix[i  * w + j+1].r == 0)	
+					{
+						pix[i * w + j+1].r = 255;
+					}
+					b = 0;	
+					if(*v < i)
+					{
+						*v = i;
+					}
+					if(*fw < j)
+					{
+						*fw = j;
+					}
+					if(*sv > i)
+					{
+						*sv = i;
+					}
+					if(*sw > j)
+					{
+						*sw = j;
+					}			
+				} 
+			}
+		}
+		if (b == 0)
+		{
+		b = 1;
+		for(int i = h-1; i>-1; i--)
+		{
+			for(int j =w-1; j >-1 ;j--)
+			{
+				if(pix[i*w+j].g == 0 && pix[i*w+j].b == 0 && pix[i*w+j].r == 255)
+				{
+					pix[i*w+j].g = 255;
+			      	 	pix[i*w+j].r = 0;
+					if( i>0 && pix[(i - 1) * w + j].g == 0 && pix[(i - 1) * w + j].b ==0 && pix[(i - 1) * w + j].r == 0)	
+					{
+						pix[(i - 1) * w + j].r = 255;
+					}
+					if( j>0 && pix[(i) * w + j-1].g == 0 && pix[(i) * w + j-1].b ==0 && pix[i * w + j-1].r == 0)	
+					{
+						pix[i  * w + j-1].r = 255;
+					}
+					if( i<h-1 && pix[(i + 1) * w + j].g == 0 && pix[(i + 1) * w + j].b ==0 && pix[(i + 1) * w + j].r == 0)	
+					{
+						pix[(i + 1) * w + j].r = 255;
+					}
+					if( j<w-1 && pix[i * w + j+1].g == 0 && pix[i  * w + j+1].b ==0 && pix[i  * w + j+1].r == 0)	
+					{
+						pix[i * w + j+1].r = 255;
+					}
+					b = 0;				
+					if(*v < i)
+					{
+						*v = i;
+					}
+					if(*fw < j)
+					{
+						*fw = j;
+					}
+					if(*sv > i)
+					{
+						*sv = i;
+					}
+					if(*sw > j)
+					{
+						*sw = j;
+					}
+				}		
+			}
+
+		}
+		}
+	}
+}
+
+Picture* betterDetect(Picture *pic,int* size)
+{
+	*size = 0;
+	int capacity = 4;
+	int b = 1;
+	int i = 0;
+	int j = 0;
+	int w;
+	int h;
+	int starth;
+	int startw;
+	Pixel* pix;
+	Picture* list = malloc(sizeof(pic)*4);
+	while(b == 1)
+	{	
+		h = 0;
+		w = 0;
+		starth = pic->h;
+		startw = pic->w;
+		*size += 1;
+		b=0;
+		while (b == 0 && i < pic->w)
+		{
+			while(b == 0 && j<pic->h)
+			{
+				if(pic->pixels[i*pic->w +j].g == 0)
+				{
+					printf("YETTT\n");
+					pic->pixels[i*pic->w +j].r = 255; 
+					b = 1;
+				}
+				j++;
+			}
+			j = 0;
+			i++;
+		}
+		if( b == 1)
+		{
+		 	colorImage(pic->pixels ,pic-> h ,pic->w,&h,&w,&starth,&startw);
+			pix = malloc(sizeof(Pixel)*(h-starth+1)*(w-startw+1));
+			for(int x = starth; x<h+1;x++)
+			{
+				for(int y = startw; y <w+1; y++)
+				{
+					if(pic->pixels[x*pic->w + y].g == 255 && pic->pixels[x*pic->w + y].r == 0 && pic->pixels[x*pic->w + y].b == 0 )
+					{
+						pic->pixels[x*pic->w + y].b = 255;
+						pic->pixels[x*pic->w + y].r = 255;
+						pix[(x-starth)*(w+1-startw) + j -startw].r =0;	
+						pix[(x-starth)*(w+1-startw) + j -startw].g =0;	
+						pix[(x-starth)*(w+1-startw) + j -startw].b =0;
+					}
+					else
+					{
+						pix[(x-starth)*(w+1-startw) + j -startw].r =255;	
+						pix[(x-starth)*(w+1-startw) + j -startw].g =255;	
+						pix[(x-starth)*(w+1-startw) + j -startw].b =255;
+
+					}
+				}
+			}
+			if(*size == capacity)
+			{
+				capacity *= 2;
+				list = realloc(list,sizeof(Pixel)*capacity);
+			}
+			list[*size-1].pixels = pix;
+			list[*size-1].w = w - startw +1;
+			list[*size-1].h = h - starth +1;
+			list[*size-1].offset = (4-(3*list[*size-1].w * list[*size-1].h)%4)%4;
+			list[*size-1].head =  changeDimensionHead(pic->head,list[*size-1].h, list[*size-1].w, list[*size-1].offset);
+
+		}
+	}
+	return list;
+
+}
+
