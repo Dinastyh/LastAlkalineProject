@@ -78,7 +78,12 @@ Data createData(Picture *p)
 		Tuple tpline = captureLine(p);
 		Data* dataLines = malloc(sizeof(Data) * tpline.length);
 		Data data;
+		int size = 0;
+		int charsize =0;
+		int charmoyenne =0;
+		int sure = 0;
 		data.length = tpline.length;
+		Picture* pics;
 		for(int i = tpline.length - 1; i > -1; i--)
 			{
 				Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
@@ -91,26 +96,62 @@ Data createData(Picture *p)
 						Data* words = malloc(sizeof(Data) * tpchar.length);
 						Data word;
 						word.length = tpchar.length;
+						charsize = 0;
+						for(int k = 0; k < tpchar.length; k++)
+						{
+							charsize += tpchar.block[k].w;
+						}
+						charmoyenne = (charmoyenne + charsize / tpchar.length)/2;
+						sure = 0;
 						for(int k = 0; k < tpchar.length; k++)
 							{
 								Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
-								resize(&oneChar, 40, 40);
-								double* pixChar = malloc(sizeof(double) * 1600);
-								Data charactere;
-								charactere.length = 1600;
-								for(int m = 0; m < 1600; m++)
+								if(oneChar.w < charmoyenne)
+								{
+									resize(&oneChar, 40, 40);
+									double* pixChar = malloc(sizeof(double) * 1600);
+									Data charactere;
+									charactere.length = 1600;
+									for(int m = 0; m < 1600; m++)
+										{
+											if(oneChar.pixels[m].r == 0)
+												{
+													pixChar[m] = 1;
+												}
+											else
+												{
+													pixChar[m] = 0;
+												}
+										}
+									charactere.thing = (double*)pixChar;
+									words[sure] = charactere;
+									sure ++;
+								}
+								else
+								{
+									pics = betterDetect(&oneChar,&size);
+									for(int yup = 0; yup < size -1; yup++)
 									{
-										if(oneChar.pixels[m].r == 0)
-											{
-												pixChar[m] = 1;
-											}
-										else
-											{
-												pixChar[m] = 0;
-											}
+									resize(&pics[yup], 40, 40);
+									double* pixChar = malloc(sizeof(double) * 1600);
+									Data charactere;
+									charactere.length = 1600;
+									for(int m = 0; m < 1600; m++)
+										{
+											if(pics[yup].pixels[m].r == 0)
+												{
+													pixChar[m] = 1;
+												}
+											else
+												{
+													pixChar[m] = 0;
+												}
+										}
+									charactere.thing = (double*)pixChar;
+									words[sure] = charactere;
+									sure ++;
 									}
-								charactere.thing = (double*)pixChar;
-								words[k] = charactere;
+								}
 							}
 						word.thing = (Data*)words;
 						lines[j] = word;

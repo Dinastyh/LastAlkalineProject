@@ -421,3 +421,170 @@ Tuple captureBlock(Pixel* pixel, Block *block)
 		tuple.length = lines;
 		return tuple;
 }
+
+void colorImage(Pixel* pix,int h ,int w, int* fw,int* sw)
+{
+	int b = 0;
+	while (b == 0)
+	{
+		b = 1;
+		for(int i = 0; i< h; i++)
+		{
+			for(int j =0; j <w ;j++)
+			{
+				if(pix[i*w+j].g == 0 && pix[i*w+j].b == 0 && pix[i*w+j].r == 255)
+				{
+					pix[i*w+j].g = 255;
+			      	 	pix[i*w+j].r = 0;
+					if( i>0 && pix[(i - 1) * w + j].g == 0 && pix[(i - 1) * w + j].b ==0 && pix[(i - 1) * w + j].r == 0)	
+					{
+						pix[(i - 1) * w + j].r = 255;
+					}
+					if( j>0 && pix[(i) * w + j-1].g == 0 && pix[(i) * w + j-1].b ==0 && pix[i * w + j-1].r == 0)	
+					{
+						pix[i  * w + j-1].r = 255;
+					}
+					if( i<h-1 && pix[(i + 1) * w + j].g == 0 && pix[(i + 1) * w + j].b ==0 && pix[(i + 1) * w + j].r == 0)	
+					{
+						pix[(i + 1) * w + j].r = 255;
+					}
+					if( j<w-1 && pix[i * w + j+1].g == 0 && pix[i  * w + j+1].b ==0 && pix[i  * w + j+1].r == 0)	
+					{
+						pix[i * w + j+1].r = 255;
+					}
+					b = 0;	
+					if(*fw < j)
+					{
+						*fw = j;
+					}
+					if(*sw > j)
+					{
+						*sw = j;
+					}			
+				} 
+			}
+		}
+		if (b == 0)
+		{
+		b = 1;
+		for(int i = h-1; i>-1; i--)
+		{
+			for(int j =w-1; j >-1 ;j--)
+			{
+				if(pix[i*w+j].g == 0 && pix[i*w+j].b == 0 && pix[i*w+j].r == 255)
+				{
+					pix[i*w+j].g = 255;
+			      	 	pix[i*w+j].r = 0;
+					if( i>0 && pix[(i - 1) * w + j].g == 0 && pix[(i - 1) * w + j].b ==0 && pix[(i - 1) * w + j].r == 0)	
+					{
+						pix[(i - 1) * w + j].r = 255;
+					}
+					if( j>0 && pix[(i) * w + j-1].g == 0 && pix[(i) * w + j-1].b ==0 && pix[i * w + j-1].r == 0)	
+					{
+						pix[i  * w + j-1].r = 255;
+					}
+					if( i<h-1 && pix[(i + 1) * w + j].g == 0 && pix[(i + 1) * w + j].b ==0 && pix[(i + 1) * w + j].r == 0)	
+					{
+						pix[(i + 1) * w + j].r = 255;
+					}
+					if( j<w-1 && pix[i * w + j+1].g == 0 && pix[i  * w + j+1].b ==0 && pix[i  * w + j+1].r == 0)	
+					{
+						pix[i * w + j+1].r = 255;
+					}
+					b = 0;				
+					if(*fw < j)
+					{
+						*fw = j;
+					}
+					if(*sw > j)
+					{
+						*sw = j;
+					}
+				}		
+			}
+
+		}
+		}
+	}
+
+}
+
+Picture* betterDetect(Picture *pic,int* size)
+{
+	*size = 0;
+	int capacity = 4;
+	int b = 1;
+	int i = 0;
+	int j = 0;
+	int w;
+	int startw;
+	Pixel* pix = malloc(sizeof(Pixel));
+	Picture* list = malloc(sizeof(Picture)*8);
+	while(b == 1)
+	{	
+		w = 0;
+		startw = pic->w;
+		*size += 1;
+		b=0;
+		i = 0;
+		j = 0;
+		while (b == 0 && i < pic->h)
+		{
+			while(b == 0 && j<pic->w)
+			{
+				if(pic->pixels[i*pic->w +j].g == 0)
+				{
+					pic->pixels[i*pic->w +j].r = 255; 
+					b = 1;
+				}
+				j++;
+			}
+			j = 0;
+			i++;
+		}
+		if( b == 1)
+		{
+		 	colorImage(pic->pixels ,pic->h ,pic->w,&w,&startw);
+			free(pix);		
+			pix = malloc(sizeof(Pixel)*(pic->h)*(w-startw+1));
+			for(int x = 0; x<pic->h;x++)
+			{
+				for(int y = 0; y <w+1-startw; y++)
+				{
+					if(pic->pixels[(x)*pic->w +startw+ y].g == 255 && pic->pixels[(x)*pic->w + y+startw].r == 0 && pic->pixels[(x)*pic->w + startw + y].b == 0 )
+					{
+
+						pic->pixels[(x)*pic->w + startw +y].b = 255;
+						pic->pixels[(x)*pic->w + startw +y].r = 255;
+						pix[x*(w+1-startw) + y].r =0;	
+						pix[(x)*(w+1-startw) + y].g =0;	
+						pix[(x)*(w+1-startw) + y].b =0;
+					}
+					else
+					{
+						pix[(x)*(w+1-startw) + y].r =255;	
+						pix[(x)*(w+1-startw) + y].g =255;	
+						pix[(x)*(w+1-startw) + y].b =255;
+
+					}
+				}
+			}
+			if(*size == capacity)
+			{
+				capacity *= 2;
+				list = realloc(list,sizeof(Picture)*capacity);
+			}
+			list[*size-1].name = "a.bmp";
+			list[*size-1].pixels = pix;
+			list[*size-1].w = w - startw +1;
+			list[*size-1].h = pic->h;
+			list[*size-1].offset = (4 - (3*list[*size-1].w)%4)%4;
+			list[*size-1].head = pic->head;
+			list[*size-1].head =  changeDimensionHead(list[*size-1].head,list[*size-1].h, list[*size-1].w, list[*size-1].offset);
+			savePicture(&list[*size-1]);
+		}
+	}
+	return list;
+
+}
+
