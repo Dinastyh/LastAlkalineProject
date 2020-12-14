@@ -422,7 +422,7 @@ Tuple captureBlock(Pixel* pixel, Block *block)
 		return tuple;
 }
 
-void colorImage(Pixel* pix,int h ,int w,int* v, int* fw, int* sv,int* sw)
+void colorImage(Pixel* pix,int h ,int w, int* fw,int* sw)
 {
 	int b = 0;
 	while (b == 0)
@@ -453,17 +453,9 @@ void colorImage(Pixel* pix,int h ,int w,int* v, int* fw, int* sv,int* sw)
 						pix[i * w + j+1].r = 255;
 					}
 					b = 0;	
-					if(*v < i)
-					{
-						*v = i;
-					}
 					if(*fw < j)
 					{
 						*fw = j;
-					}
-					if(*sv > i)
-					{
-						*sv = i;
 					}
 					if(*sw > j)
 					{
@@ -500,17 +492,9 @@ void colorImage(Pixel* pix,int h ,int w,int* v, int* fw, int* sv,int* sw)
 						pix[i * w + j+1].r = 255;
 					}
 					b = 0;				
-					if(*v < i)
-					{
-						*v = i;
-					}
 					if(*fw < j)
 					{
 						*fw = j;
-					}
-					if(*sv > i)
-					{
-						*sv = i;
 					}
 					if(*sw > j)
 					{
@@ -522,6 +506,7 @@ void colorImage(Pixel* pix,int h ,int w,int* v, int* fw, int* sv,int* sw)
 		}
 		}
 	}
+
 }
 
 Picture* betterDetect(Picture *pic,int* size)
@@ -532,26 +517,23 @@ Picture* betterDetect(Picture *pic,int* size)
 	int i = 0;
 	int j = 0;
 	int w;
-	int h;
-	int starth;
 	int startw;
-	Pixel* pix;
-	Picture* list = malloc(sizeof(pic)*4);
+	Pixel* pix = malloc(sizeof(Pixel));
+	Picture* list = malloc(sizeof(Picture)*8);
 	while(b == 1)
 	{	
-		h = 0;
 		w = 0;
-		starth = pic->h;
 		startw = pic->w;
 		*size += 1;
 		b=0;
-		while (b == 0 && i < pic->w)
+		i = 0;
+		j = 0;
+		while (b == 0 && i < pic->h)
 		{
-			while(b == 0 && j<pic->h)
+			while(b == 0 && j<pic->w)
 			{
 				if(pic->pixels[i*pic->w +j].g == 0)
 				{
-					printf("YETTT\n");
 					pic->pixels[i*pic->w +j].r = 255; 
 					b = 1;
 				}
@@ -562,25 +544,27 @@ Picture* betterDetect(Picture *pic,int* size)
 		}
 		if( b == 1)
 		{
-		 	colorImage(pic->pixels ,pic-> h ,pic->w,&h,&w,&starth,&startw);
-			pix = malloc(sizeof(Pixel)*(h-starth+1)*(w-startw+1));
-			for(int x = starth; x<h+1;x++)
+		 	colorImage(pic->pixels ,pic->h ,pic->w,&w,&startw);
+			free(pix);		
+			pix = malloc(sizeof(Pixel)*(pic->h)*(w-startw+1));
+			for(int x = 0; x<pic->h;x++)
 			{
-				for(int y = startw; y <w+1; y++)
+				for(int y = 0; y <w+1-startw; y++)
 				{
-					if(pic->pixels[x*pic->w + y].g == 255 && pic->pixels[x*pic->w + y].r == 0 && pic->pixels[x*pic->w + y].b == 0 )
+					if(pic->pixels[(x)*pic->w +startw+ y].g == 255 && pic->pixels[(x)*pic->w + y+startw].r == 0 && pic->pixels[(x)*pic->w + startw + y].b == 0 )
 					{
-						pic->pixels[x*pic->w + y].b = 255;
-						pic->pixels[x*pic->w + y].r = 255;
-						pix[(x-starth)*(w+1-startw) + j -startw].r =0;	
-						pix[(x-starth)*(w+1-startw) + j -startw].g =0;	
-						pix[(x-starth)*(w+1-startw) + j -startw].b =0;
+
+						pic->pixels[(x)*pic->w + startw +y].b = 255;
+						pic->pixels[(x)*pic->w + startw +y].r = 255;
+						pix[x*(w+1-startw) + y].r =0;	
+						pix[(x)*(w+1-startw) + y].g =0;	
+						pix[(x)*(w+1-startw) + y].b =0;
 					}
 					else
 					{
-						pix[(x-starth)*(w+1-startw) + j -startw].r =255;	
-						pix[(x-starth)*(w+1-startw) + j -startw].g =255;	
-						pix[(x-starth)*(w+1-startw) + j -startw].b =255;
+						pix[(x)*(w+1-startw) + y].r =255;	
+						pix[(x)*(w+1-startw) + y].g =255;	
+						pix[(x)*(w+1-startw) + y].b =255;
 
 					}
 				}
@@ -588,14 +572,16 @@ Picture* betterDetect(Picture *pic,int* size)
 			if(*size == capacity)
 			{
 				capacity *= 2;
-				list = realloc(list,sizeof(Pixel)*capacity);
+				list = realloc(list,sizeof(Picture)*capacity);
 			}
+			list[*size-1].name = "a.bmp";
 			list[*size-1].pixels = pix;
 			list[*size-1].w = w - startw +1;
-			list[*size-1].h = h - starth +1;
-			list[*size-1].offset = (4-(3*list[*size-1].w * list[*size-1].h)%4)%4;
-			list[*size-1].head =  changeDimensionHead(pic->head,list[*size-1].h, list[*size-1].w, list[*size-1].offset);
-
+			list[*size-1].h = pic->h;
+			list[*size-1].offset = (4 - (3*list[*size-1].w)%4)%4;
+			list[*size-1].head = pic->head;
+			list[*size-1].head =  changeDimensionHead(list[*size-1].head,list[*size-1].h, list[*size-1].w, list[*size-1].offset);
+			savePicture(&list[*size-1]);
 		}
 	}
 	return list;

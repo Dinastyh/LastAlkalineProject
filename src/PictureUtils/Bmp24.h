@@ -46,7 +46,7 @@ void savePicture(Picture *picture);
 Picture bmp24ToPicture(FILE* f);
 Picture pngToPicture(FILE* f);
 
-void colorImage(Pixel* pix, int h, int w,int*,int*,int*,int*);
+void colorImage(Pixel* pix, int h, int w,int*,int*);
 Picture* betterDetect(Picture *pic,int* size);
 
 Pixel* myPixel(Pixel* pic, int h , int w,int startw,int width);
