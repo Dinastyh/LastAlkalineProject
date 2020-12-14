@@ -97,11 +97,11 @@ Data createData(Picture *p)
             for(int k = 0; k < tpchar.length; k++)
             {
                 Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
-                resize(&oneChar, 40, 40);
-                double* pixChar = malloc(sizeof(double) * 1600);
+                resize(&oneChar, 28, 28);
+                double* pixChar = malloc(sizeof(double) * 784);
                 Data charactere;
-                charactere.length = 1600;
-                for(int m = 0; m < 1600; m++)
+                charactere.length = 784;
+                for(int m = 0; m < 784; m++)
                 {
                     if(oneChar.pixels[m].r == 0)
                     {
