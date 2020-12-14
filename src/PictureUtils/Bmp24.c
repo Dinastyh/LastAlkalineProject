@@ -138,8 +138,8 @@ void pictureToArray(double *data, char* name)
 		p.head = head;
 		p.pixels = pixel;
 		blackAndWhite(&p);
-		resize(&p, 40, 40);
-		for(size_t i = 0; i < 1600; i++)
+		resize(&p, 28, 28);
+		for(size_t i = 0; i < 784; i++)
 		{
 				if(p.pixels[i].r == 0)
 						data[i] = 1;

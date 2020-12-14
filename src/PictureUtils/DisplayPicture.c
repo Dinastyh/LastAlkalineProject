@@ -131,7 +131,7 @@ void create66Picture()
     char charac[16];
     strcat(charac, "TimBG/0.bmp");
     size_t filePassed = 0;
-    size_t lenFileName = 11;
+    size_t lenFileName = 14;
     size_t lenFile = 18;
     size_t semi, semiI;
     while(filePassed < 200)
@@ -151,7 +151,7 @@ void create66Picture()
                     for(int k = 0; k < tpchar.length; k++)
                     {
                         Picture oneChar = blockToPicture(&(tpchar.block[k]), &p);
-                        resize(&oneChar, 40, 40);
+                        resize(&oneChar, 28, 28);
                         savePicture(&oneChar);
                         if(incrementerString(charac, &lenFileName) == 1)
                         {
