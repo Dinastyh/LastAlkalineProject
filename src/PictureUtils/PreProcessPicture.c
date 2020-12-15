@@ -66,18 +66,15 @@ Pixel applyConvolutionToPixel(int w, int h, int width, int height, Convolution c
 void applyConvolutionToPicture(Picture *picture, Convolution clt)
 {
 		Pixel inter;
-		inter.r = 0;
-		inter.g = 0;
-		inter.b = 0;
-		Pixel *convoluted = myPixel(picture->pixels, picture->h, picture->w, 0, picture->w);
-		for(int h = 0; h < picture->h; h++)
+		int w = picture->w;
+		int h = picture->h;
+		Pixel *convoluted = myPixel(picture->pixels, h, w, 0, w);
+		for(int l = 0; l < h; l++)
 			{
-				for(int w = 0; w < picture->w; w++)
+				for(int c = 0; c < w; c++)
 					{
-						inter = applyConvolutionToPixel(w, h, picture->w, picture->h, clt, convoluted);
-						picture->pixels[h * picture->w + w].r = inter.r;
-						picture->pixels[h * picture->w + w].b = inter.b;
-						picture->pixels[h * picture->w + w].g = inter.g;
+						inter = applyConvolutionToPixel(c, l, w, h, clt, convoluted);
+						picture->pixels[l * w + c] = inter;
 					}
 			}
 		free(convoluted);
@@ -469,12 +466,13 @@ void invert(Picture *p)
 				for(int j = 0; j < p->w; j++)
 					{
 						pix = p->pixels[i * p->w + j];
-						pix.r -= 255;
-						pix.b -= 255;
-						pix.g -= 255;
+						pix.r = 255 - pix.r;
+						pix.b = 255 - pix.b;
+						pix.g = 255 - pix.g;
 						p->pixels[i * p->w + j] = pix;
 					}
 			}
+		p->averageColor = 255 - p->averageColor;
 }
 Picture detectionAngle(Picture pic,Tuple* l)
 {
