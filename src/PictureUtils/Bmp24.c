@@ -582,6 +582,8 @@ Picture* betterDetect(Picture *pic,int* size)
 			list[*size-1].head =  changeDimensionHead(list[*size-1].head,list[*size-1].h, list[*size-1].w, list[*size-1].offset);
 		}
 	}
+    free(pic->pixels);
+    free(pic->head);
 	return list;
 
 }
