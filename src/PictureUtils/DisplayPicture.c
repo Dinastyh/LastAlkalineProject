@@ -75,54 +75,112 @@ void displaySegmentationPicture(char* filename)
 
 Data createData(Picture *p)
 {
-    Tuple tpline = captureLine(p);
-    Data* dataLines = malloc(sizeof(Data) * tpline.length);
-    Data data;
-    int charsize =0;
-    int charmoyenne =0;
-    data.length = tpline.length;
-    Picture* pics;
-    for(int i = tpline.length - 1; i > -1; i--)
-    {
-        Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
-        Data* lines = malloc(sizeof(Data) * tpword.length);
-        Data line;
-        line.length = tpword.length;
-        for(int j = 0; j < tpword.length; j++)
-        {
-            Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
-            Data* words = malloc(sizeof(Data) * tpchar.length);
-            Data word;
-            word.length = tpchar.length;
-            for(int k = 0; k < tpchar.length; k++)
-            {
-                Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
-                resize(&oneChar, 28, 28);
-                double* pixChar = malloc(sizeof(double) * 784);
-                Data charactere;
-                charactere.length = 784;
-                for(int m = 0; m < 784; m++)
-                {
-                    if(oneChar.pixels[m].r == 0)
-                    {
-                        pixChar[m] = 1;
-                    }
-                    else
-                    {
-                        pixChar[m] = 0;
-                    }
-                }
-                charactere.thing = (double*)pixChar;
-                words[k] = charactere;
-            }
-            word.thing = (Data*)words;
-            lines[j] = word;
-        }
-        line.thing = (Data*)lines;
-        dataLines[tpline.length - i - 1] = line;
-    }
-    data.thing = (Data*)dataLines;
-    return data;
+		Tuple tpline = captureLine(p);
+		Data* dataLines = malloc(sizeof(Data) * tpline.length);
+		Data data;
+		int size = 0;
+		int charsize =0;
+		int charmoyenne =0;
+		int sure = 0;
+		int mb =0;
+		data.length = tpline.length;
+		Picture* pics;
+		for(int i = tpline.length - 1; i > -1; i--)
+			{
+				Tuple tpword = captureBlock(p->pixels, &(tpline.block[i]));
+				Data* lines = malloc(sizeof(Data) * tpword.length);
+				Data line;
+				line.length = tpword.length;
+				for(int j = 0; j < tpword.length; j++)
+					{
+						Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
+						Data* words = malloc(sizeof(Data) * tpchar.length*2);
+						Data word;
+						word.length = tpchar.length;
+						charsize = 0;
+						for(int k = 0; k < tpchar.length; k++)
+						{
+							charsize += tpchar.block[k].w;
+						}
+						charmoyenne = (charmoyenne + charsize / tpchar.length)/2;
+						sure = 0;
+						mb = tpchar.length;
+						for(int k = 0; k < tpchar.length; k++)
+							{
+								Picture oneChar = blockToPicture(&(tpchar.block[k]), p);
+								if(oneChar.w < charmoyenne)
+								{
+									resize(&oneChar, 40, 40);
+									double* pixChar = malloc(sizeof(double) * 1600);
+									Data charactere;
+									charactere.length = 1600;
+									for(int m = 0; m < 1600; m++)
+										{
+											if(oneChar.pixels[m].r == 0)
+												{
+													pixChar[m] = 1;
+												}
+											else
+												{
+													pixChar[m] = 0;
+												}
+										}
+									charactere.thing = (double*)pixChar;
+									words[sure] = charactere;
+									sure ++;
+								}
+								else
+								{
+									pics = betterDetect(&oneChar,&size);
+									if (size > 2)
+									{ 
+										mb += size -2;
+										//void* yet = realloc(word.thing,sizeof(Data)*(mb));
+										//if (yet != NULL)
+										//{
+										//	word.thing = yet;
+										//}
+										//else
+										//{
+										//	printf("YES\n");
+										//}	
+										word.length = mb;
+									}
+
+									for(int yup = 0; yup < size -1; yup++)
+									{
+										
+									resize(&pics[yup], 40, 40);
+									double* pixChar = malloc(sizeof(double) * 1600);
+									Data charactere;
+									charactere.length = 1600;
+									for(int m = 0; m < 1600; m++)
+										{
+											if(pics[yup].pixels[m].r == 0)
+												{
+													pixChar[m] = 1;
+												}
+											else
+												{
+													pixChar[m] = 0;
+												}
+										}
+									charactere.thing = (double*)pixChar;
+									words[sure] = charactere;
+									sure ++;
+									}
+									free(pics);
+								}
+							}
+						word.thing = (Data*)words;
+						lines[j] = word;
+
+					}
+				line.thing = (Data*)lines;
+				dataLines[tpline.length - i - 1] = line;
+			}
+		data.thing = (Data*)dataLines;
+		return data;
 }
 void create66Picture()
 {

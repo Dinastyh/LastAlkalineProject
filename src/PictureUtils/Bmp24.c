@@ -545,7 +545,10 @@ Picture* betterDetect(Picture *pic,int* size)
 		if( b == 1)
 		{
 		 	colorImage(pic->pixels ,pic->h ,pic->w,&w,&startw);
-			free(pix);		
+			if(w-startw == pic->w)
+			{
+				return pic;
+			}
 			pix = malloc(sizeof(Pixel)*(pic->h)*(w-startw+1));
 			for(int x = 0; x<pic->h;x++)
 			{
@@ -574,16 +577,17 @@ Picture* betterDetect(Picture *pic,int* size)
 				capacity *= 2;
 				list = realloc(list,sizeof(Picture)*capacity);
 			}
-			list[*size-1].name = "a.bmp";
+			list[*size-1].name = pic->name;
 			list[*size-1].pixels = pix;
 			list[*size-1].w = w - startw +1;
 			list[*size-1].h = pic->h;
 			list[*size-1].offset = (4 - (3*list[*size-1].w)%4)%4;
 			list[*size-1].head = pic->head;
 			list[*size-1].head =  changeDimensionHead(list[*size-1].head,list[*size-1].h, list[*size-1].w, list[*size-1].offset);
-			savePicture(&list[*size-1]);
 		}
 	}
+    free(pic->pixels);
+    free(pic->head);
 	return list;
 
 }

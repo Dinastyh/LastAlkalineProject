@@ -108,6 +108,7 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
                 output = control;
                 control = NULL;
             }
+
             output[len-1]=back;
             output[len]='\0';
         }
@@ -170,6 +171,7 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
                 }
                 //Append result filtre
                 len++;
+
                 control = realloc(output, sizeof(char)*(len+1));
                 if(control)
                 {
@@ -182,6 +184,6 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
         }
     }
 
-    freeNetwork(&net);
+	freeNetwork(&net);
     return output;
 }
