@@ -171,10 +171,10 @@ void resize(Picture *p, int neww, int newh)
 		blackAndWhite(p);
 }
 
-Picture rotate(Picture pic, int degree)
+Picture rotate(Picture pic, float degree)
 {
 		Picture ref = pixelsToSquare(pic);
-		float rotation = (float)degree / (float)(360);
+		float rotation = degree / (float)(360);
 		rotation *= 2 * (float)3.14;
 		double middlex = ref.w/2;
 		double middley = ref.h/2;
@@ -186,19 +186,19 @@ Picture rotate(Picture pic, int degree)
 		blc.b = 255;
 		Pixel *p = malloc(sizeof(Pixel) * ref.h * ref.w);
 		for(int k = 0; k < ref.h * ref.w; k++)
-			{
+		{
 				p[k] = blc;
-			}
+		}
 		for(double i = 0; i < ref.h; i++)
-			{
+		{
 				for(double j = 0; j < ref.w; j++)
-					{
+				{
 						currentx = cos(rotation) * (j - middlex) - sin(rotation) * (i - middley) + middlex;
-						currenty = sin(rotation) * (j - middlex) - cos(rotation) * (i - middley) + middley;
+						currenty = sin(rotation) * (j - middlex) + cos(rotation) * (i - middley) + middley;
 						if(currentx >= 0 && currentx < ref.w && currenty >= 0 && currenty < ref.h )
-							 p[(int)currenty * ref.w + (int)currentx] = ref.pixels[(int)i * ref.w + (int)j];
-					}
-			}
+							p[(int)i * ref.w + (int)j] = ref.pixels[(int)currenty * ref.w + (int)currentx];
+				}
+		}
 		ref.pixels = p;
 		return ref;
 }
@@ -208,9 +208,7 @@ Picture pixelsToSquare(Picture p)
 		int h = p.h;
 		int max = w;
 		if(max<h)
-		{
 			 max = h;
-		}
 		max += 4 - max%4;
 		Pixel *pix = malloc(sizeof(Pixel) * max * max);
 		int debutx = (max - w)/2;
@@ -221,32 +219,32 @@ Picture pixelsToSquare(Picture p)
 		blc.b = 255;
 		long average = 0;
 		for(int k = 0; k < max * max; k++)
-			{
+		{
 				pix[k] = blc;
 				average += 255 * 3;
-			}
+		}
 		for(int i = 0; i < h; i++)
-			{
+		{
 				for(int k = 0; k < debutx; k++)
-					{
+				{
 						pix[(debuty + i) * max + k] = blc;
 						average += 255 * 3;
-					}
+				}
 				for(int j = 0; j < w; j++)
-					{
+				{
 						pix[(debuty + i) * max + j + debutx] = p.pixels[i * w + j];
 						average += p.pixels[i * w + j].r + p.pixels[i * w + j].g +  p.pixels[i * w + j].b;
-					}
+				}
 				for(int k = max - debutx; k < max; k++)
-					{
+				{
 						pix[(debuty + i) * max + k] = blc;
 						average += 255 * 3;
-					}
-			}
-		for(int k = max - debuty; k< debuty*max; k++)
+				}
+		}
+		for(int k = max - debuty; k < debuty * max; k++)
 		{
-			pix[k] =blc;
-			average += 255*3;
+				pix[k] = blc;
+				average += 255 * 3;
 		}
 		Picture resul;
 		resul.w = max;

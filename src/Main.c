@@ -5,15 +5,15 @@
 #include "Ui/Ui.h"
 #include <stdbool.h>
 #include "Managers/Manager.h"
-#define NUMBERPRO 11
+#define NUMBERPRO 10
 static gchar* file = NULL;
 static gchar* txt = NULL;
 static GtkWidget* displayCenter;
 static bool status[NUMBERPRO] = {0};
 static gchar* nameProcessing[]= {"Gray scale", "Strenghen edge","Detect Edge",
     "Up contrast", "Push Back", "Low pass filter", "Invert",
-    "Gray scale luminate", "Rotate 90", "Rotate 180", "Automatic rotate"};
-static GtkWidget* proBtns[]={NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL};
+    "Gray scale luminate", "Rotate 90", "Rotate 180"};
+static GtkWidget* proBtns[]={NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL};
 static GtkWidget* exeBtn;
 static GtkWidget* selectBtn;
 static GtkWidget* saveBtn;
