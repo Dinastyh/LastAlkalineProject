@@ -13,7 +13,7 @@ long min3(long l1, long l2, long l3) {
 long dualGradientEnergy(Pixel* p1x, Pixel* p2x, Pixel* p1y, Pixel* p2y)
 {
     Pixel xdif;
-    pixel xdif;
+    Pixel xdif;
 	xdif.r = abs(p1x->r - p2x->r);
 	xdif.g = abs(p1x->g - p2x->g);
 	xdif.b = abs(p1x->b - p2x->b);
@@ -39,36 +39,36 @@ long **generateEnergyMatrix(Picture* p) {
 		energyMatrix[i] = malloc(w * sizeof(long));
 
 	for (int i = 0; i < h; i++)
-		for (j = 0; j < w; j++) {
+		for (int j = 0; j < w; j++) {
 			long energy;
 			/* 
 			Corner
 			*/
 			if (i == 0 && j == 0) {
-				energy = ->dualGradientEnergy(colorMat[i*h+w-1], colorMat[i*h+j+1], colorMat[h - 1][(h-1)*h+j], colorMat[(i+1)*h+j]);
+				energy = dualGradientEnergy(&colorMat[i*h+w-1], &colorMat[i*h+j+1], &colorMat[(h-1)*h+j], &colorMat[(i+1)*h+j]);
 			}
 			else if (i == 0 && j == w - 1)
-				energy = ->dualGradientEnergy(colorMat[i*h+j - 1], colorMat[i*h], colorMat[(h-1)*h+j], colorMat[(i+1)*h+j]);
+				energy = dualGradientEnergy(&colorMat[i*h+j - 1], &colorMat[i*h], &colorMat[(h-1)*h+j], &colorMat[(i+1)*h+j]);
 			else if (i == h - 1 && j == 0)
-				energy = ->dualGradientEnergy(colorMat[i*h+w - 1], colorMat[i*h+j + 1], colorMat[(i-1)*h+j], colorMat[j]);
+				energy = dualGradientEnergy(&colorMat[i*h+w - 1], &colorMat[i*h+j + 1], &colorMat[(i-1)*h+j], &colorMat[j]);
 			else if (i == h - 1 && j == w - 1)
-				energy = ->dualGradientEnergy(colorMat[h*i+j - 1], colorMat[h*i], colorMat[h*(i - 1)+j], colorMat[j]);
+				energy = dualGradientEnergy(&colorMat[h*i+j - 1], &colorMat[h*i], &colorMat[h*(i - 1)+j], &colorMat[j]);
 			/*
 			Edges
 			*/
 			else if (i == 0)
-				energy = ->dualGradientEnergy(colorMat[i*h+j - 1], colorMat[i*h+j + 1], colorMat[(h-1)*h+j], colorMat[(i+1)*h+j]);
+				energy = dualGradientEnergy(&colorMat[i*h+j - 1], &colorMat[i*h+j + 1], &colorMat[(h-1)*h+j], &colorMat[(i+1)*h+j]);
 			else if (i == h - 1)
-				energy = ->dualGradientEnergy(colorMat[i*h+j - 1], colorMat[i*h+j + 1], colorMat[(i-1)*h+j], colorMat[j]);
+				energy = dualGradientEnergy(&colorMat[i*h+j - 1], &colorMat[i*h+j + 1], &colorMat[(i-1)*h+j], &colorMat[j]);
 			else if (j == 0)
-				energy = ->dualGradientEnergy(colorMat[i*h+w - 1], colorMat[i*h+j + 1], colorMat[(i-1)*h+j], colorMat[(i+1)*h+j]);
+				energy = dualGradientEnergy(&colorMat[i*h+w - 1], &colorMat[i*h+j + 1], &colorMat[(i-1)*h+j], &colorMat[(i+1)*h+j]);
 			else if (j == w - 1)
-				energy = ->dualGradientEnergy(colorMat[i*h+j - 1], colorMat[i*h+0], colorMat[(i-1)*h+j], colorMat[(i+1)*h+j]);
+				energy = dualGradientEnergy(&colorMat[i*h+j - 1], &colorMat[i*h+0], &colorMat[(i-1)*h+j], &colorMat[(i+1)*h+j]);
 			/*
 			Inside
 			*/
 			else
-				energy = ->dualGradientEnergy(colorMat[i*h+j - 1], colorMat[i*h+j + 1], colorMat[(i-1)*h+j], colorMat[(i+1)*h+j]);
+				energy = dualGradientEnergy(&colorMat[i*h+j - 1], &colorMat[i*h+j + 1], &colorMat[(i-1)*h+j], &colorMat[(i+1)*h+j]);
 			energyMatrix[i][j] = energy;
 		}
 	return energyMatrix;
@@ -94,6 +94,7 @@ long **generateSeamEnergies(int h, int w, long **energyMatrix) {
 
 	return dp;
 }
+
 
 int *determineMinSeam(int h, int w, long **dp) {
 	/*
@@ -138,10 +139,11 @@ int *determineMinSeam(int h, int w, long **dp) {
 	return verticalSeam;
 }
 
+
 void sceamReduceW(Picture* p, int newW)
 {
-    int nbRemove = w-p->w;
-    for(int k = 0; k< to_be_removed; k++)
+    int nbAdd = newW-p->w;
+    for(int k = 0; k< nbAdd; k++)
     {
         //Energy of each pixel	
         long**energyMatrix = generateEnergyMatrix(p);
@@ -150,32 +152,73 @@ void sceamReduceW(Picture* p, int newW)
         //Detection which seams must be removed
         int *verticalSeam = determineMinSeam(p->h, p->w, dp);
         //Remove seam and reduce W
-        for(int i = 0; i< h; i++)
+        for(int i = 0; i< p->h; i++)
         {
-            Pixel *newLine = malloc((w-1)*sizeof(Pixel));
+            Pixel *newLine = malloc((p->w-1)*sizeof(Pixel));
             int skipped = 0;
-            for(int j = 0; j < w; j++)
+            for(int j = 0; j < p->w; j++)
             {
                 if(verticalSeam[i]== j)
                     skipped = 1;
                 else
-                    newLine[j-skipped] = p->pixels[i*h+j];
+                    newLine[j-skipped] = p->pixels[i*p->h+j];
             }
-            free(p->pixels[i*h]);
-            for(int j = 0; j < w; j++)
+            for(int j = 0; j < p->w; j++)
             {
-                P->pixels[i*h+j] = newLine[j];
+                p->pixels[i*p->h+j] = newLine[j];
             }
         }
-        p->w++;;
+        p->w++;
 
+		free(verticalSeam);
+    	for(int i = 0; i <p->h; i++)
+    	{
+        	free(energyMatrix[i]);
+        	free(dp[i]);
+    	}
+    	free(energyMatrix);
+    	free(dp);
     }
-    free(verticalSeam);
-    for(int i = 0; i <h; i++)
+}
+
+
+void sceamReduceW(Picture* p, int newW)
+{
+    int nbAdd = newW-p->w;
+    for(int k = 0; k< nbAdd; k++)
     {
-        free(energyMatrix[i]);
-        free(dp[i]);
+        //Energy of each pixel	
+        long**energyMatrix = generateEnergyMatrix(p);
+        //Detection energy of seams by dynamic programing
+        long **dp = generateSeamEnergies(p->h, p->w, energyMatrix);
+        //Detection which seams must be removed
+        int *verticalSeam = determineMinSeam(p->h, p->w, dp);
+        //Remove seam and reduce W
+        for(int i = 0; i< p->h; i++)
+        {
+            Pixel *newLine = malloc((p->w-1)*sizeof(Pixel));
+            int skipped = 0;
+            for(int j = 0; j < p->w; j++)
+            {
+                if(verticalSeam[i]== j)
+                    skipped = 1;
+                else
+                    newLine[j-skipped] = p->pixels[i*p->h+j];
+            }
+            for(int j = 0; j < p->w; j++)
+            {
+                p->pixels[i*p->h+j] = newLine[j];
+            }
+        }
+        p->w++;
+
+		free(verticalSeam);
+    	for(int i = 0; i <p->h; i++)
+    	{
+        	free(energyMatrix[i]);
+        	free(dp[i]);
+    	}
+    	free(energyMatrix);
+    	free(dp);
     }
-    free(energyMatrix);
-    free(dp);9
 }
