@@ -191,10 +191,10 @@ void savePicture(Picture *picture)
 							}
 					}
 			}
-		//free(picture->origine);
-		//free(picture->head);
+		free(picture->origine);
+	//	free(picture->head);
 		fclose(file);
-		//free(picture->pixels);
+	//	free(picture->pixels);
 }
 
 int* browseImage(int w, int h, Pixel *pixels, int width, int line, int start)

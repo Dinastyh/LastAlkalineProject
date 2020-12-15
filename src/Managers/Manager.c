@@ -12,7 +12,7 @@ int loadPicture(const char* path)
 
 void processingBasic(Picture* picture, bool status[], size_t len)
 {
-
+    blackAndWhite(picture);
     if(status[0])
         {grayscale(picture);}
     if(status[1])
@@ -33,7 +33,8 @@ void processingBasic(Picture* picture, bool status[], size_t len)
         {*picture = rotate(*picture, 90.0);}
     if(status[9])
         {*picture = rotate(*picture, 180.0);}
-    blackAndWhite(picture);
+    if(status[10])
+        {detectAngle(picture);}
 } 
 
 void preview(const char* path, bool status[], size_t len)

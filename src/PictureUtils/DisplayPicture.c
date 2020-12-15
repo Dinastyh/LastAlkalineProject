@@ -94,7 +94,7 @@ Data createData(Picture *p)
 				for(int j = 0; j < tpword.length; j++)
 					{
 						Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
-						Data* words = malloc(sizeof(Data) * tpchar.length*2);
+						Data* words = malloc(sizeof(Data) * tpchar.length*4);
 						Data word;
 						word.length = tpchar.length;
 						charsize = 0;
