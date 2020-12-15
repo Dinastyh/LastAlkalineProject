@@ -478,7 +478,7 @@ void invert(Picture *p)
 			}
 		p->averageColor = 255 - p->averageColor;
 }
-Picture detectionAngle(Picture pic,Tuple* l, int c)
+Picture detectionAngle(Picture pic,Tuple* l)
 {
 		double angle = 0;
 		int x1 = 0;
@@ -500,11 +500,7 @@ Picture detectionAngle(Picture pic,Tuple* l, int c)
 						}
 						else
 						{
-							if(c == 1)
-							{
 
-								pixel[y1*w+x1].g=0;
-							}
 								y1--;
 						}
 				}
@@ -523,19 +519,12 @@ Picture detectionAngle(Picture pic,Tuple* l, int c)
 						}
 						else
 						{
-							if(c == 1)
-							{
 								
-								pixel[y2*w+x2].g=0;
-							}
 							x2++;
 						}
 				}
 				y2 --;
 		}
-		savePicture(&pic);
-		displayPicture(pic.name);
-		printf("x1 = %i; x2 = %i y1 = %i y2 = %i\n",x1,x2,y1,y2);
 		double y1y2 = fabs((double) (y1 - y2));
 		double x1x2 = fabs((double) (x1 - x2));
 		if(x1x2 == 0)
@@ -606,11 +595,9 @@ void detectAngle(Picture *pic)
 {
 		Tuple line1 ;
 		Tuple line2 ;
-		Picture pic1 = detectionAngle(*pic,&line1,0);
-		Picture pic2 = detectionAngle(rotate(*pic,180),&line2,1);
+		Picture pic1 = detectionAngle(*pic,&line1);
+		Picture pic2 = detectionAngle(rotate(*pic,180),&line2);
 
-		savePicture(&pic2);
-		displayPicture(pic2.name);
 		if(line1.length < line2.length)
 		{
 				free(pic1.pixels);
