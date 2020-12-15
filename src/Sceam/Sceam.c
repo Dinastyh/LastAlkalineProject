@@ -96,6 +96,29 @@ long **generateSeamEnergies(int h, int w, long **energyMatrix) {
 }
 
 
+long **generateSeamEnergiesH(int h, int w, long **energyMatrix) {
+	/*
+	===============================================================================================
+	Function that generates the energies of all seams through dynamic programming For H
+	*/
+	long **dp = malloc(h * sizeof(long *));
+	for (int i = 0; i < h; i++)
+		dp[i] = malloc(w * sizeof(long));
+
+	for (int i = 1; i < h; i++)
+		for (int j = 0; j < w; j++)
+			if (i == 0)
+				dp[i][j] = energyMatrix[i][j] + min2(dp[i][j-1], dp[i + 1][j - 1]);
+			else if (i == h - 1)
+				dp[i][j] = energyMatrix[i][j] + min2(dp[i - 1][j - 1], dp[i][j - 1]);
+			else
+				dp[i][j] = energyMatrix[i][j] + min3(dp[i - 1][j - 1], dp[i][j-1], dp[i + 1][j - 1]);
+
+	return dp;
+}
+
+
+
 int *determineMinSeam(int h, int w, long **dp) {
 	/*
 	===============================================================================================
@@ -139,46 +162,50 @@ int *determineMinSeam(int h, int w, long **dp) {
 	return verticalSeam;
 }
 
+int *determineMinSeamH(int h, int w, long **dp) {
+	/*
+	===============================================================================================
+	Function that determines the minimum seam to be deleted from the image for H
+	*/
 
-void sceamReduceW(Picture* p, int newW)
-{
-    int nbAdd = newW-p->w;
-    for(int k = 0; k< nbAdd; k++)
-    {
-        //Energy of each pixel	
-        long**energyMatrix = generateEnergyMatrix(p);
-        //Detection energy of seams by dynamic programing
-        long **dp = generateSeamEnergies(p->h, p->w, energyMatrix);
-        //Detection which seams must be removed
-        int *verticalSeam = determineMinSeam(p->h, p->w, dp);
-        //Remove seam and reduce W
-        for(int i = 0; i< p->h; i++)
-        {
-            Pixel *newLine = malloc((p->w-1)*sizeof(Pixel));
-            int skipped = 0;
-            for(int j = 0; j < p->w; j++)
-            {
-                if(verticalSeam[i]== j)
-                    skipped = 1;
-                else
-                    newLine[j-skipped] = p->pixels[i*p->h+j];
-            }
-            for(int j = 0; j < p->w; j++)
-            {
-                p->pixels[i*p->h+j] = newLine[j];
-            }
-        }
-        p->w++;
+	int *horizontalSeam = malloc(w * sizeof(int));
+	long minEnergy  = 2000000;
 
-		free(verticalSeam);
-    	for(int i = 0; i <p->h; i++)
-    	{
-        	free(energyMatrix[i]);
-        	free(dp[i]);
-    	}
-    	free(energyMatrix);
-    	free(dp);
-    }
+	minEnergy  = dp[h - 1][0];
+	for (int j = 0; j < h; j++)
+		if (dp[j][w-1] < minEnergy ) {
+			minEnergy  = dp[j][w-1];
+			horizontalSeam[w-1] = j;
+		}
+
+	for (int i = w - 2; i >= 0; i--) {
+
+		if (horizontalSeam[i + 1] == 0) {
+			if (dp[horizontalSeam[i + 1]][i] < dp[horizontalSeam[i + 1] + 1][i]) {
+				horizontalSeam[i] = horizontalSeam[i + 1];
+			} else {
+				horizontalSeam[i] = horizontalSeam[i + 1] + 1;
+			}
+
+		} else if (horizontalSeam[i + 1] == h - 1) {
+			if (dp[horizontalSeam[i + 1] - 1][i] < dp[horizontalSeam[i + 1]][i]) {
+				horizontalSeam[i] = horizontalSeam[i + 1] - 1;
+			} else {
+				horizontalSeam[i] = horizontalSeam[i + 1];
+			}
+
+		} else {
+			if (dp[horizontalSeam[i + 1] - 1][i] < dp[horizontalSeam[i + 1]][i] && dp[horizontalSeam[i + 1] - 1][i] < dp[horizontalSeam[i + 1]] + 1) {
+				horizontalSeam[i] = horizontalSeam[i + 1] - 1;
+			} else if (dp[horizontalSeam[i + 1]][i] < dp[horizontalSeam[i + 1] + 1][i]) {
+				horizontalSeam[i] = horizontalSeam[i + 1];
+			} else {
+				horizontalSeam[i] = horizontalSeam[i + 1] + 1;
+			}
+		}
+	}
+
+	return horizontalSeam;
 }
 
 
