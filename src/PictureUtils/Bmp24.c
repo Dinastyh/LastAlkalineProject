@@ -545,6 +545,10 @@ Picture* betterDetect(Picture *pic,int* size)
 		if( b == 1)
 		{
 		 	colorImage(pic->pixels ,pic->h ,pic->w,&w,&startw);
+			if(w-startw == pic->w)
+			{
+				return pic;
+			}
 			pix = malloc(sizeof(Pixel)*(pic->h)*(w-startw+1));
 			for(int x = 0; x<pic->h;x++)
 			{

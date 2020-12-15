@@ -94,8 +94,7 @@ Data createData(Picture *p)
 				for(int j = 0; j < tpword.length; j++)
 					{
 						Tuple tpchar = captureChar(p->pixels, &(tpword.block[j]), p->w);
-						Data* words = malloc(sizeof(Data) * tpchar.length);
-						printf("here\n");
+						Data* words = malloc(sizeof(Data) * tpchar.length*2);
 						Data word;
 						word.length = tpchar.length;
 						charsize = 0;
@@ -136,15 +135,15 @@ Data createData(Picture *p)
 									if (size > 2)
 									{ 
 										mb += size -2;
-										void* yet = realloc(word.thing,sizeof(Data)*(mb));
-										if (yet != NULL)
-										{
-											word.thing = yet;
-										}
-										else
-										{
-											printf("YES\n");
-										}	
+										//void* yet = realloc(word.thing,sizeof(Data)*(mb));
+										//if (yet != NULL)
+										//{
+										//	word.thing = yet;
+										//}
+										//else
+										//{
+										//	printf("YES\n");
+										//}	
 										word.length = mb;
 									}
 
@@ -152,7 +151,6 @@ Data createData(Picture *p)
 									{
 										
 									resize(&pics[yup], 40, 40);
-									printf("numero carac %i\n",sure);
 									double* pixChar = malloc(sizeof(double) * 1600);
 									Data charactere;
 									charactere.length = 1600;
@@ -177,11 +175,10 @@ Data createData(Picture *p)
 						word.thing = (Data*)words;
 						lines[j] = word;
 
-						printf("size = %i\n",word.length);
 					}
 				line.thing = (Data*)lines;
 				dataLines[tpline.length - i - 1] = line;
-			}printf("YETTT\n");
+			}
 		data.thing = (Data*)dataLines;
 		return data;
 }
