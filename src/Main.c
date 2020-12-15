@@ -12,7 +12,7 @@ static GtkWidget* displayCenter;
 static bool status[NUMBERPRO] = {0};
 static gchar* nameProcessing[]= {"Gray scale", "Strenghen edge","Detect Edge",
     "Up contrast", "Push Back", "Low pass filter", "Invert",
-    "Gray scale luminate", "Rotate 90", "Rotate 180", "Automatic rotate"};
+    "Gray scale luminate", "Rotate 90", "Rotate 180", "Auto rotate"};
 static GtkWidget* proBtns[]={NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL};
 static GtkWidget* exeBtn;
 static GtkWidget* selectBtn;

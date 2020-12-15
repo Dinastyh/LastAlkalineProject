@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include "PreProcessPicture.h"
+#include "Bmp24.h"
+#include "DisplayPicture.h"
 
 
 void blackAndWhite(Picture *picture)
@@ -169,10 +171,10 @@ void resize(Picture *p, int neww, int newh)
 		blackAndWhite(p);
 }
 
-Picture rotate(Picture pic, int degree)
+Picture rotate(Picture pic, float degree)
 {
 		Picture ref = pixelsToSquare(pic);
-		float rotation = (float)degree / (float)(360);
+		float rotation = degree / (float)(360);
 		rotation *= 2 * (float)3.14;
 		double middlex = ref.w/2;
 		double middley = ref.h/2;
@@ -184,19 +186,19 @@ Picture rotate(Picture pic, int degree)
 		blc.b = 255;
 		Pixel *p = malloc(sizeof(Pixel) * ref.h * ref.w);
 		for(int k = 0; k < ref.h * ref.w; k++)
-			{
+		{
 				p[k] = blc;
-			}
+		}
 		for(double i = 0; i < ref.h; i++)
-			{
+		{
 				for(double j = 0; j < ref.w; j++)
-					{
+				{
 						currentx = cos(rotation) * (j - middlex) - sin(rotation) * (i - middley) + middlex;
-						currenty = sin(rotation) * (j - middlex) - cos(rotation) * (i - middley) + middley;
+						currenty = sin(rotation) * (j - middlex) + cos(rotation) * (i - middley) + middley;
 						if(currentx >= 0 && currentx < ref.w && currenty >= 0 && currenty < ref.h )
-							 p[(int)currenty * ref.w + (int)currentx] = ref.pixels[(int)i * ref.w + (int)j];
-					}
-			}
+							p[(int)i * ref.w + (int)j] = ref.pixels[(int)currenty * ref.w + (int)currentx];
+				}
+		}
 		ref.pixels = p;
 		return ref;
 }
@@ -217,33 +219,33 @@ Picture pixelsToSquare(Picture p)
 		blc.b = 255;
 		long average = 0;
 		for(int k = 0; k < max * max; k++)
-			{
+		{
 				pix[k] = blc;
 				average += 255 * 3;
-			}
+		}
 		for(int i = 0; i < h; i++)
-			{
+		{
 				for(int k = 0; k < debutx; k++)
-					{
+				{
 						pix[(debuty + i) * max + k] = blc;
 						average += 255 * 3;
-					}
+				}
 				for(int j = 0; j < w; j++)
-					{
+				{
 						pix[(debuty + i) * max + j + debutx] = p.pixels[i * w + j];
 						average += p.pixels[i * w + j].r + p.pixels[i * w + j].g +  p.pixels[i * w + j].b;
-					}
+				}
 				for(int k = max - debutx; k < max; k++)
-					{
+				{
 						pix[(debuty + i) * max + k] = blc;
 						average += 255 * 3;
-					}
-			}
+				}
+		}
 		for(int k = max - debuty; k < debuty * max; k++)
-			{
+		{
 				pix[k] = blc;
 				average += 255 * 3;
-			}
+		}
 		Picture resul;
 		resul.w = max;
 		resul.h = max;
@@ -490,13 +492,14 @@ Picture detectionAngle(Picture pic,Tuple* l)
 				y1 = h-1;
 				while(b == 0 && y1 > -1)
 				{
-						if(pixel[y1*w+x1].g == 255)
+						if(pixel[y1*w+x1].b == 0)
 						{
-								y1--;
+								b = 1;
 						}
 						else
 						{
-								b = 1;
+
+								y1--;
 						}
 				}
 				x1 ++;
@@ -507,13 +510,15 @@ Picture detectionAngle(Picture pic,Tuple* l)
 				x2 = 0;
 				while(b == 0 && x2 < w)
 				{
-						if(pixel[y2*w+x2].r == 255)
+						if(pixel[y2*w+x2].b == 0)
 						{
-								x2++;
+								
+								b = 1;
 						}
 						else
 						{
-								b = 1;
+								
+							x2++;
 						}
 				}
 				y2 --;
@@ -590,8 +595,7 @@ void detectAngle(Picture *pic)
 		Tuple line2 ;
 		Picture pic1 = detectionAngle(*pic,&line1);
 		Picture pic2 = detectionAngle(rotate(*pic,180),&line2);
-		free(pic->pixels);
-		free(pic->head);
+
 		if(line1.length < line2.length)
 		{
 				free(pic1.pixels);
@@ -616,6 +620,6 @@ void detectAngle(Picture *pic)
 				pic3 = rotate(pic1, 180);
 				line3 = captureLine(&pic1);
 				pic2 = invertDetection(pic3,pic1,line3,line1);
-				*pic = invertDetection(pic1,pic2,line1,line2);
+				*pic = invertDetection(pic2,pic1,line2,line1);
 		}
 }
