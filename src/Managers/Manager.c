@@ -108,6 +108,11 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
                 output = control;
                 control = NULL;
             }
+	else
+	{
+
+		printf("je bug ? control deb\n");
+	}
             output[len-1]=back;
             output[len]='\0';
         }
@@ -124,6 +129,11 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
                     output = control;
                     control = NULL;
                 }
+		else
+		{
+
+		printf("je bug ? control mil\n");
+		}
                 output[len-1]=space;
                 output[len]='\0';
             }
@@ -135,6 +145,7 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
                 Data* charactere = &((Data*)(word->thing))[k];
                 int result = forwardPropagationTest(&net, charactere->thing);
                 //Filtre result
+    printf("line %i word %i caract %i\n",i,j,k);
                 char c;
                 if(result >= 4 && result <= 13)
                 {
@@ -170,13 +181,20 @@ char* managerExec(const char* path, bool status[], size_t lenStatus)
                 }
                 //Append result filtre
                 len++;
+
                 control = realloc(output, sizeof(char)*(len+1));
                 if(control)
                 {
                     output = control;
                     control = NULL;
                 }
+		else
+		{
+
+		printf("je bug ? control fin\n");
+		}
                 output[len-1]=c;
+    printf("line %i word %i\n",i,j);
                 output[len] = '\0';
             }
         }

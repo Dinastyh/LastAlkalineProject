@@ -30,7 +30,7 @@ void invert(Picture *p);
 double sumRGBPixel(Pixel *p);
 double varianceP(Picture *p);
 
-Picture detectionAngle(Picture pic, Tuple* l);
+Picture detectionAngle(Picture pic, Tuple* l,int);
 float variance(Picture pic, Tuple l);
 Picture invertDetection(Picture pic1, Picture pic2, Tuple l1, Tuple l2);
 void detecAngle(Picture *picture);
